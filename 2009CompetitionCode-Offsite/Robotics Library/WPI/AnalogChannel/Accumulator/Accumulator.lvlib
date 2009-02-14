@@ -8,6 +8,7 @@
       <Item Name="VerifyChannel.vi" Type="VI" URL="VerifyChannel.vi"/>
    </Item>
    <Item Name="Functions" Type="Folder">
+      <Item Name="AccumulatorToVoltageSeconds.vi" Type="VI" URL="AccumulatorToVoltageSeconds.vi"/>
       <Item Name="GetOutput.vi" Type="VI" URL="GetOutput.vi"/>
       <Item Name="GetConfiguration.vi" Type="VI" URL="GetConfiguration.vi"/>
       <Item Name="Reset.vi" Type="VI" URL="Reset.vi"/>

@@ -30,7 +30,6 @@
             <Item Name="Merge Errors.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Merge Errors.vi"/>
             <Item Name="VariantType.lvlib" Type="Library" URL="/&lt;vilib&gt;/Utility/VariantDataType/VariantType.lvlib"/>
             <Item Name="Clear Errors.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Clear Errors.vi"/>
-            <Item Name="Servo.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/PWM/Servo/Servo.lvlib"/>
             <Item Name="PID Control Input Filter (DBL).vi" Type="VI" URL="/&lt;vilib&gt;/addons/control/pid/pid.llb/PID Control Input Filter (DBL).vi"/>
             <Item Name="PID Control Input Filter (DBL Array).vi" Type="VI" URL="/&lt;vilib&gt;/addons/control/pid/pid.llb/PID Control Input Filter (DBL Array).vi"/>
             <Item Name="PID Control Input Filter.vi" Type="VI" URL="/&lt;vilib&gt;/addons/control/pid/pid.llb/PID Control Input Filter.vi"/>
@@ -40,6 +39,8 @@
             <Item Name="joystickAcquire.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/inputDevices.llb/joystickAcquire.vi"/>
             <Item Name="keyboardAcquire.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/inputDevices.llb/keyboardAcquire.vi"/>
             <Item Name="mouseAcquire.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/inputDevices.llb/mouseAcquire.vi"/>
+            <Item Name="Encoder.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/Encoder/Encoder.lvlib"/>
+            <Item Name="Relay.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/Relay/Relay.lvlib"/>
          </Item>
          <Item Name="Servo Positions.vi" Type="VI" URL="Two Color Servo Camera/Servo Positions.vi"/>
          <Item Name="camera servo control.vi" Type="VI" URL="camera servo control.vi"/>
@@ -105,6 +106,7 @@
          <Item Name="Two Color Servo Camera Examplev1.vi" Type="VI" URL="Two Color Servo Camera/Two Color Servo Camera Examplev1.vi"/>
          <Item Name="Periodic Tasks.vi" Type="VI" URL="Periodic Tasks.vi"/>
          <Item Name="Build DashBoard Data.vi" Type="VI" URL="Build DashBoard Data.vi"/>
+         <Item Name="JoystickButtonToggle.vi" Type="VI" URL="JoystickButtonToggle.vi"/>
       </Item>
       <Item Name="Robot Main.vi" Type="VI" URL="Robot Main.vi"/>
       <Item Name="Dependencies" Type="Dependencies">
@@ -395,8 +397,8 @@
             <Item Name="Counter.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/Counter/Counter.lvlib"/>
             <Item Name="EventCtrMode.ctl" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/NIFPGAInterface/Counter/EventCtrMode.ctl"/>
             <Item Name="Relay.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/Relay/Relay.lvlib"/>
-            <Item Name="Application Version.ctl" Type="VI" URL="/&lt;vilib&gt;/Utility/libraryn.llb/Application Version.ctl"/>
             <Item Name="DigitalInput.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/DigitalInput/DigitalInput.lvlib"/>
+            <Item Name="Application Version.ctl" Type="VI" URL="/&lt;vilib&gt;/Utility/libraryn.llb/Application Version.ctl"/>
          </Item>
          <Item Name="Teleop.vi" Type="VI" URL="Teleop.vi"/>
          <Item Name="Control Statesv1.ctl" Type="VI" URL="Two Color Servo Camera/Control Statesv1.ctl"/>

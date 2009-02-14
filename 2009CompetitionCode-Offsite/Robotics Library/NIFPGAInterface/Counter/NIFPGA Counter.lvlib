@@ -25,14 +25,16 @@
       <Item Name="CtrSystemIndex.ctl" Type="VI" URL="CtrSystemIndex.ctl"/>
       <Item Name="CtrEdgeDetectionType.ctl" Type="VI" URL="CtrEdgeDetectionType.ctl"/>
       <Item Name="CtrChannelSource.ctl" Type="VI" URL="CtrChannelSource.ctl"/>
+      <Item Name="CounterOutput.ctl" Type="VI" URL="CounterOutput.ctl"/>
+      <Item Name="EventTimerAverageOutput.ctl" Type="VI" URL="EventTimerAverageOutput.ctl"/>
    </Item>
    <Item Name="DevStatus" Type="Folder">
       <Item Name="GetDevStatus.vi" Type="VI" URL="GetDevStatus.vi"/>
    </Item>
    <Item Name="Internal" Type="Folder">
-      <Property Name="NI.LibItem.Scope" Type="Int">1</Property>
+      <Property Name="NI.LibItem.Scope" Type="Int">2</Property>
       <Item Name="Error" Type="Folder">
-         <Item Name="InvalidResourceErr.vi" Type="VI" URL="InvalidResourceErr.vi"/>
+         <Item Name="ERRInvalidResource.vi" Type="VI" URL="ERRInvalidResource.vi"/>
       </Item>
    </Item>
    <Item Name="CounterSourceConvertion" Type="Folder">
@@ -42,6 +44,10 @@
    <Item Name="Poly VIs" Type="Folder">
       <Item Name="Open WO Configuration.vi" Type="VI" URL="Open WO Configuration.vi"/>
       <Item Name="Open &amp; Configured.vi" Type="VI" URL="Open &amp; Configured.vi"/>
+   </Item>
+   <Item Name="Unpack Raw Samples" Type="Folder">
+      <Item Name="UnpackCounterSample.vi" Type="VI" URL="UnpackCounterSample.vi"/>
+      <Item Name="UnpackTimerSample.vi" Type="VI" URL="UnpackTimerSample.vi"/>
    </Item>
    <Item Name="Open.vi" Type="VI" URL="Open.vi"/>
 </Library>

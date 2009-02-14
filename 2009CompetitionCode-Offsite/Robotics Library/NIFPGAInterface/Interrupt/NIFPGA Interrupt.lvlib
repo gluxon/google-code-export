@@ -14,7 +14,8 @@
    </Item>
    <Item Name="Functions" Type="Folder">
       <Item Name="ReadConfiguration.vi" Type="VI" URL="ReadConfiguration.vi"/>
-      <Item Name="WriteConfiguration.vi" Type="VI" URL="WriteConfiguration.vi"/>
+      <Item Name="ReadTimestamp.vi" Type="VI" URL="ReadTimestamp.vi"/>
       <Item Name="WaitOnInterrupt.vi" Type="VI" URL="WaitOnInterrupt.vi"/>
+      <Item Name="WriteConfiguration.vi" Type="VI" URL="WriteConfiguration.vi"/>
    </Item>
 </Library>

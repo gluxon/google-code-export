@@ -18,7 +18,6 @@
       <Property Name="NI.LibItem.Scope" Type="Int">2</Property>
       <Item Name="Error" Type="Folder">
          <Item Name="ERRInvalidDistancePerCount.vi" Type="VI" URL="ERRInvalidDistancePerCount.vi"/>
-         <Item Name="ERREncoderNotSupported.vi" Type="VI" URL="ERREncoderNotSupported.vi"/>
          <Item Name="ERRAllocAnInvalidEncoderIdx.vi" Type="VI" URL="ERRAllocAnInvalidEncoderIdx.vi"/>
          <Item Name="ERREncoderAllocate.vi" Type="VI" URL="ERREncoderAllocate.vi"/>
       </Item>

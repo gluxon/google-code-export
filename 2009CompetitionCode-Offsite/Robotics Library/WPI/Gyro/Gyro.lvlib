@@ -10,6 +10,7 @@
       <Item Name="GetAngle.vi" Type="VI" URL="GetAngle.vi"/>
       <Item Name="SetGain.vi" Type="VI" URL="SetGain.vi"/>
       <Item Name="Reset.vi" Type="VI" URL="Reset.vi"/>
+      <Item Name="GyroDevRefToAnalogChannelDevRef.vi" Type="VI" URL="GyroDevRefToAnalogChannelDevRef.vi"/>
    </Item>
    <Item Name="Constants" Type="Folder">
       <Item Name="GyroConstants.vi" Type="VI" URL="GyroConstants.vi"/>
@@ -17,7 +18,6 @@
    <Item Name="Private" Type="Folder">
       <Property Name="NI.LibItem.Scope" Type="Int">2</Property>
       <Item Name="GyroChannelToAIChannel.vi" Type="VI" URL="GyroChannelToAIChannel.vi"/>
-      <Item Name="GyroDevRefToAnalogChannelDevRef.vi" Type="VI" URL="GyroDevRefToAnalogChannelDevRef.vi"/>
    </Item>
    <Item Name="Open.vi" Type="VI" URL="Open.vi"/>
    <Item Name="Close.vi" Type="VI" URL="Close.vi"/>

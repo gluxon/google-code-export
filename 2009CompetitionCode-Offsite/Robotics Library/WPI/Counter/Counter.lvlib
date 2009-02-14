@@ -34,6 +34,7 @@
       <Item Name="Open External Direction Mode.vi" Type="VI" URL="Open External Direction Mode.vi"/>
       <Item Name="AnalogTriggerToDigitalSource.vi" Type="VI" URL="AnalogTriggerToDigitalSource.vi"/>
       <Item Name="DigitalInputToDigitalSource.vi" Type="VI" URL="DigitalInputToDigitalSource.vi"/>
+      <Item Name="DigitalOutputToDigitalSource.vi" Type="VI" URL="DigitalOutputToDigitalSource.vi"/>
    </Item>
    <Item Name="Digital Source" Type="Folder">
       <Item Name="ToDigitalSource.vi" Type="VI" URL="ToDigitalSource.vi"/>
