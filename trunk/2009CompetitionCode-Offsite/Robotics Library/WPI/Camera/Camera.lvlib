@@ -31,68 +31,68 @@
       <Item Name="Get Acquire Image Notifier.vi" Type="VI" URL="Get Acquire Image Notifier.vi"/>
       <Item Name="Get Camera Dev Ref Notifier.vi" Type="VI" URL="Get Camera Dev Ref Notifier.vi"/>
       <Item Name="Get Default Frame Rate.vi" Type="VI" URL="Get Default Frame Rate.vi"/>
-      <Item Name="Get Enum Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Enum Appearance Property.vi"/>
-      <Item Name="Get Enum Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Enum Sensor Property.vi"/>
-      <Item Name="Get Exposure Priority Values.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Exposure Priority Values.vi"/>
-      <Item Name="Get Exposure Values.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Exposure Values.vi"/>
+      <Item Name="Get Enum Appearance Property.vi" Type="VI" URL="Get Enum Appearance Property.vi"/>
+      <Item Name="Get Enum Sensor Property.vi" Type="VI" URL="Get Enum Sensor Property.vi"/>
+      <Item Name="Get Exposure Priority Values.vi" Type="VI" URL="Get Exposure Priority Values.vi"/>
+      <Item Name="Get Exposure Values.vi" Type="VI" URL="Get Exposure Values.vi"/>
       <Item Name="Get Frame Rate Notifier Internal.vi" Type="VI" URL="Get Frame Rate Notifier Internal.vi"/>
-      <Item Name="Get Frame Rate Notifier.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Frame Rate Notifier.vi"/>
-      <Item Name="Get Image Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Image Appearance Property.vi"/>
+      <Item Name="Get Frame Rate Notifier.vi" Type="VI" URL="Get Frame Rate Notifier.vi"/>
+      <Item Name="Get Image Appearance Property.vi" Type="VI" URL="Get Image Appearance Property.vi"/>
       <Item Name="Get Image Notifier Internal.vi" Type="VI" URL="Get Image Notifier Internal.vi"/>
       <Item Name="Get Image Notifier.vi" Type="VI" URL="Get Image Notifier.vi"/>
-      <Item Name="Get Image Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Image Sensor Property.vi"/>
-      <Item Name="Get Image Size Values.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Image Size Values.vi"/>
+      <Item Name="Get Image Sensor Property.vi" Type="VI" URL="Get Image Sensor Property.vi"/>
+      <Item Name="Get Image Size Values.vi" Type="VI" URL="Get Image Size Values.vi"/>
       <Item Name="Get Image To PC Port.vi" Type="VI" URL="Get Image To PC Port.vi"/>
-      <Item Name="Get Numeric Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Numeric Appearance Property.vi"/>
-      <Item Name="Get Numeric Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Numeric Sensor Property.vi"/>
-      <Item Name="Get White Balance Values.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get White Balance Values.vi"/>
-      <Item Name="Issue Get.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Issue Get.vi"/>
+      <Item Name="Get Numeric Appearance Property.vi" Type="VI" URL="Get Numeric Appearance Property.vi"/>
+      <Item Name="Get Numeric Sensor Property.vi" Type="VI" URL="Get Numeric Sensor Property.vi"/>
+      <Item Name="Get White Balance Values.vi" Type="VI" URL="Get White Balance Values.vi"/>
+      <Item Name="Issue Get.vi" Type="VI" URL="Issue Get.vi"/>
       <Item Name="Issue HTTP Request with Authentication.vi" Type="VI" URL="Issue HTTP Request with Authentication.vi"/>
       <Item Name="Notifier GUID.vi" Type="VI" URL="Notifier GUID.vi"/>
       <Item Name="Open Internal.vi" Type="VI" URL="Open Internal.vi"/>
       <Item Name="Read JPG.vi" Type="VI" URL="Read JPG.vi"/>
       <Item Name="Send Image String To PC 1.0.0.0.vi" Type="VI" URL="Send Image String To PC 1.0.0.0.vi"/>
       <Item Name="Send Images To PC.vi" Type="VI" URL="Send Images To PC.vi"/>
-      <Item Name="Set Enum Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Enum Appearance Property.vi"/>
-      <Item Name="Set Enum Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Enum Sensor Property.vi"/>
-      <Item Name="Set Image Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Image Appearance Property.vi"/>
-      <Item Name="Set Image Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Image Sensor Property.vi"/>
-      <Item Name="Set Numeric Appearance Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Numeric Appearance Property.vi"/>
-      <Item Name="Set Numeric Sensor Property.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Numeric Sensor Property.vi"/>
+      <Item Name="Set Enum Appearance Property.vi" Type="VI" URL="Set Enum Appearance Property.vi"/>
+      <Item Name="Set Enum Sensor Property.vi" Type="VI" URL="Set Enum Sensor Property.vi"/>
+      <Item Name="Set Image Appearance Property.vi" Type="VI" URL="Set Image Appearance Property.vi"/>
+      <Item Name="Set Image Sensor Property.vi" Type="VI" URL="Set Image Sensor Property.vi"/>
+      <Item Name="Set Numeric Appearance Property.vi" Type="VI" URL="Set Numeric Appearance Property.vi"/>
+      <Item Name="Set Numeric Sensor Property.vi" Type="VI" URL="Set Numeric Sensor Property.vi"/>
       <Item Name="Start Asynchronous VI.vi" Type="VI" URL="Start Asynchronous VI.vi"/>
       <Item Name="Update Refcount.vi" Type="VI" URL="Update Refcount.vi"/>
       <Item Name="Wait for Raw Image String.vi" Type="VI" URL="Wait for Raw Image String.vi"/>
    </Item>
    <Item Name="Typedef" Type="Folder">
       <Item Name="CameraDevRef.ctl" Type="VI" URL="CameraDevRef.ctl"/>
-      <Item Name="Exposure Priority Values.ctl" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Exposure Priority Values.ctl"/>
-      <Item Name="Exposure Values.ctl" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Exposure Values.ctl"/>
+      <Item Name="Exposure Priority Values.ctl" Type="VI" URL="Exposure Priority Values.ctl"/>
+      <Item Name="Exposure Values.ctl" Type="VI" URL="Exposure Values.ctl"/>
       <Item Name="FrameRate.ctl" Type="VI" URL="FrameRate.ctl"/>
-      <Item Name="ImageSize.ctl" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/ImageSize.ctl"/>
+      <Item Name="ImageSize.ctl" Type="VI" URL="ImageSize.ctl"/>
       <Item Name="SessionID.ctl" Type="VI" URL="SessionID.ctl"/>
-      <Item Name="White Balance Values.ctl" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/White Balance Values.ctl"/>
+      <Item Name="White Balance Values.ctl" Type="VI" URL="White Balance Values.ctl"/>
    </Item>
    <Item Name="Close.vi" Type="VI" URL="Close.vi"/>
-   <Item Name="Get Brightness.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Brightness.vi"/>
-   <Item Name="Get Color Level.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Color Level.vi"/>
-   <Item Name="Get Exposure Priority.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Exposure Priority.vi"/>
-   <Item Name="Get Exposure.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Exposure.vi"/>
-   <Item Name="Get Frame Rate.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Frame Rate.vi"/>
-   <Item Name="Get Image Compression.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Image Compression.vi"/>
-   <Item Name="Get Image Size.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Image Size.vi"/>
+   <Item Name="Get Brightness.vi" Type="VI" URL="Get Brightness.vi"/>
+   <Item Name="Get Color Level.vi" Type="VI" URL="Get Color Level.vi"/>
+   <Item Name="Get Exposure Priority.vi" Type="VI" URL="Get Exposure Priority.vi"/>
+   <Item Name="Get Exposure.vi" Type="VI" URL="Get Exposure.vi"/>
+   <Item Name="Get Frame Rate.vi" Type="VI" URL="Get Frame Rate.vi"/>
+   <Item Name="Get Image Compression.vi" Type="VI" URL="Get Image Compression.vi"/>
+   <Item Name="Get Image Size.vi" Type="VI" URL="Get Image Size.vi"/>
    <Item Name="Get Image.vi" Type="VI" URL="Get Image.vi"/>
-   <Item Name="Get Sharpness.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get Sharpness.vi"/>
-   <Item Name="Get White Balance.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Get White Balance.vi"/>
+   <Item Name="Get Sharpness.vi" Type="VI" URL="Get Sharpness.vi"/>
+   <Item Name="Get White Balance.vi" Type="VI" URL="Get White Balance.vi"/>
    <Item Name="Open.vi" Type="VI" URL="Open.vi"/>
-   <Item Name="Set Brightness.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Brightness.vi"/>
-   <Item Name="Set Color Level.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Color Level.vi"/>
-   <Item Name="Set Exposure Priority.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Exposure Priority.vi"/>
-   <Item Name="Set Exposure.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Exposure.vi"/>
-   <Item Name="Set Frame Rate.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Frame Rate.vi"/>
-   <Item Name="Set Image Compression.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Image Compression.vi"/>
-   <Item Name="Set Image Size.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Image Size.vi"/>
-   <Item Name="Set Sharpness.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set Sharpness.vi"/>
-   <Item Name="Set White Balance.vi" Type="VI" URL="/&lt;vilib&gt;/Robotics Library/WPI/Camera/Set White Balance.vi"/>
+   <Item Name="Set Brightness.vi" Type="VI" URL="Set Brightness.vi"/>
+   <Item Name="Set Color Level.vi" Type="VI" URL="Set Color Level.vi"/>
+   <Item Name="Set Exposure Priority.vi" Type="VI" URL="Set Exposure Priority.vi"/>
+   <Item Name="Set Exposure.vi" Type="VI" URL="Set Exposure.vi"/>
+   <Item Name="Set Frame Rate.vi" Type="VI" URL="Set Frame Rate.vi"/>
+   <Item Name="Set Image Compression.vi" Type="VI" URL="Set Image Compression.vi"/>
+   <Item Name="Set Image Size.vi" Type="VI" URL="Set Image Size.vi"/>
+   <Item Name="Set Sharpness.vi" Type="VI" URL="Set Sharpness.vi"/>
+   <Item Name="Set White Balance.vi" Type="VI" URL="Set White Balance.vi"/>
    <Item Name="Start.vi" Type="VI" URL="Start.vi"/>
    <Item Name="Stop.vi" Type="VI" URL="Stop.vi"/>
 </Library>

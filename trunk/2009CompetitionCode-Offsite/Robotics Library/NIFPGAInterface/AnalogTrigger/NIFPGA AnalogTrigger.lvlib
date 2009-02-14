@@ -10,6 +10,7 @@
       <Item Name="AnalogTriggerDevRef.ctl" Type="VI" URL="AnalogTriggerDevRef.ctl"/>
       <Item Name="AnalogTriggerSource.ctl" Type="VI" URL="AnalogTriggerSource.ctl"/>
       <Item Name="AnalogTriggerOutType.ctl" Type="VI" URL="AnalogTriggerOutType.ctl"/>
+      <Item Name="AnalogTriggerStaticOutType.ctl" Type="VI" URL="AnalogTriggerStaticOutType.ctl"/>
    </Item>
    <Item Name="Error" Type="Folder">
       <Item Name="ERRInvalidAnalogTriggerChannel.vi" Type="VI" URL="ERRInvalidAnalogTriggerChannel.vi"/>

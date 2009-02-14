@@ -28,7 +28,7 @@
       <Item Name="GetDevStatus.vi" Type="VI" URL="GetDevStatus.vi"/>
    </Item>
    <Item Name="Error" Type="Folder">
-      <Item Name="InvalidResourceError.vi" Type="VI" URL="InvalidResourceError.vi"/>
+      <Item Name="ERRInvalidResource.vi" Type="VI" URL="ERRInvalidResource.vi"/>
    </Item>
    <Item Name="Open &amp; Configure.vi" Type="VI" URL="Open &amp; Configure.vi"/>
    <Item Name="Open WO Configuration.vi" Type="VI" URL="Open WO Configuration.vi"/>

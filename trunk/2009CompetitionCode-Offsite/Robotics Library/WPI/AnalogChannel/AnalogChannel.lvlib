@@ -15,7 +15,6 @@
       </Item>
       <Item Name="ChannelCacheOp.ctl" Type="VI" URL="ChannelCacheOp.ctl"/>
       <Item Name="ChannelCache.vi" Type="VI" URL="ChannelCache.vi"/>
-      <Item Name="FPGA_Timebase.vi" Type="VI" URL="FPGA_Timebase.vi"/>
    </Item>
    <Item Name="Typedef" Type="Folder">
       <Item Name="AnalogChannelDevRef.ctl" Type="VI" URL="AnalogChannelDevRef.ctl"/>
@@ -33,10 +32,13 @@
       <Item Name="GetValue.vi" Type="VI" URL="GetValue.vi"/>
       <Item Name="GetVoltage.vi" Type="VI" URL="GetVoltage.vi"/>
       <Item Name="SetAveraging.vi" Type="VI" URL="SetAveraging.vi"/>
+      <Item Name="ValueToVoltage.vi" Type="VI" URL="ValueToVoltage.vi"/>
+      <Item Name="VoltageToValue.vi" Type="VI" URL="VoltageToValue.vi"/>
    </Item>
    <Item Name="Module Functions" Type="Folder">
       <Item Name="GetSampleRate.vi" Type="VI" URL="GetSampleRate.vi"/>
       <Item Name="SetSampleRate.vi" Type="VI" URL="SetSampleRate.vi"/>
+      <Item Name="FPGA_Timebase.vi" Type="VI" URL="FPGA_Timebase.vi"/>
    </Item>
    <Item Name="Open.vi" Type="VI" URL="Open.vi"/>
    <Item Name="Close.vi" Type="VI" URL="Close.vi"/>

@@ -16,6 +16,8 @@
       <Item Name="Stop VI Asynchronous.vi" Type="VI" URL="Stop VI Asynchronous.vi"/>
       <Item Name="StatusErrorCache.vi" Type="VI" URL="StatusErrorCache.vi"/>
       <Item Name="UpdateDashboard.vi" Type="VI" URL="UpdateDashboard.vi"/>
+      <Item Name="Get Alliance Info.vi" Type="VI" URL="Get Alliance Info.vi"/>
+      <Item Name="UnloadC++StartupProgram.vi" Type="VI" URL="UnloadC++StartupProgram.vi"/>
    </Item>
    <Item Name="Typedef" Type="Folder">
       <Item Name="RobotMode.ctl" Type="VI" URL="RobotMode.ctl"/>
@@ -24,6 +26,8 @@
       <Item Name="IOData.ctl" Type="VI" URL="IOData.ctl"/>
       <Item Name="Match Info.ctl" Type="VI" URL="Match Info.ctl"/>
       <Item Name="DashboardEnable.ctl" Type="VI" URL="DashboardEnable.ctl"/>
+      <Item Name="AllianceInfo.ctl" Type="VI" URL="AllianceInfo.ctl"/>
+      <Item Name="PositionInfo.ctl" Type="VI" URL="PositionInfo.ctl"/>
    </Item>
    <Item Name="Internal" Type="Folder">
       <Property Name="NI.LibItem.Scope" Type="Int">2</Property>
@@ -36,6 +40,8 @@
       <Item Name="StatusDataCache.vi" Type="VI" URL="StatusDataCache.vi"/>
       <Item Name="StatusDataCache.ctl" Type="VI" URL="StatusDataCache.ctl"/>
       <Item Name="BuildDashboardPacket.vi" Type="VI" URL="BuildDashboardPacket.vi"/>
+      <Item Name="AllianceInfoCacheOp.ctl" Type="VI" URL="AllianceInfoCacheOp.ctl"/>
+      <Item Name="AllianceInfoCache.vi" Type="VI" URL="AllianceInfoCache.vi"/>
    </Item>
    <Item Name="Deprecated" Type="Folder">
       <Item Name="Set Driver Station Status.vi" Type="VI" URL="Deprecated/Set Driver Station Status.vi"/>

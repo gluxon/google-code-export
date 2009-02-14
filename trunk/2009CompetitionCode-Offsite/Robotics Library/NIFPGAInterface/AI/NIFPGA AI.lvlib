@@ -11,21 +11,22 @@
       <Item Name="AIDevRef.ctl" Type="VI" URL="AIDevRef.ctl"/>
    </Item>
    <Item Name="Read" Type="Folder">
+      <Item Name="ReadAccumulatorCenter.vi" Type="VI" URL="ReadAccumulatorCenter.vi"/>
+      <Item Name="ReadAccumulatorDeadband.vi" Type="VI" URL="ReadAccumulatorDeadband.vi"/>
       <Item Name="ReadAccumulatorOutput.vi" Type="VI" URL="ReadAccumulatorOutput.vi"/>
       <Item Name="ReadAI.vi" Type="VI" URL="ReadAI.vi"/>
-      <Item Name="ReadAccumulatorCenter.vi" Type="VI" URL="ReadAccumulatorCenter.vi"/>
       <Item Name="ReadAverageBits.vi" Type="VI" URL="ReadAverageBits.vi"/>
       <Item Name="ReadAveraged.vi" Type="VI" URL="ReadAveraged.vi"/>
       <Item Name="ReadCalOK.vi" Type="VI" URL="ReadCalOK.vi"/>
-      <Item Name="ReadConvertRate.vi" Type="VI" URL="ReadConvertRate.vi"/>
+      <Item Name="ReadConfig.vi" Type="VI" URL="ReadConfig.vi"/>
       <Item Name="ReadLoopTiming.vi" Type="VI" URL="ReadLoopTiming.vi"/>
       <Item Name="ReadLSBWeight.vi" Type="VI" URL="ReadLSBWeight.vi"/>
       <Item Name="ReadOffset.vi" Type="VI" URL="ReadOffset.vi"/>
       <Item Name="ReadOversampleBits.vi" Type="VI" URL="ReadOversampleBits.vi"/>
       <Item Name="ReadScanList.vi" Type="VI" URL="ReadScanList.vi"/>
-      <Item Name="ReadScanSize.vi" Type="VI" URL="ReadScanSize.vi"/>
    </Item>
    <Item Name="Write" Type="Folder">
+      <Item Name="WriteAccumulatorDeadband.vi" Type="VI" URL="WriteAccumulatorDeadband.vi"/>
       <Item Name="WriteAccumulatorCenter.vi" Type="VI" URL="WriteAccumulatorCenter.vi"/>
       <Item Name="WriteAccumulatorReset.vi" Type="VI" URL="WriteAccumulatorReset.vi"/>
       <Item Name="WriteAverageBits.vi" Type="VI" URL="WriteAverageBits.vi"/>
@@ -45,6 +46,4 @@
       <Item Name="OversampleBits.vi" Type="VI" URL="OversampleBits.vi"/>
    </Item>
    <Item Name="Open.vi" Type="VI" URL="Open.vi"/>
-   <Item Name="ReadAccumulatorDeadband.vi" Type="VI" URL="ReadAccumulatorDeadband.vi"/>
-   <Item Name="WriteAccumulatorDeadband.vi" Type="VI" URL="WriteAccumulatorDeadband.vi"/>
 </Library>

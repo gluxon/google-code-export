@@ -70,6 +70,7 @@
    <Item Name="NIFPGA Counter.lvlib" Type="Library" URL="Counter/NIFPGA Counter.lvlib"/>
    <Item Name="NIFPGA CounterEncoderSourceConvertion.lvlib" Type="Library" URL="CounterEncoderSourceConvertion/NIFPGA CounterEncoderSourceConvertion.lvlib"/>
    <Item Name="NIFPGA DIO.lvlib" Type="Library" URL="DIO/NIFPGA DIO.lvlib"/>
+   <Item Name="NIFPGA DMA.lvlib" Type="Library" URL="DMA/NIFPGA DMA.lvlib"/>
    <Item Name="NIFPGA Encoder.lvlib" Type="Library" URL="Encoder/NIFPGA Encoder.lvlib"/>
    <Item Name="NIFPGA Global.lvlib" Type="Library" URL="Global/NIFPGA Global.lvlib"/>
    <Item Name="NIFPGA Interrupt.lvlib" Type="Library" URL="Interrupt/NIFPGA Interrupt.lvlib"/>
