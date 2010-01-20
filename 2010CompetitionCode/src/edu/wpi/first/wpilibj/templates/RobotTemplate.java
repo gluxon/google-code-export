@@ -36,7 +36,9 @@ ColorImage image1;
 AxisCamera axisCamera1;
 Relay re1;
 Relay re2;//rename relays later according to usasge (elevator, base roller, etc.)
-    /**
+Ultrasonic ultra1;
+DriverStationLCD dsout;
+    /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
@@ -54,6 +56,8 @@ Relay re2;//rename relays later according to usasge (elevator, base roller, etc.
         re1 = new Relay(3);
         re2 = new Relay(4);
         ADrive = new AuxDriver(joy3);
+        ultra1 = new Ultrasonic(5,6);
+        dsout = DriverStationLCD.getInstance();
     }
 
     /**
@@ -76,6 +80,9 @@ Relay re2;//rename relays later according to usasge (elevator, base roller, etc.
         try{image1 = axisCamera1.getImage();}
         catch(AxisCameraException A){}
         catch(NIVisionException N){}
+        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
+        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
+        //ultra1.pidGet()(String)
         
     }
 }
