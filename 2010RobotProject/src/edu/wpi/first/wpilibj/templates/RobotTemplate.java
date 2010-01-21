@@ -68,8 +68,10 @@ DriverStationLCD dsout;
         re1 = new Relay(3);
         re2 = new Relay(4);
         ADrive = new AuxDriver(joy3);
-        ultra1 = new Ultrasonic(5,6);
+        //ultra1 = new Ultrasonic(5,6);
         dsout = DriverStationLCD.getInstance();
+        dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
     }
 
     /**
@@ -90,8 +92,12 @@ DriverStationLCD dsout;
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
         ADrive.operate();//Auxillary Driver
         try{image1 = axisCamera1.getImage();}
-        catch(AxisCameraException A){}
-        catch(NIVisionException N){}
+        catch(AxisCameraException cameraEx){
+            cameraEx.printStackTrace();
+        }
+        catch(NIVisionException ve){
+            ve.printStackTrace();
+        }
         String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         //ultra1.pidGet()(String)
