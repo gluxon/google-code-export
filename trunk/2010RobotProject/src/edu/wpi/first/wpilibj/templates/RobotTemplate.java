@@ -65,10 +65,15 @@ DriverStationLCD dsout;
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag);
         axisCamera1 = AxisCamera.getInstance();
-        re1 = new Relay(3);
-        re2 = new Relay(4);
-        ADrive = new AuxDriver(joy3);
-        //ultra1 = new Ultrasonic(5,6);
+        try {
+            re1 = new Relay(3);
+            re2 = new Relay(4);
+            ADrive = new AuxDriver(joy3);
+            ultra1 = new Ultrasonic(5,6);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Unable to init devices correctly!" );
+            e.printStackTrace();
+        }
         dsout = DriverStationLCD.getInstance();
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
