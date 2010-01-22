@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.image.*;
  */
 public class RobotTemplate extends IterativeRobot
 {
-AuxDriver ADrive;
+AuxDriver auxDrive;
 Joystick joy1;
 Joystick joy2;
 Joystick joy3;
@@ -65,15 +65,15 @@ DriverStationLCD dsout;
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag);
         axisCamera1 = AxisCamera.getInstance();
-        try {
-            re1 = new Relay(3);
-            re2 = new Relay(4);
-            ADrive = new AuxDriver(joy3);
-            ultra1 = new Ultrasonic(5,6);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Unable to init devices correctly!" );
-            e.printStackTrace();
-        }
+//        try {
+//            re1 = new Relay(3);
+//            re2 = new Relay(4);
+//            auxDrive = new AuxDriver(joy3);
+//            ultra1 = new Ultrasonic(5,6);
+//        } catch (IndexOutOfBoundsException e) {
+//            System.err.println("Unable to init devices correctly!" );
+//            e.printStackTrace();
+//        }
         dsout = DriverStationLCD.getInstance();
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
@@ -95,16 +95,20 @@ DriverStationLCD dsout;
     {
         drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getTwist());//Omni Drive
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
-        ADrive.operate();//Auxillary Driver
-        try{image1 = axisCamera1.getImage();}
+        auxDrive.operate();//Auxillary Driver
+        try{
+            image1 = axisCamera1.getImage();
+        }
         catch(AxisCameraException cameraEx){
             cameraEx.printStackTrace();
         }
         catch(NIVisionException ve){
             ve.printStackTrace();
         }
-        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
-        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
+        dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
+//        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
+//        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         //ultra1.pidGet()(String)
         
     }
