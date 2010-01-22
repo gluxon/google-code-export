@@ -95,7 +95,7 @@ DriverStationLCD dsout;
     {
         drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getTwist());//Omni Drive
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
-        auxDrive.operate();//Auxillary Driver
+//        auxDrive.operate();//Auxillary Driver
         try{
             image1 = axisCamera1.getImage();
         }
