@@ -77,6 +77,8 @@ DriverStationLCD dsout;
         dsout = DriverStationLCD.getInstance();
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
+        dsout.updateLCD();
+
     }
 
     /**
@@ -107,6 +109,7 @@ DriverStationLCD dsout;
         }
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
+        dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         //ultra1.pidGet()(String)
