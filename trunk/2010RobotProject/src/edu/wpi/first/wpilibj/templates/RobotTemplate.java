@@ -126,7 +126,7 @@ PWM pressure = new PWM(12);
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
         dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + leftFrontJag.get() + " LR " + leftRearJag.get() + " RF " + rightFrontJag.get() + " RR " + rightRearJag.get());
-        dsout.println(DriverStationLCD.Line.kUser4, 1, pressure.getRaw());
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "" + pressure.getRaw());
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
