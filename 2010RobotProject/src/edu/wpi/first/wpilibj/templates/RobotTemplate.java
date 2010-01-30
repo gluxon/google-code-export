@@ -35,7 +35,11 @@ RobotDrive drive;
 ColorImage image1;
 AxisCamera axisCamera1;
 Relay re1;
-Relay re2;//rename relays later according to usasge (elevator, base roller, etc.)
+Relay re2;
+Relay reMainPf;
+Relay reMainPb;
+Relay reGatePf;
+Relay reGatePb;  //rename relays later according to usasge (elevator, base roller, etc.)
 Ultrasonic ultra1;
 DriverStationLCD dsout;
     /**    *
@@ -63,7 +67,7 @@ DriverStationLCD dsout;
                         super.set(d * -1);
                     }
                 };
-        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag);
+        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 0.75);
         axisCamera1 = AxisCamera.getInstance();
 //        try {
 //            re1 = new Relay(3);
@@ -78,7 +82,10 @@ DriverStationLCD dsout;
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
         dsout.updateLCD();
-
+        reMainPf = new Relay(5);
+        reMainPb = new Relay(6);
+        reGatePf = new Relay(7);
+        reGatePb = new Relay(8);
     }
 
     /**
@@ -109,10 +116,14 @@ DriverStationLCD dsout;
         }
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + leftFrontJag.get() + " LR " + leftRearJag.get() + " RF " + rightFrontJag.get() + " RR " + rightRearJag.get());
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         //ultra1.pidGet()(String)
-        
+        if(joy2.getTrigger())
+        {
+             
+        }
     }
 }
