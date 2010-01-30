@@ -8,6 +8,8 @@
 package edu.wpi.first.wpilibj.templates;
 
 
+import edu.fhs.actuators.KickerControl;
+import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.*;
@@ -42,6 +44,8 @@ Relay reGatePf;
 Relay reGatePb;  //rename relays later according to usasge (elevator, base roller, etc.)
 Ultrasonic ultra1;
 DriverStationLCD dsout;
+KickerControl kickerControl;
+Pneumatics pneumatics = new Pneumatics();
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -86,6 +90,10 @@ DriverStationLCD dsout;
         reMainPb = new Relay(6);
         reGatePf = new Relay(7);
         reGatePb = new Relay(8);
+        kickerControl.setRelay1Close(reGatePf);
+        kickerControl.setRelay1Open(reGatePb);
+        kickerControl.setRelay2Close(reMainPf);
+        kickerControl.setRelay2Open(reMainPb);
     }
 
     /**
@@ -123,7 +131,7 @@ DriverStationLCD dsout;
         //ultra1.pidGet()(String)
         if(joy2.getTrigger())
         {
-             
+             pneumatics.kick(kickerControl);
         }
     }
 }
