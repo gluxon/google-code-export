@@ -46,6 +46,7 @@ Ultrasonic ultra1;
 DriverStationLCD dsout;
 KickerControl kickerControl;
 Pneumatics pneumatics = new Pneumatics();
+PWM pressure = new PWM(12);
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -125,6 +126,7 @@ Pneumatics pneumatics = new Pneumatics();
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
         dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + leftFrontJag.get() + " LR " + leftRearJag.get() + " RF " + rightFrontJag.get() + " RR " + rightRearJag.get());
+        dsout.println(DriverStationLCD.Line.kUser4, 1, pressure.getRaw());
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
