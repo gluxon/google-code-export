@@ -88,16 +88,29 @@ Encoder encoder;
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
         dsout.updateLCD();
-        reMainPf = new Relay(5);
-        reMainPb = new Relay(6);
-        reGatePf = new Relay(7);
-        reGatePb = new Relay(8);
-        kickerControl.setRelay1Close(reGatePf);
-        kickerControl.setRelay1Open(reGatePb);
-        kickerControl.setRelay2Close(reMainPf);
-        kickerControl.setRelay2Open(reMainPb);
+        try
+        {
+            reMainPf = new Relay(5);
+            reMainPb = new Relay(6);
+            reGatePf = new Relay(7);
+            reGatePb = new Relay(8);
+            kickerControl.setRelay1Close(reGatePf);
+            kickerControl.setRelay1Open(reGatePb);
+            kickerControl.setRelay2Close(reMainPf);
+            kickerControl.setRelay2Open(reMainPb);
+        }
+        catch(NullPointerException n){
+            System.out.println("ERROR: relays not connected");
+        }
         pressure = new AnalogChannel(4,8);
-        encoder = new Encoder(1,2);
+        try
+        {
+            encoder = new Encoder(1,2);
+        }
+         catch(NullPointerException n)
+         {
+             System.out.println("ERROR: encoders not connected");
+         }
     }
 
     /**
