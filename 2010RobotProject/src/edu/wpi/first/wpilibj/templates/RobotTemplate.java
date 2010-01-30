@@ -96,7 +96,7 @@ Encoder encoder;
         kickerControl.setRelay1Open(reGatePb);
         kickerControl.setRelay2Close(reMainPf);
         kickerControl.setRelay2Open(reMainPb);
-        pressure = new AnalogChannel(4,10);
+        pressure = new AnalogChannel(4,8);
         encoder = new Encoder(1,2);
     }
 
@@ -129,7 +129,7 @@ Encoder encoder;
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
         dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + leftFrontJag.get() + " LR " + leftRearJag.get() + " RF " + rightFrontJag.get() + " RR " + rightRearJag.get());
-        dsout.println(DriverStationLCD.Line.kUser4, 1, "raw voltage from slot 10" + pressure.getVoltage());
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "raw voltage from channel 8" + pressure.getVoltage());
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
