@@ -141,8 +141,8 @@ Encoder encoder;
         }
         dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
         dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 running");
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + leftFrontJag.get() + " LR " + leftRearJag.get() + " RF " + rightFrontJag.get() + " RR " + rightRearJag.get());
-        dsout.println(DriverStationLCD.Line.kUser4, 1, "analg1: " + pressure.getAverageVoltage());
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "LF " + (((double)((int)(100*leftFrontJag.get())))/100) + " LR " + (((double)((int)(100*leftRearJag.get())))/100) + " RF " + (((double)((int)(100*rightFrontJag.get())))/100) + " RR " + (((double)((int)(100*rightRearJag.get())))/100));
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "pressure: " + (pressure.getAverageVoltage()*37.5-18.75));
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
