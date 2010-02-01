@@ -85,8 +85,6 @@ Encoder encoder;
 //            e.printStackTrace();
 //        }
         dsout = DriverStationLCD.getInstance();
-        dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 reporting in");
-        dsout.println(DriverStationLCD.Line.kUser2, 1, "kUser2 reporting in");
         dsout.updateLCD();
         try
         {
@@ -139,10 +137,9 @@ Encoder encoder;
         catch(NIVisionException ve){
             ve.printStackTrace();
         }
-        dsout.println(DriverStationLCD.Line.kMain6, 1, "kMain6 running");
-        dsout.println(DriverStationLCD.Line.kUser2, 1, "LF " + (((double)((int)(100*leftFrontJag.get())))/100) + " LR " + (((double)((int)(100*leftRearJag.get())))/100));
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "RF " + (((double)((int)(100*rightFrontJag.get())))/100) + " RR " + (((double)((int)(100*rightRearJag.get())))/100));
-        dsout.println(DriverStationLCD.Line.kUser4, 1, "pressure: " + (pressure.getAverageVoltage()*37.76-32.89));
+        dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + (((double)((int)(100*leftFrontJag.get())))/100) + " LR " + (((double)((int)(100*leftRearJag.get())))/100));
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + (((double)((int)(100*rightFrontJag.get())))/100) + " RR " + (((double)((int)(100*rightRearJag.get())))/100));
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + (pressure.getAverageVoltage()*37.76-32.89));
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
