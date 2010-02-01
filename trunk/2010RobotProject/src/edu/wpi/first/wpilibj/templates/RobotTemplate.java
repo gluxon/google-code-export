@@ -7,14 +7,12 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.*;
 import edu.wpi.first.wpilibj.image.*;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -137,9 +135,9 @@ Encoder encoder;
         catch(NIVisionException ve){
             ve.printStackTrace();
         }
-        dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + (((double)((int)(100*leftFrontJag.get())))/100) + " LR " + (((double)((int)(100*leftRearJag.get())))/100));
-        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + (((double)((int)(100*rightFrontJag.get())))/100) + " RR " + (((double)((int)(100*rightRearJag.get())))/100));
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + (pressure.getAverageVoltage()*37.76-32.89));
+        dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate((pressure.getAverageVoltage()*37.76-32.89)));
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
@@ -147,6 +145,11 @@ Encoder encoder;
         if(joy2.getTrigger())
         {
              pneumatics.kick(kickerControl);
-        }
+        } 
+    }
+
+    private double truncate(double rawDouble)
+    {
+        return ((double) ((int) (100 * rawDouble))) / 100;
     }
 }
