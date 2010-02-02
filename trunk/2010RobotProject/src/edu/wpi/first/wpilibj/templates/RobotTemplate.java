@@ -47,7 +47,7 @@ Pneumatics pneumatics = new Pneumatics();
 AnalogChannel pressure;
 Encoder encoder;
 AnalogChannel ultrasonic;
-int delay = 50;
+int delay = 20;
 double ultraV;
     /**    *
      * This function is run when the robot is first started up and should be
@@ -142,7 +142,7 @@ double ultraV;
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate((pressure.getAverageVoltage()*37.76-32.89)));
-        if(delay == 50)
+        if(delay == 20)
         {
             ultraV = ultrasonic.getAverageVoltage();
             delay = 0;
