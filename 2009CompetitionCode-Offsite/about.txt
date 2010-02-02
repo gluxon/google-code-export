@@ -1,1 +1,0 @@
-This is the source repository for the LabView code to be used for the 2009 FIRST competition.
