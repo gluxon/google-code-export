@@ -49,9 +49,14 @@ public class Pneumatics {
         {
             control.getRelay1Open().set(Relay.Value.kOn);
             Timer.delay(500);
-            control.getRelay1Close().set(Relay.Value.kOff);
+            control.getRelay1Open().set(Relay.Value.kOff);
+            control.getRelay1Close().set(Relay.Value.kOn);
             control.getRelay2Open().set(Relay.Value.kOn);
-            Timer.delay(1000);
+            Timer.delay(1500);
+            control.getRelay1Close().set(Relay.Value.kOff);
+            control.getRelay2Open().set(Relay.Value.kOff);
+            control.getRelay2Close().set(Relay.Value.kOn);
+            Timer.delay(500);
             control.getRelay2Close().set(Relay.Value.kOff);
             isKicking = false;
         }

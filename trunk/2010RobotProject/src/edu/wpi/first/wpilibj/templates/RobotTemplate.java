@@ -46,6 +46,7 @@ KickerControl kickerControl;
 Pneumatics pneumatics = new Pneumatics();
 AnalogChannel pressure;
 Encoder encoder;
+AnalogChannel ultrasonic;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -107,6 +108,7 @@ Encoder encoder;
          {
              System.out.println("ERROR: encoders not connected");
          }
+        ultrasonic = new AnalogChannel(1,2);
     }
 
     /**
@@ -114,8 +116,8 @@ Encoder encoder;
      */
     public void autonomousPeriodic()
     {
-        leftFrontJag.set(-1);
-        rightFrontJag.set(-1);
+        leftFrontJag.set(0);
+        rightFrontJag.set(0);
     }
 
     /**
@@ -138,6 +140,8 @@ Encoder encoder;
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate((pressure.getAverageVoltage()*37.76-32.89)));
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "U voltage: " + ultrasonic.getAverageVoltage());
+        //dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
         dsout.updateLCD();
 //        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
 //        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
