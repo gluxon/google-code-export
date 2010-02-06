@@ -36,10 +36,9 @@ ColorImage image1;
 AxisCamera axisCamera1;
 Relay re1;
 Relay re2;
-Relay reMainPf;
-Relay reMainPb;
-Relay reGatePf;
-Relay reGatePb;  //rename relays later according to usasge (elevator, base roller, etc.)
+Relay solenoid1;
+Relay solenoid2;
+Relay solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
 Ultrasonic ultra1;
 DriverStationLCD dsout;
 KickerControl kickerControl;
@@ -89,14 +88,12 @@ double ultraV;
         dsout.updateLCD();
         try
         {
-            reMainPf = new Relay(5);
-            reMainPb = new Relay(6);
-            reGatePf = new Relay(7);
-            reGatePb = new Relay(8);
-            kickerControl.setRelay1Close(reGatePf);
-            kickerControl.setRelay1Open(reGatePb);
-            kickerControl.setRelay2Close(reMainPf);
-            kickerControl.setRelay2Open(reMainPb);
+            solenoid1 = new Relay(5);
+            solenoid2 = new Relay(6);
+            solenoid3 = new Relay(7);
+            kickerControl.setRelay1(solenoid1);
+            kickerControl.setRelay2(solenoid2);
+            kickerControl.setRelay3(solenoid3);
         }
         catch(NullPointerException n){
             System.out.println("ERROR: relays not connected");
