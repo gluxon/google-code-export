@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Relay;
  * @author programming
  */
 public class KickerControl {
-        private Relay relay1Open;
+    private Relay relay1Open;
     private Relay relay1Close;
     private Relay relay2Open;
     private Relay relay2Close;
