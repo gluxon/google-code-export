@@ -39,9 +39,10 @@ Relay re2;
 Relay solenoid1;
 Relay solenoid2;
 Relay solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
+Relay solenoid4;
 Ultrasonic ultra1;
 DriverStationLCD dsout;
-KickerControl kickerControl;
+KickerControl kickerControl = new KickerControl();
 Pneumatics pneumatics = new Pneumatics();
 AnalogChannel pressure;
 Encoder encoder;
@@ -54,6 +55,10 @@ double ultraV;
      */
     public void robotInit()
     {
+        solenoid1 = new Relay(5);
+        solenoid1 = new Relay(6);
+        solenoid1 = new Relay(7);
+        solenoid1 = new Relay(8);
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
@@ -94,6 +99,7 @@ double ultraV;
             kickerControl.setRelay1(solenoid1);
             kickerControl.setRelay2(solenoid2);
             kickerControl.setRelay3(solenoid3);
+            kickerControl.setRelay4(solenoid4);
         }
         catch(NullPointerException n){
             System.out.println("ERROR: relays not connected");

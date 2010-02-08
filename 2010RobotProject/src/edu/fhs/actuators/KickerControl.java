@@ -15,6 +15,11 @@ public class KickerControl {
     private Relay relay1;
     private Relay relay2;
     private Relay relay3;
+    private Relay relay4;
+
+    public void setRelay4(Relay relay4) {
+        this.relay4 = relay4;
+    }
 
     public void setRelay1(Relay relay1) {
         this.relay1 = relay1;
@@ -38,5 +43,9 @@ public class KickerControl {
 
     public Relay getRelay3() {
         return relay3;
+    }
+
+    public Relay getRelay4() {
+        return relay4;
     }
 }
