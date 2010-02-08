@@ -121,6 +121,7 @@ double ultraV;
      */
     public void autonomousPeriodic()
     {
+        updateDashboard();
         leftFrontJag.set(0);
         rightFrontJag.set(0);
     }
@@ -130,6 +131,7 @@ double ultraV;
      */
     public void teleopPeriodic()
     {
+        updateDashboard();
         drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getTwist());//Omni Drive
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
@@ -166,5 +168,84 @@ double ultraV;
     private double truncate(double rawDouble)
     {
         return ((double) ((int) (100 * rawDouble))) / 100;
+    }
+
+    void updateDashboard() {
+        Dashboard lowDashData = DriverStation.getInstance().getDashboardPackerLow();
+        lowDashData.addCluster();
+        {
+            lowDashData.addCluster();
+            {     //analog modules
+                lowDashData.addCluster();
+                {
+                    for (int i = 1; i <= 8; i++) {
+                        lowDashData.addFloat((float) AnalogModule.getInstance(1).getAverageVoltage(i));
+                    }
+                }
+                lowDashData.finalizeCluster();
+                lowDashData.addCluster();
+                {
+                    for (int i = 1; i <= 8; i++) {
+                        lowDashData.addFloat((float) AnalogModule.getInstance(2).getAverageVoltage(i));
+                    }
+                }
+                lowDashData.finalizeCluster();
+            }
+            lowDashData.finalizeCluster();
+
+            lowDashData.addCluster();
+            { //digital modules
+                lowDashData.addCluster();
+                {
+                    lowDashData.addCluster();
+                    {
+                        int module = 4;
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+                        lowDashData.addCluster();
+                        {
+                            for (int i = 1; i <= 10; i++) {
+                                lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+                            }
+                        }
+                        lowDashData.finalizeCluster();
+                    }
+                    lowDashData.finalizeCluster();
+                }
+                lowDashData.finalizeCluster();
+
+                lowDashData.addCluster();
+                {
+                    lowDashData.addCluster();
+                    {
+                        int module = 6;
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayReverse());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+                        lowDashData.addCluster();
+                        {
+                            for (int i = 1; i <= 10; i++) {
+                                lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+                            }
+                        }
+                        lowDashData.finalizeCluster();
+                    }
+                    lowDashData.finalizeCluster();
+                }
+                lowDashData.finalizeCluster();
+
+            }
+            lowDashData.finalizeCluster();
+
+            lowDashData.addByte(Solenoid.getAll());
+
+            lowDashData.addDouble(999.123d);
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.commit();
+
     }
 }
