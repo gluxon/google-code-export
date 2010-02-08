@@ -47,13 +47,15 @@ public class Pneumatics {
                             piston                                            
                                                                               */
         {
-            control.getRelay1().set(Relay.Value.kOff);
+            control.getRelay1().set(Relay.Value.kOn);
             control.getRelay2().set(Relay.Value.kOn);
             control.getRelay3().set(Relay.Value.kOn);
+            control.getRelay4().set(Relay.Value.kOn);
             Timer.delay(250);
             control.getRelay1().set(Relay.Value.kOff);
-            control.getRelay2().set(Relay.Value.kOn);
+            control.getRelay2().set(Relay.Value.kOff);
             control.getRelay3().set(Relay.Value.kOff);
+            control.getRelay4().set(Relay.Value.kOff);
             isKicking = false;
         }
 
