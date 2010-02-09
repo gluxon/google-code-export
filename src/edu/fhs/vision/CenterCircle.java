@@ -40,7 +40,7 @@ public class CenterCircle {
         cam = AxisCamera.getInstance();
         turnController = new PIDController(.08 , 0.0 , 0.5 , gyro , new PIDOutput(){
             public void pidWrite(double output) {
-                drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), js.getTwist());
+                drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
             }
         }, .005);
     }
