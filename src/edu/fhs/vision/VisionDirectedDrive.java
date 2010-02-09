@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.samples.Target;
  *
  * @author programming
  */
-public class CenterCircle {
+public class VisionDirectedDrive {
 
     private Gyro gyro;
     private Joystick js;
@@ -29,10 +29,12 @@ public class CenterCircle {
     private RobotDrive drive;
     private AxisCamera cam;
     private boolean lastEnable;
-    public static final double kScoreThreshold = .01;
+    private final double kScoreThreshold = .01;
+    private boolean targetFound;
 
 
-    public CenterCircle(Gyro g , Joystick j, RobotDrive d){
+
+    public VisionDirectedDrive(Gyro g , Joystick j, RobotDrive d){
         lastEnable = false;
         gyro = g;
         js = j;
@@ -43,6 +45,7 @@ public class CenterCircle {
                 drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
             }
         }, .005);
+        targetFound = false;
     }
 
     public void intialize(){ //call during robotInit
@@ -67,6 +70,7 @@ public class CenterCircle {
             ColorImage image = null;
             try {
                 if (cam.freshImage()) {// && turnController.onTarget()) {
+                    targetFound = false;
                     double gyroAngle = gyro.pidGet();
                     image = cam.getImage();
                     Thread.yield();
@@ -82,12 +86,12 @@ public class CenterCircle {
                         for (int i = 0; i < targets.length; i++) {
                             newTargets[i + 1] = targets[i];
                         }
-
+                        //noCircleFound();
                     } else {
+                        targetFound = true;
                         System.out.println(targets[0]);
                         System.out.println("Target Angle: " + targets[0].getHorizontalAngle());
                         turnController.setSetpoint(gyroAngle + targets[0].getHorizontalAngle());
-
                     }
                 }
             } catch (NIVisionException ex) {
@@ -106,6 +110,29 @@ public class CenterCircle {
     }
 
 
+    private void noCircleFound(){
+        turnController.disable();
+        drive.holonomicDrive(0, 0, -.2);
+        turnController.enable();
+    }
 
+    public boolean isTargetFound(){
+        return targetFound;
+    }
+
+    public boolean isOnTarget(){
+        if(targetFound == true)
+            return turnController.onTarget();
+        return false;
+    }
+
+    public void driveToRamp(){
+        if (isOnTarget() == false){
+            centerOnCircle(true);
+        }else{
+            centerOnCircle(false);
+            drive.holonomicDrive(.5, 0, 0);
+        }
+    }
 
 }
