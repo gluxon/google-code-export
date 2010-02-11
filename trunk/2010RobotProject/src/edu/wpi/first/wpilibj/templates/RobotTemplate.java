@@ -8,6 +8,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.fhs.actuators.KickerControl;
+import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
@@ -47,6 +48,8 @@ Pneumatics pneumatics = new Pneumatics();
 AnalogChannel pressure;
 Encoder encoder;
 AnalogChannel ultrasonic;
+Gyro gyro;
+PitchSmoothing pitchAdj = new PitchSmoothing(2);
 int delay = 20;
 double ultraV;
     /**    *
@@ -79,6 +82,7 @@ double ultraV;
                     }
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 0.75);
+        gyro = new Gyro(1,9);
         axisCamera1 = AxisCamera.getInstance();
 //        try {
 //            re1 = new Relay(3);
@@ -122,8 +126,10 @@ double ultraV;
     public void autonomousPeriodic()
     {
         updateDashboard();
-        leftFrontJag.set(0);
-        rightFrontJag.set(0);
+        leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
+        rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
+        leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
+        rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
     }
 
     /**
