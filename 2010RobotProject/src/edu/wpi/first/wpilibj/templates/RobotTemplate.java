@@ -125,11 +125,12 @@ double ultraV;
      */
     public void autonomousPeriodic()
     {
+        double inputSpeed = 0.5;
         updateDashboard();
-        leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
-        rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
-        leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
-        rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(30.0, 0.5, isAutonomous(), gyro.getAngle()));
+        leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
     }
 
     /**
