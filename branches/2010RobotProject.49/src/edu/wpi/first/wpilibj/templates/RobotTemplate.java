@@ -13,7 +13,7 @@ import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.*;
 import edu.wpi.first.wpilibj.image.*;
-import edu.fhs.vision.VisionDirectedDrive;
+import edu.fhs.vision.CircleFinder;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -49,7 +49,7 @@ AnalogChannel pressure;
 Encoder encoder;
 AnalogChannel ultrasonic;
 Gyro gyro;
-VisionDirectedDrive vision;
+CircleFinder circle;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -113,8 +113,8 @@ VisionDirectedDrive vision;
              System.out.println("ERROR: encoders not connected");
          }
         ultrasonic = new AnalogChannel(1,2);
-        vision = new VisionDirectedDrive(gyro, joy1, drive);
-        vision.intialize();
+        circle = new CircleFinder(gyro, joy1, drive);
+        circle.intialize();
     }
     
     
@@ -157,7 +157,9 @@ VisionDirectedDrive vision;
         {
              pneumatics.kick(kickerControl);
         }
-        vision.centerOnCircle(joy1.getTrigger());
+
+        circle.centerOnCircle(joy1.getTrigger());
+       
     }
 
     private double truncate(double rawDouble)
