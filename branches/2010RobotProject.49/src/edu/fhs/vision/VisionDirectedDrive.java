@@ -25,7 +25,7 @@ public class VisionDirectedDrive{
     private CircleFinder circleFinder;
     private int mode;
     private int lastMode;
-    private final double MINUMUM_RANGE = 10.0;
+    private final double MINUMUM_RANGE = 24.0;
     private PIDController driveTowardsRamp;
     private Ultrasonic ultraFrontRight;
 
@@ -46,7 +46,7 @@ public class VisionDirectedDrive{
     
     public void initialize(){
         circleFinder.intialize();
-        driveTowardsRamp.setTolerance(5.0);
+        driveTowardsRamp.setTolerance(1.0);
         driveTowardsRamp.setSetpoint(MINUMUM_RANGE);
     }
     
