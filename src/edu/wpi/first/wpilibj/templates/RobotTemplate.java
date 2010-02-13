@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.*;
 import edu.wpi.first.wpilibj.image.*;
 import edu.fhs.vision.CircleFinder;
+import edu.fhs.vision.VisionDirectedDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -50,6 +51,7 @@ Encoder encoder;
 AnalogChannel ultrasonic;
 Gyro gyro;
 CircleFinder circle;
+VisionDirectedDrive vision;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -77,7 +79,8 @@ CircleFinder circle;
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 0.75);
         axisCamera1 = AxisCamera.getInstance();
-        gyro = new Gyro(5); 
+        gyro = new Gyro(1,10);//THIS WONT WORK
+
 //        try {
 //            re1 = new Relay(3);
 //            re2 = new Relay(4);
@@ -115,6 +118,7 @@ CircleFinder circle;
         ultrasonic = new AnalogChannel(1,2);
         circle = new CircleFinder(gyro, joy1, drive);
         circle.intialize();
+
     }
     
     
