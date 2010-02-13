@@ -161,7 +161,11 @@ double ultraV;
         }
         else
         {
-        drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getTwist());//Omni Drive
+            int x = 0;
+            if(joy1.getRawButton(7)){x = 270;}
+            else if(joy1.getRawButton(8)){x = 90;}
+            else if(!joy1.getRawButton(7) && !joy1.getRawButton(8)){x = 0;}
+        drive.holonomicDrive(-joy1.getY(), x,joy1.getThrottle());//Omni Drive
         }
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
