@@ -24,37 +24,37 @@ import edu.wpi.first.wpilibj.image.*;
  */
 public class RobotTemplate extends IterativeRobot
 {
-AuxDriver auxDrive;
-Joystick joy1;
-Joystick joy2;
-Joystick joy3;
-Jaguar leftFrontJag;
-Jaguar rightFrontJag;
-Jaguar leftRearJag;
-Jaguar rightRearJag;
-RobotDrive drive;
-ColorImage image1;
-AxisCamera axisCamera1;
-Relay re1;
-Relay re2;
-Relay compressorRelay;
-DigitalInput regulator;
-Solenoid solenoid1;
-Solenoid solenoid2;
-Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
-Solenoid solenoid4;
-DriverStationLCD dsout;
-KickerControl kickerControl = new KickerControl();
-Pneumatics pneumatics = new Pneumatics();
-AnalogChannel pressure;
-Encoder encoder;
-AnalogChannel ultrasonic;
-Gyro gyro;
-PitchSmoothing pitchAdj = new PitchSmoothing(2);
-int delay = 20;
-double ultraV;
-double psi;
-int joy1Angle = 0;
+private AuxDriver auxDrive;
+private Joystick joy1;
+private Joystick joy2;
+private Joystick joy3;
+private Jaguar leftFrontJag;
+private Jaguar rightFrontJag;
+private Jaguar leftRearJag;
+private Jaguar rightRearJag;
+private RobotDrive drive;
+private ColorImage image1;
+private AxisCamera axisCamera1;
+private Relay re1;
+private Relay re2;
+private Relay compressorRelay;
+private DigitalInput regulator;
+private Solenoid solenoid1;
+private Solenoid solenoid2;
+private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
+private Solenoid solenoid4;
+private DriverStationLCD dsout;
+private KickerControl kickerControl = new KickerControl();
+private Pneumatics pneumatics = new Pneumatics();
+private AnalogChannel pressure;
+private Encoder encoder;
+private AnalogChannel ultrasonic;
+private Gyro gyro;
+private PitchSmoothing pitchAdj = new PitchSmoothing(2);
+private int delay = 20;
+private double ultraV;
+private double psi;
+private int joy1Angle = 0;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
