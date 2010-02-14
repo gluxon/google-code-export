@@ -37,11 +37,12 @@ ColorImage image1;
 AxisCamera axisCamera1;
 Relay re1;
 Relay re2;
-Relay solenoid1;
-Relay solenoid2;
-Relay solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
-Relay solenoid4;
-Ultrasonic ultra1;
+Relay compressorRelay;
+DigitalInput regulator;
+Solenoid solenoid1;
+Solenoid solenoid2;
+Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
+Solenoid solenoid4;
 DriverStationLCD dsout;
 KickerControl kickerControl = new KickerControl();
 Pneumatics pneumatics = new Pneumatics();
@@ -52,6 +53,8 @@ Gyro gyro;
 PitchSmoothing pitchAdj = new PitchSmoothing(2);
 int delay = 20;
 double ultraV;
+double psi;
+int joy1Angle = 0;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -78,49 +81,50 @@ double ultraV;
                     }
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+        compressorRelay = new Relay(1, 8);
+        regulator = new DigitalInput(1);
+        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+        else {compressorRelay.set(Relay.Value.kOff);}
+        
         /*
         gyro = new Gyro(1,9);
         axisCamera1 = AxisCamera.getInstance();
-//        try {
-//            re1 = new Relay(3);
-//            re2 = new Relay(4);
-//            auxDrive = new AuxDriver(joy3);
-//            ultra1 = new Ultrasonic(5,6);
-//        } catch (IndexOutOfBoundsException e) {
-//            System.err.println("Unable to init devices correctly!" );
-//            e.printStackTrace();
-//        }
+        try {
+            re1 = new Relay(3);
+            re2 = new Relay(4);
+            auxDrive = new AuxDriver(joy3);
+            ultra1 = new Ultrasonic(5,6);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Unable to init devices correctly!" );
+            e.printStackTrace();
+        }
          * */
         dsout = DriverStationLCD.getInstance();
         dsout.updateLCD();
-        /*
         try
         {
-        solenoid1 = new Relay(5);
-        solenoid1 = new Relay(6);
-        solenoid1 = new Relay(7);
-        solenoid1 = new Relay(8);
-            kickerControl.setRelay1(solenoid1);
-            kickerControl.setRelay2(solenoid2);
-            kickerControl.setRelay3(solenoid3);
-            kickerControl.setRelay4(solenoid4);
+            solenoid1 = new Solenoid(5);
+            solenoid1 = new Solenoid(6);
+            solenoid1 = new Solenoid(7);
+            solenoid1 = new Solenoid(8);
+            kickerControl.setSolenoid1(solenoid1);
+            kickerControl.setSolenoid2(solenoid2);
+            kickerControl.setSolenoid3(solenoid3);
+            kickerControl.setSolenoid4(solenoid4);
         }
         catch(NullPointerException n){
-            System.out.println("ERROR: relays not connected");
+            System.out.println("ERROR: solenoids not connected");
         }
-         * */
-        /*
-        pressure = new AnalogChannel(1,1);
         try
         {
-            encoder = new Encoder(1,3);
+            pressure = new AnalogChannel(1,1);
+            encoder = new Encoder(1,2);
+            ultrasonic = new AnalogChannel(1,3);
         }
          catch(NullPointerException n)
          {
-             System.out.println("ERROR: encoders not connected");
+             System.out.println("ERROR: sensors not connected");
          }
-        ultrasonic = new AnalogChannel(1,2);
-         * */
     }
 
     /**
@@ -128,6 +132,8 @@ double ultraV;
      */
     public void autonomousPeriodic()
     {
+        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+        else {compressorRelay.set(Relay.Value.kOff);}
         leftFrontJag.set(0);
         rightFrontJag.set(0);
         leftRearJag.set(0);
@@ -147,8 +153,10 @@ double ultraV;
      */
     public void teleopPeriodic()
     {
+        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+        else {compressorRelay.set(Relay.Value.kOff);}
         updateDashboard();
-        if(joy1.getTrigger())
+        if(joy1.getRawButton(3))
         {
         drive.holonomicDrive(1, 0, 0);//Omni Drive
         }
@@ -161,11 +169,10 @@ double ultraV;
         }
         else
         {
-            int x = 0;
-            if(joy1.getRawButton(7)){x = 270;}
-            else if(joy1.getRawButton(8)){x = 90;}
-            else if(!joy1.getRawButton(7) && !joy1.getRawButton(8)){x = 0;}
-        drive.holonomicDrive(-joy1.getY(), x,joy1.getThrottle());//Omni Drive
+            if(joy1.getRawButton(7)){joy1Angle = 270;}
+            else if(joy1.getRawButton(8)){joy1Angle = 90;}
+            else if(!joy1.getRawButton(7) && !joy1.getRawButton(8)){joy1Angle = 0;}
+            drive.holonomicDrive(-joy1.getY(), joy1Angle,joy1.getThrottle());//Omni Drive
         }
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
@@ -182,25 +189,29 @@ double ultraV;
          * */
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        dsout.updateLCD();
-        //dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate((pressure.getAverageVoltage()*37.76-32.89)));
-        /*
-        if(delay == 20)
+        psi = pressure.getAverageVoltage()*37.76-32.89;
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
+        if(ultrasonic != null)
         {
-            ultraV = ultrasonic.getAverageVoltage();
-            delay = 0;
+            if(delay == 20)
+            {
+                ultraV = ultrasonic.getAverageVoltage();
+                delay = 0;
+            }
+            dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
+            delay++;
         }
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "U voltage: " + ultraV);
-        delay++;
-        //dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
-//        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
-//        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
-        //ultra1.pidGet()(String)
+        /*
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
+        String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
+        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
+        ultrasonic.pidGet()(String)
+         * */
         if(joy2.getTrigger())
         {
              pneumatics.kick(kickerControl);
         }
-         * */
+        dsout.updateLCD();
     }
 
     private double truncate(double rawDouble)

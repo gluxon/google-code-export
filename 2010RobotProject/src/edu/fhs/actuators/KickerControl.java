@@ -5,47 +5,48 @@
 
 package edu.fhs.actuators;
 
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.*;
 
 /**
  *
  * @author programming
  */
 public class KickerControl {
-    private Relay relay1;
-    private Relay relay2;
-    private Relay relay3;
-    private Relay relay4;
+    private Solenoid solenoid1;
+    private Solenoid solenoid2;
+    private Solenoid solenoid3;
+    private Solenoid solenoid4;
 
-    public void setRelay4(Relay relay4) {
-        this.relay4 = relay4;
+    public Solenoid getSolenoid1() {
+        return solenoid1;
     }
 
-    public void setRelay1(Relay relay1) {
-        this.relay1 = relay1;
+    public void setSolenoid1(Solenoid solenoid1) {
+        this.solenoid1 = solenoid1;
     }
 
-    public void setRelay2(Relay relay2) {
-        this.relay2 = relay2;
+    public Solenoid getSolenoid2() {
+        return solenoid2;
     }
 
-    public void setRelay3(Relay relay3) {
-        this.relay3 = relay3;
+    public void setSolenoid2(Solenoid solenoid2) {
+        this.solenoid2 = solenoid2;
     }
 
-    public Relay getRelay1() {
-        return relay1;
+    public Solenoid getSolenoid3() {
+        return solenoid3;
     }
 
-    public Relay getRelay2() {
-        return relay2;
+    public void setSolenoid3(Solenoid solenoid3) {
+        this.solenoid3 = solenoid3;
     }
 
-    public Relay getRelay3() {
-        return relay3;
+    public Solenoid getSolenoid4() {
+        return solenoid4;
     }
 
-    public Relay getRelay4() {
-        return relay4;
+    public void setSolenoid4(Solenoid solenoid4) {
+        this.solenoid4 = solenoid4;
     }
+
 }
