@@ -81,11 +81,20 @@ int joy1Angle = 0;
                     }
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+        try
+        {
         compressorRelay = new Relay(1, 8);
         regulator = new DigitalInput(1);
-        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
-        else {compressorRelay.set(Relay.Value.kOff);}
-        
+        }
+        catch(NullPointerException n)
+        {
+            System.out.println("ERROR: compressor/regulator not connected");
+        }
+        if(compressorRelay != null && regulator != null)
+        {
+            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
         /*
         gyro = new Gyro(1,9);
         axisCamera1 = AxisCamera.getInstance();
@@ -132,8 +141,11 @@ int joy1Angle = 0;
      */
     public void autonomousPeriodic()
     {
-        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
-        else {compressorRelay.set(Relay.Value.kOff);}
+        if(compressorRelay != null && regulator != null)
+        {
+            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
         leftFrontJag.set(0);
         rightFrontJag.set(0);
         leftRearJag.set(0);
@@ -153,9 +165,11 @@ int joy1Angle = 0;
      */
     public void teleopPeriodic()
     {
-        if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
-        else {compressorRelay.set(Relay.Value.kOff);}
-        updateDashboard();
+        if(compressorRelay != null && regulator != null)
+        {
+            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
         if(joy1.getRawButton(3))
         {
         drive.holonomicDrive(1, 0, 0);//Omni Drive
