@@ -1,7 +1,7 @@
 package edu.fhs.actuators;
 
 /**
- * @author Patt Cunningham / Adam Gresh / Brandon Bald / Jim Jakupco / Wess Stevens
+ * @author Team 178 Programming devision
  */
 public class PitchSmoothing
 {
