@@ -48,7 +48,10 @@ private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
 private Encoder encoder;
-private AnalogChannel ultrasonic;
+private AnalogChannel ultrasonic1;
+private AnalogChannel ultrasonic2;
+private AnalogChannel ultrasonic3;
+private AnalogChannel ultrasonic4;
 private Gyro gyro;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int delay = 20;
@@ -112,10 +115,10 @@ private int joy1Angle = 0;
         dsout.updateLCD();
         try
         {
-            solenoid1 = new Solenoid(5);
-            solenoid1 = new Solenoid(6);
-            solenoid1 = new Solenoid(7);
-            solenoid1 = new Solenoid(8);
+            solenoid1 = new Solenoid(8,5);
+            solenoid1 = new Solenoid(8,6);
+            solenoid1 = new Solenoid(8,7);
+            solenoid1 = new Solenoid(8,8);
             kickerControl.setSolenoid1(solenoid1);
             kickerControl.setSolenoid2(solenoid2);
             kickerControl.setSolenoid3(solenoid3);
@@ -128,7 +131,10 @@ private int joy1Angle = 0;
         {
             pressure = new AnalogChannel(1,1);
             encoder = new Encoder(1,2);
-            ultrasonic = new AnalogChannel(1,3);
+            ultrasonic1 = new AnalogChannel(1,3);
+            ultrasonic2 = new AnalogChannel(1,4);
+            ultrasonic3 = new AnalogChannel(1,5);
+            ultrasonic4 = new AnalogChannel(1,6);
         }
          catch(NullPointerException n)
          {
@@ -205,11 +211,11 @@ private int joy1Angle = 0;
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         psi = pressure.getAverageVoltage()*37.76-32.89;
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
-        if(ultrasonic != null)
+        if(ultrasonic1 != null)
         {
             if(delay == 20)
             {
-                ultraV = ultrasonic.getAverageVoltage();
+                ultraV = ultrasonic1.getAverageVoltage();
                 delay = 0;
             }
             dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
