@@ -86,7 +86,7 @@ private int joy1Angle = 0;
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
         try
         {
-        compressorRelay = new Relay(1, 8);
+        compressorRelay = new Relay(1);
         regulator = new DigitalInput(1);
         }
         catch(NullPointerException n)
