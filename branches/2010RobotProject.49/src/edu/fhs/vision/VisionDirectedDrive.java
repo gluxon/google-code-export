@@ -5,8 +5,8 @@
 
 package edu.fhs.vision;
 
+import edu.fhs.input.UltrasonicFHS;
 import edu.wpi.first.wpilibj.Gyro;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -27,9 +27,9 @@ public class VisionDirectedDrive{
     private int lastMode;
     private final double MINUMUM_RANGE = 24.0;
     private PIDController driveTowardsRamp;
-    private Ultrasonic ultraFrontRight;
+    private UltrasonicFHS ultraFrontRight;
 
-    public VisionDirectedDrive(Gyro g, Joystick j, RobotDrive d,Ultrasonic fr){
+    public VisionDirectedDrive(Gyro g, Joystick j, RobotDrive d,UltrasonicFHS fr){
         gyro = g;
         js = j;
         drive = d;
@@ -46,6 +46,7 @@ public class VisionDirectedDrive{
     
     public void initialize(){
         circleFinder.intialize();
+        driveTowardsRamp.setInputRange(0.0, 480.0);
         driveTowardsRamp.setTolerance(1.0);
         driveTowardsRamp.setSetpoint(MINUMUM_RANGE);
     }

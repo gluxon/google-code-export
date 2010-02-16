@@ -114,7 +114,39 @@ public class CircleFinder{
     protected void noCircleFound(){
 
     }
-
+    
+    public boolean isTargetInFrame(){
+        ColorImage image = null;
+        boolean isit = false;
+            try {
+                if (cam.freshImage()) {// && turnController.onTarget()) 
+                    double gyroAngle = gyro.pidGet();
+                    image = cam.getImage();
+                    Thread.yield();
+                    Target[] targets = Target.findCircularTargets(image);
+                    Thread.yield();
+                    if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
+                     
+                    } else {
+                        isit = true;
+                    }
+                }
+            } catch (NIVisionException ex) {
+                ex.printStackTrace();
+                return false;
+            } catch (AxisCameraException ex) {
+                ex.printStackTrace();
+                return false;
+            } finally {
+                try {
+                    if (image != null) {
+                        image.free();
+                    }
+                } catch (NIVisionException ex) {
+                }
+            }
+            return isit;
+    }
 
     public boolean isTargetFound(){
         return targetFound;
