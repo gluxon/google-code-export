@@ -21,32 +21,32 @@ public class KickerControl {
         return solenoid1;
     }
 
-    public void setSolenoid1(Solenoid solenoid1) {
-        this.solenoid1 = solenoid1;
+    public void setSolenoid1(Solenoid solenoid) {
+        solenoid1 = solenoid;
     }
 
     public Solenoid getSolenoid2() {
         return solenoid2;
     }
 
-    public void setSolenoid2(Solenoid solenoid2) {
-        this.solenoid2 = solenoid2;
+    public void setSolenoid2(Solenoid solenoid) {
+        solenoid2 = solenoid;
     }
 
     public Solenoid getSolenoid3() {
         return solenoid3;
     }
 
-    public void setSolenoid3(Solenoid solenoid3) {
-        this.solenoid3 = solenoid3;
+    public void setSolenoid3(Solenoid solenoid) {
+        solenoid3 = solenoid;
     }
 
     public Solenoid getSolenoid4() {
         return solenoid4;
     }
 
-    public void setSolenoid4(Solenoid solenoid4) {
-        this.solenoid4 = solenoid4;
+    public void setSolenoid4(Solenoid solenoid) {
+        solenoid4 = solenoid;
     }
 
 }
