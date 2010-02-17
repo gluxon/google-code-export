@@ -38,7 +38,7 @@ private AxisCamera axisCamera1;
 private Relay re1;
 private Relay re2;
 private Relay compressorRelay;
-private DigitalInput regulator;
+private DigitalInput transducer;
 private Solenoid solenoid1;
 private Solenoid solenoid2;
 private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
@@ -84,20 +84,23 @@ private int joy1Angle = 0;
                     }
                 };
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+
         try
         {
-        compressorRelay = new Relay(1);
-        regulator = new DigitalInput(1);
+        compressorRelay = new Relay(1, Relay.Direction.kForward);
+        transducer = new DigitalInput(10);
         }
         catch(NullPointerException n)
         {
             System.out.println("ERROR: compressor/regulator not connected");
         }
-        if(compressorRelay != null && regulator != null)
+        compressorRelay.set(Relay.Value.kOff);
+        if(compressorRelay != null && transducer != null)
         {
-            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
             else {compressorRelay.set(Relay.Value.kOff);}
         }
+        
         /*
         gyro = new Gyro(1,9);
         axisCamera1 = AxisCamera.getInstance();
@@ -147,11 +150,13 @@ private int joy1Angle = 0;
      */
     public void autonomousPeriodic()
     {
-        if(compressorRelay != null && regulator != null)
+        
+        if(compressorRelay != null && transducer != null)
         {
-            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
             else {compressorRelay.set(Relay.Value.kOff);}
         }
+        
         leftFrontJag.set(0);
         rightFrontJag.set(0);
         leftRearJag.set(0);
@@ -171,11 +176,22 @@ private int joy1Angle = 0;
      */
     public void teleopPeriodic()
     {
-        if(compressorRelay != null && regulator != null)
+        updateDashboard();
+        if(compressorRelay != null && transducer != null)
         {
-            if(regulator.get()){compressorRelay.set(Relay.Value.kOn);}
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
             else {compressorRelay.set(Relay.Value.kOff);}
         }
+
+        if(joy1.getRawButton(6))
+        {
+            compressorRelay.set(Relay.Value.kOn);
+        }
+        if(joy1.getRawButton(5))
+        {
+            compressorRelay.set(Relay.Value.kOff);
+        }
+        
         if(joy1.getRawButton(3))
         {
         drive.holonomicDrive(1, 0, 0);//Omni Drive
@@ -227,8 +243,9 @@ private int joy1Angle = 0;
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         ultrasonic.pidGet()(String)
          * */
-        if(joy2.getTrigger())
+        if(joy1.getRawButton(4))
         {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
              pneumatics.kick(kickerControl);
         }
         dsout.updateLCD();
