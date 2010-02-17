@@ -116,20 +116,21 @@ private int joy1Angle = 0;
          * */
         dsout = DriverStationLCD.getInstance();
         dsout.updateLCD();
-        try
-        {
-            solenoid1 = new Solenoid(8,5);
-            solenoid1 = new Solenoid(8,6);
-            solenoid1 = new Solenoid(8,7);
-            solenoid1 = new Solenoid(8,8);
+       try
+       {
+            solenoid1 = new Solenoid(8,1);
+            solenoid2 = new Solenoid(8,2);
+            solenoid3 = new Solenoid(8,3);
+            solenoid4 = new Solenoid(8,4);
             kickerControl.setSolenoid1(solenoid1);
             kickerControl.setSolenoid2(solenoid2);
             kickerControl.setSolenoid3(solenoid3);
             kickerControl.setSolenoid4(solenoid4);
-        }
+       }
         catch(NullPointerException n){
             System.out.println("ERROR: solenoids not connected");
         }
+
         try
         {
             pressure = new AnalogChannel(1,1);
@@ -143,6 +144,12 @@ private int joy1Angle = 0;
          {
              System.out.println("ERROR: sensors not connected");
          }
+            
+        if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
+        {
+            dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
+        }
+        dsout.updateLCD();
     }
 
     /**
@@ -246,7 +253,19 @@ private int joy1Angle = 0;
         if(joy1.getRawButton(4))
         {
              dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
-             pneumatics.kick(kickerControl);
+//             pneumatics.kick(kickerControl);
+            kickerControl.getSolenoid1().set(true);
+            kickerControl.getSolenoid2().set(true);
+            kickerControl.getSolenoid3().set(true);
+            kickerControl.getSolenoid4().set(true);
+        }
+        else
+        {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "");
+             kickerControl.getSolenoid1().set(false);
+             kickerControl.getSolenoid2().set(false);
+             kickerControl.getSolenoid3().set(false);
+             kickerControl.getSolenoid4().set(false);
         }
         dsout.updateLCD();
     }
