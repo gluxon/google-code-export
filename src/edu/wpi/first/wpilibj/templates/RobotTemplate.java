@@ -10,11 +10,10 @@ package edu.wpi.first.wpilibj.templates;
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
+import edu.fhs.input.UltrasonicFHS;
+import edu.fhs.input.IRRangeFinderFHS;
 import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.camera.*;
-import edu.wpi.first.wpilibj.image.*;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -33,8 +32,6 @@ private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
 private RobotDrive drive;
-private ColorImage image1;
-private AxisCamera axisCamera1;
 private Relay re1;
 private Relay re2;
 private Relay compressorRelay;
@@ -48,10 +45,11 @@ private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
 private Encoder encoder;
-private AnalogChannel ultrasonic1;
-private AnalogChannel ultrasonic2;
-private AnalogChannel ultrasonic3;
-private AnalogChannel ultrasonic4;
+private UltrasonicFHS ultrasonicLF;
+private UltrasonicFHS ultrasonicRF;
+private UltrasonicFHS ultrasonicLB;
+private UltrasonicFHS ultrasonicRB;
+private IRRangeFinderFHS ir;
 private Gyro gyro;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int delay = 20;
@@ -103,13 +101,10 @@ double throttleDynamic = 0.0;
         }
         
         /*
-        gyro = new Gyro(1,9);
-        axisCamera1 = AxisCamera.getInstance();
         try {
             re1 = new Relay(3);
             re2 = new Relay(4);
             auxDrive = new AuxDriver(joy3);
-            ultra1 = new Ultrasonic(5,6);
         } catch (IndexOutOfBoundsException e) {
             System.err.println("Unable to init devices correctly!" );
             e.printStackTrace();
@@ -135,11 +130,12 @@ double throttleDynamic = 0.0;
         try
         {
             pressure = new AnalogChannel(1,1);
-            encoder = new Encoder(1,2);
-            ultrasonic1 = new AnalogChannel(1,3);
-            ultrasonic2 = new AnalogChannel(1,4);
-            ultrasonic3 = new AnalogChannel(1,5);
-            ultrasonic4 = new AnalogChannel(1,6);
+            ir = new IRRangeFinderFHS(1,2);
+            ultrasonicLF = new UltrasonicFHS(1,3);//left front
+            ultrasonicRF = new UltrasonicFHS(1,4);//right front
+            ultrasonicLB = new UltrasonicFHS(1,5);//left back
+            ultrasonicRB = new UltrasonicFHS(1,6);//right back
+            gyro = new Gyro(1,7);
         }
          catch(NullPointerException n)
          {
@@ -236,16 +232,7 @@ double throttleDynamic = 0.0;
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         psi = pressure.getAverageVoltage()*37.76-32.89;
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
-        if(ultrasonic1 != null)
-        {
-            if(delay == 20)
-            {
-                ultraV = ultrasonic1.getAverageVoltage();
-                delay = 0;
-            }
-            dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
-            delay++;
-        }
+        
         /*
         dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
         String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
