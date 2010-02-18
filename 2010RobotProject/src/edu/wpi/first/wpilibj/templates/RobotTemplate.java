@@ -218,7 +218,10 @@ double throttleDynamic = 0.0;
                 joy1Angle = 0;
             }
             drive.holonomicDrive(throttleDynamic, joy1Angle,joy1.getThrottle());//Omni Drive
-
+            leftFrontJag.set(leftFrontJag.get()*(10.0/7.0));
+            rightFrontJag.set(rightFrontJag.get()*(10.0/7.0));
+            leftRearJag.set(leftRearJag.get()*(10.0/7.0));
+            rightRearJag.set(rightRearJag.get()*(10.0/7.0));
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
         /*
