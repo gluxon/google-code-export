@@ -58,6 +58,7 @@ private int delay = 20;
 private double ultraV;
 private double psi;
 private int joy1Angle = 0;
+double throttleDynamic = 0.0;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -198,25 +199,26 @@ private int joy1Angle = 0;
         {
             compressorRelay.set(Relay.Value.kOff);
         }
-        
-        if(joy1.getRawButton(3))
-        {
-        drive.holonomicDrive(1, 0, 0);//Omni Drive
-        }
-        else if(joy1.getRawButton(2))
-        {
-        leftFrontJag.set(1);
-        rightFrontJag.set(1);
-        leftRearJag.set(1);
-        rightRearJag.set(1);
-        }
-        else
-        {
-            if(joy1.getRawButton(7)){joy1Angle = 270;}
-            else if(joy1.getRawButton(8)){joy1Angle = 90;}
-            else if(!joy1.getRawButton(7) && !joy1.getRawButton(8)){joy1Angle = 0;}
-            drive.holonomicDrive(-joy1.getY(), joy1Angle,joy1.getThrottle());//Omni Drive
-        }
+
+
+
+            if(joy1.getX() < -0.1)
+            {
+                throttleDynamic = -joy1.getX();
+                joy1Angle = 270;
+            }
+            else if(joy1.getX() > 0.1)
+            {
+                throttleDynamic = joy1.getX();
+                joy1Angle = 90;
+            }
+            else
+            {
+                throttleDynamic = joy1.getY();
+                joy1Angle = 0;
+            }
+            drive.holonomicDrive(throttleDynamic, joy1Angle,joy1.getThrottle());//Omni Drive
+
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
         /*
