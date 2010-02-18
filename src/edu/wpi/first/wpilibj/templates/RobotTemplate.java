@@ -8,13 +8,12 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.fhs.actuators.KickerControl;
+import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.AuxDriver;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.*;
 import edu.wpi.first.wpilibj.image.*;
-import edu.fhs.vision.CircleFinder;
-import edu.fhs.vision.VisionDirectedDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,33 +24,41 @@ import edu.fhs.vision.VisionDirectedDrive;
  */
 public class RobotTemplate extends IterativeRobot
 {
-AuxDriver auxDrive;
-Joystick joy1;
-Joystick joy2;
-Joystick joy3;
-Jaguar leftFrontJag;
-Jaguar rightFrontJag;
-Jaguar leftRearJag;
-Jaguar rightRearJag;
-RobotDrive drive;
-ColorImage image1;
-AxisCamera axisCamera1;
-Relay re1;
-Relay re2;
-Relay reMainPf;
-Relay reMainPb;
-Relay reGatePf;
-Relay reGatePb;  //rename relays later according to usasge (elevator, base roller, etc.)
-Ultrasonic ultra1;
-DriverStationLCD dsout;
-KickerControl kickerControl;
-Pneumatics pneumatics = new Pneumatics();
-AnalogChannel pressure;
-Encoder encoder;
-AnalogChannel ultrasonic;
-Gyro gyro;
-CircleFinder circle;
-VisionDirectedDrive vision;
+private AuxDriver auxDrive;
+private Joystick joy1;
+private Joystick joy2;
+private Joystick joy3;
+private Jaguar leftFrontJag;
+private Jaguar rightFrontJag;
+private Jaguar leftRearJag;
+private Jaguar rightRearJag;
+private RobotDrive drive;
+private ColorImage image1;
+private AxisCamera axisCamera1;
+private Relay re1;
+private Relay re2;
+private Relay compressorRelay;
+private DigitalInput transducer;
+private Solenoid solenoid1;
+private Solenoid solenoid2;
+private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
+private Solenoid solenoid4;
+private DriverStationLCD dsout;
+private KickerControl kickerControl = new KickerControl();
+private Pneumatics pneumatics = new Pneumatics();
+private AnalogChannel pressure;
+private Encoder encoder;
+private AnalogChannel ultrasonic1;
+private AnalogChannel ultrasonic2;
+private AnalogChannel ultrasonic3;
+private AnalogChannel ultrasonic4;
+private Gyro gyro;
+private PitchSmoothing pitchAdj = new PitchSmoothing(2);
+private int delay = 20;
+private double ultraV;
+private double psi;
+private int joy1Angle = 0;
+double throttleDynamic = 0.0;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -77,68 +84,144 @@ VisionDirectedDrive vision;
                         super.set(d * -1);
                     }
                 };
-        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 0.75);
-        axisCamera1 = AxisCamera.getInstance();
-        gyro = new Gyro(1,10);//THIS WONT WORK
+        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
 
-//        try {
-//            re1 = new Relay(3);
-//            re2 = new Relay(4);
-//            auxDrive = new AuxDriver(joy3);
-//            ultra1 = new Ultrasonic(5,6);
-//        } catch (IndexOutOfBoundsException e) {
-//            System.err.println("Unable to init devices correctly!" );
-//            e.printStackTrace();
-//        }
+        try
+        {
+        compressorRelay = new Relay(1, Relay.Direction.kForward);
+        transducer = new DigitalInput(10);
+        }
+        catch(NullPointerException n)
+        {
+            System.out.println("ERROR: compressor/regulator not connected");
+        }
+        compressorRelay.set(Relay.Value.kOff);
+        if(compressorRelay != null && transducer != null)
+        {
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
+        
+        /*
+        gyro = new Gyro(1,9);
+        axisCamera1 = AxisCamera.getInstance();
+        try {
+            re1 = new Relay(3);
+            re2 = new Relay(4);
+            auxDrive = new AuxDriver(joy3);
+            ultra1 = new Ultrasonic(5,6);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Unable to init devices correctly!" );
+            e.printStackTrace();
+        }
+         * */
         dsout = DriverStationLCD.getInstance();
         dsout.updateLCD();
-        try
-        {
-            reMainPf = new Relay(5);
-            reMainPb = new Relay(6);
-            reGatePf = new Relay(7);
-            reGatePb = new Relay(8);
-            kickerControl.setRelay1Close(reGatePf);
-            kickerControl.setRelay1Open(reGatePb);
-            kickerControl.setRelay2Close(reMainPf);
-            kickerControl.setRelay2Open(reMainPb);
-        }
+       try
+       {
+            solenoid1 = new Solenoid(8,1);
+            solenoid2 = new Solenoid(8,2);
+            solenoid3 = new Solenoid(8,3);
+            solenoid4 = new Solenoid(8,4);
+            kickerControl.setSolenoid1(solenoid1);
+            kickerControl.setSolenoid2(solenoid2);
+            kickerControl.setSolenoid3(solenoid3);
+            kickerControl.setSolenoid4(solenoid4);
+       }
         catch(NullPointerException n){
-            System.out.println("ERROR: relays not connected");
+            System.out.println("ERROR: solenoids not connected");
         }
-        pressure = new AnalogChannel(1,1);
+
         try
         {
+            pressure = new AnalogChannel(1,1);
             encoder = new Encoder(1,2);
+            ultrasonic1 = new AnalogChannel(1,3);
+            ultrasonic2 = new AnalogChannel(1,4);
+            ultrasonic3 = new AnalogChannel(1,5);
+            ultrasonic4 = new AnalogChannel(1,6);
         }
          catch(NullPointerException n)
          {
-             System.out.println("ERROR: encoders not connected");
+             System.out.println("ERROR: sensors not connected");
          }
-        ultrasonic = new AnalogChannel(1,2);
-        circle = new CircleFinder(gyro, joy1, drive);
-        circle.intialize();
-
+            
+        if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
+        {
+            dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
+        }
+        dsout.updateLCD();
     }
-    
-    
+
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic()
     {
+        
+        if(compressorRelay != null && transducer != null)
+        {
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
+        
         leftFrontJag.set(0);
         rightFrontJag.set(0);
-    }
+        leftRearJag.set(0);
+        rightRearJag.set(0);
+        /*
+        double inputSpeed = 0.5;
+        updateDashboard();
+        leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
+        */
+         }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic()
     {
-        drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getTwist());//Omni Drive
+        updateDashboard();
+        if(compressorRelay != null && transducer != null)
+        {
+            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
+            else {compressorRelay.set(Relay.Value.kOff);}
+        }
+
+        if(joy1.getRawButton(6))
+        {
+            compressorRelay.set(Relay.Value.kOn);
+        }
+        if(joy1.getRawButton(5))
+        {
+            compressorRelay.set(Relay.Value.kOff);
+        }
+
+
+
+            if(joy1.getX() < -0.1)
+            {
+                throttleDynamic = -joy1.getX();
+                joy1Angle = 270;
+            }
+            else if(joy1.getX() > 0.1)
+            {
+                throttleDynamic = joy1.getX();
+                joy1Angle = 90;
+            }
+            else
+            {
+                throttleDynamic = joy1.getY();
+                joy1Angle = 0;
+            }
+            drive.holonomicDrive(throttleDynamic, joy1Angle,joy1.getThrottle());//Omni Drive
+
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
+        /*
         try{
             image1 = axisCamera1.getImage();
         }
@@ -148,26 +231,128 @@ VisionDirectedDrive vision;
         catch(NIVisionException ve){
             ve.printStackTrace();
         }
+         * */
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate((pressure.getAverageVoltage()*37.76-32.89)));
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "U voltage: " + ultrasonic.getAverageVoltage());
-        //dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
-        dsout.updateLCD();
-//        String distanceGivenByUltrasound =  Double.toString(ultra1.pidGet());
-//        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
-        //ultra1.pidGet()(String)
-        if(joy2.getTrigger())
+        psi = pressure.getAverageVoltage()*37.76-32.89;
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
+        if(ultrasonic1 != null)
         {
-             pneumatics.kick(kickerControl);
+            if(delay == 20)
+            {
+                ultraV = ultrasonic1.getAverageVoltage();
+                delay = 0;
+            }
+            dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
+            delay++;
         }
-
-        circle.centerOnCircle(joy1.getTrigger());
-       
+        /*
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
+        String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
+        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
+        ultrasonic.pidGet()(String)
+         * */
+        if(joy1.getRawButton(4))
+        {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
+//             pneumatics.kick(kickerControl);
+            kickerControl.getSolenoid1().set(true);
+            kickerControl.getSolenoid2().set(true);
+            kickerControl.getSolenoid3().set(true);
+            kickerControl.getSolenoid4().set(true);
+        }
+        else
+        {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "");
+             kickerControl.getSolenoid1().set(false);
+             kickerControl.getSolenoid2().set(false);
+             kickerControl.getSolenoid3().set(false);
+             kickerControl.getSolenoid4().set(false);
+        }
+        dsout.updateLCD();
     }
 
     private double truncate(double rawDouble)
     {
         return ((double) ((int) (100 * rawDouble))) / 100;
+    }
+
+    void updateDashboard() {
+        Dashboard lowDashData = DriverStation.getInstance().getDashboardPackerLow();
+        lowDashData.addCluster();
+        {
+            lowDashData.addCluster();
+            {     //analog modules
+                lowDashData.addCluster();
+                {
+                    for (int i = 1; i <= 8; i++) {
+                        lowDashData.addFloat((float) AnalogModule.getInstance(1).getAverageVoltage(i));
+                    }
+                }
+                lowDashData.finalizeCluster();
+                lowDashData.addCluster();
+                {
+                    for (int i = 1; i <= 8; i++) {
+                        lowDashData.addFloat((float) AnalogModule.getInstance(2).getAverageVoltage(i));
+                    }
+                }
+                lowDashData.finalizeCluster();
+            }
+            lowDashData.finalizeCluster();
+
+            lowDashData.addCluster();
+            { //digital modules
+                lowDashData.addCluster();
+                {
+                    lowDashData.addCluster();
+                    {
+                        int module = 4;
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+                        lowDashData.addCluster();
+                        {
+                            for (int i = 1; i <= 10; i++) {
+                                lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+                            }
+                        }
+                        lowDashData.finalizeCluster();
+                    }
+                    lowDashData.finalizeCluster();
+                }
+                lowDashData.finalizeCluster();
+
+                lowDashData.addCluster();
+                {
+                    lowDashData.addCluster();
+                    {
+                        int module = 6;
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+                        lowDashData.addByte(DigitalModule.getInstance(module).getRelayReverse());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+                        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+                        lowDashData.addCluster();
+                        {
+                            for (int i = 1; i <= 10; i++) {
+                                lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+                            }
+                        }
+                        lowDashData.finalizeCluster();
+                    }
+                    lowDashData.finalizeCluster();
+                }
+                lowDashData.finalizeCluster();
+
+            }
+            lowDashData.finalizeCluster();
+
+            lowDashData.addByte(Solenoid.getAll());
+
+            lowDashData.addDouble(999.123d);
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.commit();
+
     }
 }

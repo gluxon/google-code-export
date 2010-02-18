@@ -5,8 +5,7 @@
 
 package edu.fhs.actuators;
 
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.*;
 
 /**
  *
@@ -47,17 +46,15 @@ public class Pneumatics {
                             piston                                            
                                                                               */
         {
-            control.getRelay1Open().set(Relay.Value.kOn);
-            Timer.delay(500);
-            control.getRelay1Open().set(Relay.Value.kOff);
-            control.getRelay1Close().set(Relay.Value.kOn);
-            control.getRelay2Open().set(Relay.Value.kOn);
-            Timer.delay(1500);
-            control.getRelay1Close().set(Relay.Value.kOff);
-            control.getRelay2Open().set(Relay.Value.kOff);
-            control.getRelay2Close().set(Relay.Value.kOn);
-            Timer.delay(500);
-            control.getRelay2Close().set(Relay.Value.kOff);
+            control.getSolenoid1().set(true);
+            control.getSolenoid2().set(true);
+            control.getSolenoid3().set(true);
+            control.getSolenoid4().set(true);
+            Timer.delay(250);
+            control.getSolenoid1().set(false);
+            control.getSolenoid2().set(false);
+            control.getSolenoid3().set(false);
+            control.getSolenoid4().set(false);
             isKicking = false;
         }
 
