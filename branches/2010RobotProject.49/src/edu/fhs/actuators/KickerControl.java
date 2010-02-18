@@ -5,71 +5,48 @@
 
 package edu.fhs.actuators;
 
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.*;
 
 /**
  *
  * @author programming
  */
 public class KickerControl {
-    private Relay relay1Open;
-    private Relay relay1Close;
-    private Relay relay2Open;
-    private Relay relay2Close;
+    private Solenoid solenoid1;
+    private Solenoid solenoid2;
+    private Solenoid solenoid3;
+    private Solenoid solenoid4;
 
-    /**
-     * @return the relay1Open
-     */
-    public Relay getRelay1Open() {
-        return relay1Open;
+    public Solenoid getSolenoid1() {
+        return solenoid1;
     }
 
-    /**
-     * @param relay1Open the relay1Open to set
-     */
-    public void setRelay1Open(Relay relay1Open) {
-        this.relay1Open = relay1Open;
+    public void setSolenoid1(Solenoid solenoid) {
+        solenoid1 = solenoid;
     }
 
-    /**
-     * @return the relay1Close
-     */
-    public Relay getRelay1Close() {
-        return relay1Close;
+    public Solenoid getSolenoid2() {
+        return solenoid2;
     }
 
-    /**
-     * @param relay1Close the relay1Close to set
-     */
-    public void setRelay1Close(Relay relay1Close) {
-        this.relay1Close = relay1Close;
+    public void setSolenoid2(Solenoid solenoid) {
+        solenoid2 = solenoid;
     }
 
-    /**
-     * @return the relay2Open
-     */
-    public Relay getRelay2Open() {
-        return relay2Open;
+    public Solenoid getSolenoid3() {
+        return solenoid3;
     }
 
-    /**
-     * @param relay2Open the relay2Open to set
-     */
-    public void setRelay2Open(Relay relay2Open) {
-        this.relay2Open = relay2Open;
+    public void setSolenoid3(Solenoid solenoid) {
+        solenoid3 = solenoid;
     }
 
-    /**
-     * @return the relay2Close
-     */
-    public Relay getRelay2Close() {
-        return relay2Close;
+    public Solenoid getSolenoid4() {
+        return solenoid4;
     }
 
-    /**
-     * @param relay2Close the relay2Close to set
-     */
-    public void setRelay2Close(Relay relay2Close) {
-        this.relay2Close = relay2Close;
+    public void setSolenoid4(Solenoid solenoid) {
+        solenoid4 = solenoid;
     }
+
 }
