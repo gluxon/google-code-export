@@ -71,31 +71,31 @@ private double throttleDynamic = 0.0;
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
-        leftFrontJag = new Jaguar(1);
-        leftRearJag = new Jaguar(3);
-        rightFrontJag = new Jaguar(2)
+        leftFrontJag = new Jaguar(6,1);
+        leftRearJag = new Jaguar(6,3);
+        rightFrontJag = new Jaguar(6,2)
                 {
                   public void set(double d)
                     {
                         super.set(d * -1);
                     }
                 };
-         rightRearJag = new Jaguar(4)
+         rightRearJag = new Jaguar(6,4)
                 {
                   public void set(double d)
                     {
                         super.set(d * -1);
                     }
                 };
-        armWinch = new Victor(5);
+        armWinch = new Victor(6,5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(6);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
         try
         {
-        compressorRelay = new Relay(1, Relay.Direction.kForward);
-        transducer = new DigitalInput(10);
+        compressorRelay = new Relay(6, 1, Relay.Direction.kForward);
+        transducer = new DigitalInput(6, 10);
         }
         catch(NullPointerException n)
         {
