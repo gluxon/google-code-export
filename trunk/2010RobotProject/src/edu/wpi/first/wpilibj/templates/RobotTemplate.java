@@ -32,6 +32,7 @@ private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
+private Victor armWinch;
 private RobotDrive drive;
 private ColorImage image1;
 private AxisCamera axisCamera1;
@@ -43,6 +44,8 @@ private Solenoid solenoid1;
 private Solenoid solenoid2;
 private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
 private Solenoid solenoid4;
+private Solenoid armAngle;
+private Solenoid armExtention;
 private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
@@ -58,7 +61,7 @@ private int delay = 20;
 private double ultraV;
 private double psi;
 private int joy1Angle = 0;
-double throttleDynamic = 0.0;
+private double throttleDynamic = 0.0;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -84,8 +87,11 @@ double throttleDynamic = 0.0;
                         super.set(d * -1);
                     }
                 };
-        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+        armWinch = new Victor(5);
+        armAngle = new Solenoid(5);
+        armExtention = new Solenoid(6);
 
+        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
         try
         {
         compressorRelay = new Relay(1, Relay.Direction.kForward);
@@ -223,7 +229,6 @@ double throttleDynamic = 0.0;
             leftRearJag.set(leftRearJag.get()*(10.0/7.0));
             rightRearJag.set(rightRearJag.get()*(10.0/7.0));
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
-//        auxDrive.operate();//Auxillary Driver
         /*
         try{
             image1 = axisCamera1.getImage();
@@ -235,6 +240,31 @@ double throttleDynamic = 0.0;
             ve.printStackTrace();
         }
          * */
+        if(joy2.getRawButton(3))
+        {
+            armExtention.set(true);
+        }
+        else if(joy2.getRawButton(4))
+        {
+            armExtention.set(false);
+        }
+        if(joy2.getRawButton(5))
+        {
+            armAngle.set(true);
+        }
+        else if(joy2.getRawButton(6))
+        {
+            armAngle.set(false);
+        }
+        if(joy2.getTrigger())
+        {
+            armWinch.set(joy2.getY());
+        }
+        else
+        {
+            armWinch.set(0);
+        }
+
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         psi = pressure.getAverageVoltage()*37.76-32.89;
