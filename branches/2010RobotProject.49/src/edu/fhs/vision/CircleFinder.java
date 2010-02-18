@@ -78,7 +78,7 @@ public class CircleFinder{
                     Target[] targets = Target.findCircularTargets(image);
                     Thread.yield();
                     if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
-                        System.out.println("No target found");
+                        
                         Target[] newTargets = new Target[targets.length + 1];
                         newTargets[0] = new Target();
                         newTargets[0].m_majorRadius = 0;
@@ -90,8 +90,7 @@ public class CircleFinder{
                         noCircleFound();
                     } else {
                         targetFound = true;
-                        System.out.println(targets[0]);
-                        System.out.println("Target Angle: " + targets[0].getHorizontalAngle());
+                       
                         turnController.setSetpoint(gyroAngle + targets[0].getHorizontalAngle());
                     }
                 }
