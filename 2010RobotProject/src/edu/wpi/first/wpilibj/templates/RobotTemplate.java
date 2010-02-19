@@ -57,7 +57,8 @@ private AnalogChannel ultrasonic3;
 private AnalogChannel ultrasonic4;
 private Gyro gyro;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
-private int delay = 20;
+private int delay = 10;
+private int kickerDelay = 100;
 private double ultraV;
 private double psi;
 private int joy1Angle = 0;
@@ -267,25 +268,25 @@ private double throttleDynamic = 0.0;
 
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        psi = pressure.getAverageVoltage()*37.76-32.89;
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         if(ultrasonic1 != null)
         {
-            if(delay == 20)
+            if(delay == 10)
             {
                 ultraV = ultrasonic1.getAverageVoltage();
+                psi = pressure.getAverageVoltage()*37.76-32.89;
                 delay = 0;
             }
             dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
             delay++;
         }
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         /*
         dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
         String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         ultrasonic.pidGet()(String)
          * */
-        if(joy1.getRawButton(4))
+        if(joy1.getRawButton(4) && kickerDelay > 99)
         {
              dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
 //             pneumatics.kick(kickerControl);
@@ -293,14 +294,16 @@ private double throttleDynamic = 0.0;
             kickerControl.getSolenoid2().set(true);
             kickerControl.getSolenoid3().set(true);
             kickerControl.getSolenoid4().set(true);
+            kickerDelay = 0;
         }
         else
         {
-             dsout.println(DriverStationLCD.Line.kUser5, 1, "");
+             dsout.println(DriverStationLCD.Line.kUser5, 1, " ");
              kickerControl.getSolenoid1().set(false);
              kickerControl.getSolenoid2().set(false);
              kickerControl.getSolenoid3().set(false);
              kickerControl.getSolenoid4().set(false);
+             kickerDelay++;
         }
         dsout.updateLCD();
     }
