@@ -50,16 +50,18 @@ private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
-private Encoder encoder;
+private AnalogChannel IR;
 private AnalogChannel ultrasonic1;
 private AnalogChannel ultrasonic2;
 private AnalogChannel ultrasonic3;
 private AnalogChannel ultrasonic4;
 private Gyro gyro;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
-private int delay = 10;
+private int UDelay = 10;
+private int IRDelay = 10;
 private int kickerDelay = 100;
 private double ultraV;
+private double IRV;
 private double psi;
 private int joy1Angle = 0;
 private double throttleDynamic = 0.0;
@@ -142,7 +144,7 @@ private double throttleDynamic = 0.0;
         try
         {
             pressure = new AnalogChannel(1,1);
-            encoder = new Encoder(1,2);
+            IR = new AnalogChannel(1,2);
             ultrasonic1 = new AnalogChannel(1,3);
             ultrasonic2 = new AnalogChannel(1,4);
             ultrasonic3 = new AnalogChannel(1,5);
@@ -270,14 +272,25 @@ private double throttleDynamic = 0.0;
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         if(ultrasonic1 != null)
         {
-            if(delay == 10)
+            if(UDelay == 10)
             {
                 ultraV = ultrasonic1.getAverageVoltage();
                 psi = pressure.getAverageVoltage()*37.76-32.89;
-                delay = 0;
+                UDelay = 0;
             }
             dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
-            delay++;
+            UDelay++;
+        }
+        if(IR != null)
+        {
+            if(IRDelay == 10)
+            {
+                IRV = IR.getAverageVoltage();
+                psi = pressure.getAverageVoltage()*37.76-32.89;
+                IRDelay = 0;
+            }
+            dsout.println(DriverStationLCD.Line.kUser5, 1, "IR voltage: " + IRV);
+            IRDelay++;
         }
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         /*
@@ -288,7 +301,6 @@ private double throttleDynamic = 0.0;
          * */
         if(joy1.getRawButton(4) && kickerDelay > 99)
         {
-             dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
 //             pneumatics.kick(kickerControl);
             kickerControl.getSolenoid1().set(true);
             kickerControl.getSolenoid2().set(true);
@@ -298,7 +310,6 @@ private double throttleDynamic = 0.0;
         }
         else
         {
-             dsout.println(DriverStationLCD.Line.kUser5, 1, " ");
              kickerControl.getSolenoid1().set(false);
              kickerControl.getSolenoid2().set(false);
              kickerControl.getSolenoid3().set(false);
