@@ -65,29 +65,27 @@
 			<Item Name="lvsound2.dll" Type="Document" URL="../../../../../Program Files/National Instruments/LabVIEW 8.6/resource/lvsound2.dll"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build">
-			<Item Name="FRC PC Dashboard" Type="EXE">
+			<Item Name="FRC Dashboard" Type="EXE">
 				<Property Name="App_applicationGUID" Type="Str">{AEE2EF3D-7087-47D6-AEAE-9F87F896ED5E}</Property>
 				<Property Name="App_applicationName" Type="Str">FRC Dashboard.exe</Property>
-				<Property Name="App_fileDescription" Type="Str">FRC PC Dashboard</Property>
+				<Property Name="App_fileDescription" Type="Str">FRC Dashboard</Property>
 				<Property Name="App_fileVersion.major" Type="Int">1</Property>
 				<Property Name="App_INI_aliasGUID" Type="Str">{47BAFDCE-3F99-4134-9347-62A4C9A5434C}</Property>
 				<Property Name="App_INI_GUID" Type="Str">{76D91052-50F0-4E0B-B76F-616DDC550CED}</Property>
-				<Property Name="App_internalName" Type="Str">FRC PC Dashboard</Property>
+				<Property Name="App_internalName" Type="Str">FRC Dashboard</Property>
 				<Property Name="Bld_buildSpecDescription" Type="Str">Build Dashboard Main.vi into an EXE that will respond to the driver station and display robot information on a PC.</Property>
-				<Property Name="Bld_buildSpecName" Type="Str">FRC PC Dashboard</Property>
+				<Property Name="Bld_buildSpecName" Type="Str">FRC Dashboard</Property>
 				<Property Name="Bld_excludeLibraryItems" Type="Bool">true</Property>
 				<Property Name="Bld_excludePolymorphicVIs" Type="Bool">true</Property>
 				<Property Name="Bld_modifyLibraryFile" Type="Bool">true</Property>
 				<Property Name="Destination[0].destName" Type="Str">FRC Dashboard.exe</Property>
-				<Property Name="Destination[0].path" Type="Path">/C/Documents and Settings/Administrator/My Documents/LabVIEW Data/builds/FRC Dashboard Project/FRC PC Dashboard/internal.llb</Property>
-				<Property Name="Destination[0].path.type" Type="Str">&lt;none&gt;</Property>
+				<Property Name="Destination[0].path" Type="Path">../2010DashboardProject/FRC Dashboard/internal.llb</Property>
 				<Property Name="Destination[0].type" Type="Str">App</Property>
 				<Property Name="Destination[1].destName" Type="Str">Support Directory</Property>
-				<Property Name="Destination[1].path" Type="Path">/C/Documents and Settings/Administrator/My Documents/LabVIEW Data/builds/FRC Dashboard Project/FRC PC Dashboard/data</Property>
-				<Property Name="Destination[1].path.type" Type="Str">&lt;none&gt;</Property>
+				<Property Name="Destination[1].path" Type="Path">../2010DashboardProject/FRC Dashboard/data</Property>
 				<Property Name="DestinationCount" Type="Int">2</Property>
 				<Property Name="Exe_iconItemID" Type="Ref">/My Computer/Support/App EXE.ico</Property>
-				<Property Name="Source[0].itemID" Type="Str">{1DC69E0B-5F88-497D-AF44-143900D2A246}</Property>
+				<Property Name="Source[0].itemID" Type="Str">{66FF4103-A62C-468A-A7F5-470939EC8DF7}</Property>
 				<Property Name="Source[0].type" Type="Str">Container</Property>
 				<Property Name="Source[1].destinationIndex" Type="Int">0</Property>
 				<Property Name="Source[1].itemID" Type="Ref">/My Computer/Dashboard Main.vi</Property>
