@@ -62,7 +62,7 @@ double throttleDynamic = 0.0;
      * used for any initialization code.
      */
     public void robotInit()
-    {
+    {/*
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
@@ -110,9 +110,10 @@ double throttleDynamic = 0.0;
             e.printStackTrace();
         }
          * */
+        ultrasonicLF = new UltrasonicFHS(1,3);
         dsout = DriverStationLCD.getInstance();
         dsout.updateLCD();
-       try
+      /* try
        {
             solenoid1 = new Solenoid(8,1);
             solenoid2 = new Solenoid(8,2);
@@ -146,7 +147,7 @@ double throttleDynamic = 0.0;
         {
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
-        dsout.updateLCD();
+        dsout.updateLCD();*/
     }
 
     /**
@@ -154,7 +155,7 @@ double throttleDynamic = 0.0;
      */
     public void autonomousPeriodic()
     {
-        
+        /*
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
@@ -180,7 +181,7 @@ double throttleDynamic = 0.0;
      */
     public void teleopPeriodic()
     {
-        updateDashboard();
+/*        updateDashboard();
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
@@ -228,8 +229,8 @@ double throttleDynamic = 0.0;
             ve.printStackTrace();
         }
          * */
-        dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
-        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
+        dsout.println(DriverStationLCD.Line.kMain6, 1,"Voltage" + truncate(ultrasonicLF.getAverageVoltage()) );
+      /*  dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
         psi = pressure.getAverageVoltage()*37.76-32.89;
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         
@@ -238,7 +239,7 @@ double throttleDynamic = 0.0;
         String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         ultrasonic.pidGet()(String)
-         * */
+         * *//*
         if(joy1.getRawButton(4))
         {
              dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
@@ -255,7 +256,7 @@ double throttleDynamic = 0.0;
              kickerControl.getSolenoid2().set(false);
              kickerControl.getSolenoid3().set(false);
              kickerControl.getSolenoid4().set(false);
-        }
+        }*/
         dsout.updateLCD();
     }
 
