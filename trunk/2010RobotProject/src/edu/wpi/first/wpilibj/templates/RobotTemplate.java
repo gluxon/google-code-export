@@ -38,7 +38,7 @@ private ColorImage image1;
 private AxisCamera axisCamera1;
 private Relay re1;
 private Relay re2;
-private Relay compressorRelay;
+private DigitalOutput compressorRelay;
 private DigitalInput transducer;
 private Solenoid solenoid1;
 private Solenoid solenoid2;
@@ -60,6 +60,8 @@ private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int UDelay = 10;
 private int IRDelay = 10;
 private int kickerDelay = 100;
+private int kickerDelay2 = 0;
+private boolean kicked = false;
 private double ultraV;
 private double IRV;
 private double psi;
@@ -97,18 +99,18 @@ private double throttleDynamic = 0.0;
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
         try
         {
-        compressorRelay = new Relay(6, 1, Relay.Direction.kForward);
+        //compressorRelay = new Relay(6,8,Relay.Direction.kForward);
+            compressorRelay = new DigitalOutput(6,1);
         transducer = new DigitalInput(6, 10);
         }
         catch(NullPointerException n)
         {
             System.out.println("ERROR: compressor/regulator not connected");
         }
-        compressorRelay.set(Relay.Value.kOff);
         if(compressorRelay != null && transducer != null)
         {
-            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
-            else {compressorRelay.set(Relay.Value.kOff);}
+                //compressorRelay.set(Relay.Value.kOff);
+            compressorRelay.set(false);
         }
         
         /*
@@ -170,8 +172,12 @@ private double throttleDynamic = 0.0;
         
         if(compressorRelay != null && transducer != null)
         {
-            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
-            else {compressorRelay.set(Relay.Value.kOff);}
+            if(!transducer.get()){compressorRelay.set(true);
+                //compressorRelay.set(Relay.Value.kOn);
+            }
+            else {compressorRelay.set(false);
+                //compressorRelay.set(Relay.Value.kOff);
+            }
         }
         
         leftFrontJag.set(0);
@@ -196,22 +202,28 @@ private double throttleDynamic = 0.0;
         updateDashboard();
         if(compressorRelay != null && transducer != null)
         {
-            if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
-            else {compressorRelay.set(Relay.Value.kOff);}
+            if(!transducer.get()){compressorRelay.set(true);
+                //compressorRelay.set(Relay.Value.kOn);
+            }
+            else {compressorRelay.set(false);
+                //compressorRelay.set(Relay.Value.kOff);
+            }
         }
 
-        if(joy1.getRawButton(6))
+        if(compressorRelay != null && joy1.getRawButton(6))
         {
-            compressorRelay.set(Relay.Value.kOn);
+            compressorRelay.set(true);
+            //compressorRelay.set(Relay.Value.kOn);
         }
-        if(joy1.getRawButton(5))
+        if(compressorRelay != null && joy1.getRawButton(5))
         {
-            compressorRelay.set(Relay.Value.kOff);
+            compressorRelay.set(false);
+            //compressorRelay.set(Relay.Value.kOff);
         }
 
 
 
-            if(joy1.getX() < -0.1)
+            /*if(joy1.getX() < -0.1)
             {
                 throttleDynamic = -joy1.getX();
                 joy1Angle = 270;
@@ -225,12 +237,10 @@ private double throttleDynamic = 0.0;
             {
                 throttleDynamic = joy1.getY();
                 joy1Angle = 0;
-            }
-            drive.holonomicDrive(throttleDynamic, joy1Angle,joy1.getThrottle());//Omni Drive
-            leftFrontJag.set(leftFrontJag.get()*(10.0/7.0));
-            rightFrontJag.set(rightFrontJag.get()*(10.0/7.0));
-            leftRearJag.set(leftRearJag.get()*(10.0/7.0));
-            rightRearJag.set(rightRearJag.get()*(10.0/7.0));
+            }*/
+        if(joy1.getRawButton(7) == true){drive.holonomicDrive(-(joy1.getY()*(10.0/7.0)), 90,joy1.getThrottle());}
+        else{drive.holonomicDrive(-joy1.getY(), 0,joy1.getThrottle());}
+            
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
         /*
         try{
@@ -299,14 +309,21 @@ private double throttleDynamic = 0.0;
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         ultrasonic.pidGet()(String)
          * */
-        if(joy1.getRawButton(4) && kickerDelay > 99)
+        if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
         {
-//             pneumatics.kick(kickerControl);
+//          pneumatics.kick(kickerControl);
             kickerControl.getSolenoid1().set(true);
             kickerControl.getSolenoid2().set(true);
             kickerControl.getSolenoid3().set(true);
             kickerControl.getSolenoid4().set(true);
             kickerDelay = 0;
+            kicked = true;
+            if(kickerDelay2 > 40)
+            {
+                kickerDelay2 = 0;
+                kicked = false;
+            }
+            else{kickerDelay2++;}
         }
         else
         {
