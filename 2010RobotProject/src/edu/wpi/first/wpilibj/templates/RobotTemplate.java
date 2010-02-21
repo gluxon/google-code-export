@@ -199,6 +199,7 @@ private double throttleDynamic = 0.0;
      */
     public void teleopPeriodic()
     {
+
         updateDashboard();
         if(compressorRelay != null && transducer != null)
         {
@@ -318,12 +319,19 @@ private double throttleDynamic = 0.0;
             kickerControl.getSolenoid4().set(true);
             kickerDelay = 0;
             kicked = true;
-            if(kickerDelay2 > 40)
+            if(kickerDelay2 > 25)
             {
                 kickerDelay2 = 0;
                 kicked = false;
             }
             else{kickerDelay2++;}
+        }
+        else if(joy1.getRawButton(8))
+        {
+            kickerControl.getSolenoid1().set(true);
+            kickerControl.getSolenoid2().set(true);
+            kickerControl.getSolenoid3().set(true);
+            kickerControl.getSolenoid4().set(true);
         }
         else
         {
