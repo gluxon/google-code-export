@@ -239,7 +239,14 @@ private double throttleDynamic = 0.0;
                 throttleDynamic = joy1.getY();
                 joy1Angle = 0;
             }*/
-        if(joy1.getRawButton(7) == true){drive.holonomicDrive(-(joy1.getY()*(10.0/7.0)), 90,joy1.getThrottle());}
+        if(joy1.getRawButton(7) == true)
+        {
+            drive.holonomicDrive(-joy1.getX(), 90,joy1.getThrottle());
+            leftFrontJag.set(leftFrontJag.get()*(10.0/7.0));
+            rightFrontJag.set(rightFrontJag.get()*(10.0/7.0));
+            leftRearJag.set(leftRearJag.get()*(10.0/7.0));
+            rightRearJag.set(rightRearJag.get()*(10.0/7.0));
+        }
         else{drive.holonomicDrive(-joy1.getY(), 0,joy1.getThrottle());}
             
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
@@ -254,6 +261,13 @@ private double throttleDynamic = 0.0;
             ve.printStackTrace();
         }
          * */
+        if(joy2.getRawButton(2))
+        {
+            leftFrontJag.set(-1);
+            rightFrontJag.set(1);
+            leftRearJag.set(-1);
+            rightRearJag.set(1);
+        }
         if(joy2.getRawButton(3))
         {
             armExtention.set(true);
