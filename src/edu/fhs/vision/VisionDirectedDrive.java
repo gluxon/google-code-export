@@ -45,6 +45,7 @@ public class VisionDirectedDrive{
         ultraFrontRight = fr;
         ir=i;
         kc = k;
+        kickingDelay = 0;
         driveTowardsRamp = new PIDController(.5,.2,.8,ultraFrontRight,new PIDOutput(){
             public void pidWrite(double output){
                 drive.holonomicDrive(output, 0, 0);
@@ -83,7 +84,7 @@ public class VisionDirectedDrive{
         
         switch (mode){
 
-            case 0: if(ir.getRangeInches() < KICKING_DISTANCE_THRESHHOLD){
+            case 0: if(ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
                         drive.holonomicDrive(.3,0,0);
                     }else{
                         drive.holonomicDrive(0,0,0);
@@ -92,6 +93,7 @@ public class VisionDirectedDrive{
 
             case 1: if(kickingDelay == 0){
                         kick(true);
+                        kickingDelay++;
                     }else if(kickingDelay < 250){
                         kickingDelay++;
                     }else{
@@ -100,7 +102,7 @@ public class VisionDirectedDrive{
                         mode++;
                     }break;
 
-            case 2: if (ir.getRangeInches() < KICKING_DISTANCE_THRESHHOLD){
+            case 2: if (ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
                         drive.holonomicDrive(.3,90,0);
                     }else{
                         mode++;
@@ -113,6 +115,7 @@ public class VisionDirectedDrive{
 
             case 4: if(kickingDelay == 0){
                         kick(true);
+                        kickingDelay++;
                     }else if(kickingDelay < 250){
                         kickingDelay++;
                     }else{

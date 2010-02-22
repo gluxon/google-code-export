@@ -62,7 +62,7 @@ double throttleDynamic = 0.0;
      * used for any initialization code.
      */
     public void robotInit()
-    {/*
+    {
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
@@ -100,7 +100,7 @@ double throttleDynamic = 0.0;
             else {compressorRelay.set(Relay.Value.kOff);}
         }
         
-        /*
+       
         try {
             re1 = new Relay(3);
             re2 = new Relay(4);
@@ -109,11 +109,9 @@ double throttleDynamic = 0.0;
             System.err.println("Unable to init devices correctly!" );
             e.printStackTrace();
         }
-         * */
-        ultrasonicLF = new UltrasonicFHS(1,3);
-        dsout = DriverStationLCD.getInstance();
-        dsout.updateLCD();
-      /* try
+         
+      
+       try
        {
             solenoid1 = new Solenoid(8,1);
             solenoid2 = new Solenoid(8,2);
@@ -147,7 +145,7 @@ double throttleDynamic = 0.0;
         {
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
-        dsout.updateLCD();*/
+        dsout.updateLCD();
     }
 
     /**
@@ -155,7 +153,7 @@ double throttleDynamic = 0.0;
      */
     public void autonomousPeriodic()
     {
-        /*
+       
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
@@ -166,14 +164,14 @@ double throttleDynamic = 0.0;
         rightFrontJag.set(0);
         leftRearJag.set(0);
         rightRearJag.set(0);
-        /*
+        
         double inputSpeed = 0.5;
         updateDashboard();
         leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        */
+        
          }
 
     /**
@@ -181,7 +179,7 @@ double throttleDynamic = 0.0;
      */
     public void teleopPeriodic()
     {
-/*        updateDashboard();
+        updateDashboard();
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
@@ -218,28 +216,18 @@ double throttleDynamic = 0.0;
 
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
 //        auxDrive.operate();//Auxillary Driver
-        /*
-        try{
-            image1 = axisCamera1.getImage();
-        }
-        catch(AxisCameraException cameraEx){
-            cameraEx.printStackTrace();
-        }
-        catch(NIVisionException ve){
-            ve.printStackTrace();
-        }
-         * */
-        dsout.println(DriverStationLCD.Line.kMain6, 1,"Voltage" + truncate(ultrasonicLF.getAverageVoltage()) );
-      /*  dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        psi = pressure.getAverageVoltage()*37.76-32.89;
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         
-        /*
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
-        String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
-        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
-        ultrasonic.pidGet()(String)
-         * *//*
+        
+         
+        dsout.println(DriverStationLCD.Line.kMain6, 1,"Voltage" + truncate(ultrasonicLF.getAverageVoltage()) );
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
+        psi = pressure.getAverageVoltage()*37.76-32.89;
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));   
+       
+    
+
+       
+        
         if(joy1.getRawButton(4))
         {
              dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
@@ -256,7 +244,7 @@ double throttleDynamic = 0.0;
              kickerControl.getSolenoid2().set(false);
              kickerControl.getSolenoid3().set(false);
              kickerControl.getSolenoid4().set(false);
-        }*/
+        }
         dsout.updateLCD();
     }
 
