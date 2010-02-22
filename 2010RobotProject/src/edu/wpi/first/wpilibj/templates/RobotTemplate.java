@@ -38,7 +38,7 @@ private ColorImage image1;
 private AxisCamera axisCamera1;
 private Relay re1;
 private Relay re2;
-private DigitalOutput compressorRelay;
+private Relay compressorRelay;
 private DigitalInput transducer;
 private Solenoid solenoid1;
 private Solenoid solenoid2;
@@ -76,23 +76,23 @@ private double throttleDynamic = 0.0;
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
-        leftFrontJag = new Jaguar(6,1);
-        leftRearJag = new Jaguar(6,3);
-        rightFrontJag = new Jaguar(6,2)
+        leftFrontJag = new Jaguar(1);
+        leftRearJag = new Jaguar(3);
+        rightFrontJag = new Jaguar(2)
                 {
                   public void set(double d)
                     {
                         super.set(d * -1);
                     }
                 };
-         rightRearJag = new Jaguar(6,4)
+         rightRearJag = new Jaguar(4)
                 {
                   public void set(double d)
                     {
                         super.set(d * -1);
                     }
                 };
-        armWinch = new Victor(6,5);
+        armWinch = new Victor(5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(6);
 
@@ -100,9 +100,8 @@ private double throttleDynamic = 0.0;
        dsout = DriverStationLCD.getInstance();
         try
         {
-        //compressorRelay = new Relay(6,8,Relay.Direction.kForward);
-            compressorRelay = new DigitalOutput(6,1);
-        transducer = new DigitalInput(6, 10);
+            compressorRelay = new Relay(8,Relay.Direction.kForward);
+            transducer = new DigitalInput(10);
         }
         catch(NullPointerException n)
         {
@@ -110,8 +109,7 @@ private double throttleDynamic = 0.0;
         }
         if(compressorRelay != null && transducer != null)
         {
-                //compressorRelay.set(Relay.Value.kOff);
-            compressorRelay.set(false);
+                compressorRelay.set(Relay.Value.kOff);
         }
         
         /*
@@ -173,11 +171,13 @@ private double throttleDynamic = 0.0;
         
         if(compressorRelay != null && transducer != null)
         {
-            if(!transducer.get()){compressorRelay.set(true);
-                //compressorRelay.set(Relay.Value.kOn);
+            if(!transducer.get())
+            {
+                compressorRelay.set(Relay.Value.kOn);
             }
-            else {compressorRelay.set(false);
-                //compressorRelay.set(Relay.Value.kOff);
+            else
+            {
+                compressorRelay.set(Relay.Value.kOff);
             }
         }
         
@@ -204,23 +204,23 @@ private double throttleDynamic = 0.0;
         updateDashboard();
         if(compressorRelay != null && transducer != null)
         {
-            if(!transducer.get()){compressorRelay.set(true);
-                //compressorRelay.set(Relay.Value.kOn);
+            if(!transducer.get())
+            {
+                compressorRelay.set(Relay.Value.kOn);
             }
-            else {compressorRelay.set(false);
-                //compressorRelay.set(Relay.Value.kOff);
+            else
+            {
+                compressorRelay.set(Relay.Value.kOff);
             }
         }
 
         if(compressorRelay != null && joy1.getRawButton(6))
         {
-            compressorRelay.set(true);
-            //compressorRelay.set(Relay.Value.kOn);
+            compressorRelay.set(Relay.Value.kOn);
         }
         if(compressorRelay != null && joy1.getRawButton(5))
         {
-            compressorRelay.set(false);
-            //compressorRelay.set(Relay.Value.kOff);
+            compressorRelay.set(Relay.Value.kOff);
         }
 
 
