@@ -97,6 +97,7 @@ private double throttleDynamic = 0.0;
         armExtention = new Solenoid(6);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+       dsout = DriverStationLCD.getInstance();
         try
         {
         //compressorRelay = new Relay(6,8,Relay.Direction.kForward);
@@ -105,7 +106,7 @@ private double throttleDynamic = 0.0;
         }
         catch(NullPointerException n)
         {
-            System.out.println("ERROR: compressor/regulator not connected");
+            dsout.println(DriverStationLCD.Line.kUser3, 0,"ERROR: compressor/regulator not connected");
         }
         if(compressorRelay != null && transducer != null)
         {
@@ -126,7 +127,7 @@ private double throttleDynamic = 0.0;
             e.printStackTrace();
         }
          * */
-        dsout = DriverStationLCD.getInstance();
+        
         dsout.updateLCD();
        try
        {
@@ -140,7 +141,7 @@ private double throttleDynamic = 0.0;
             kickerControl.setSolenoid4(solenoid4);
        }
         catch(NullPointerException n){
-            System.out.println("ERROR: solenoids not connected");
+            dsout.println(DriverStationLCD.Line.kUser4, 0,"ERROR: compressor/regulator not connected");
         }
 
         try
@@ -154,7 +155,7 @@ private double throttleDynamic = 0.0;
         }
          catch(NullPointerException n)
          {
-             System.out.println("ERROR: sensors not connected");
+             dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
          }
             
         if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
