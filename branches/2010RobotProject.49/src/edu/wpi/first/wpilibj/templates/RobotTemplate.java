@@ -13,6 +13,8 @@ import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.input.IRRangeFinderFHS;
 import edu.fhs.input.AuxDriver;
+import edu.fhs.vision.VisionDirectedDrive;
+import edu.fhs.vision.CircleFinder;
 import edu.wpi.first.wpilibj.*;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,6 +59,8 @@ private double ultraV;
 private double psi;
 private int joy1Angle = 0;
 double throttleDynamic = 0.0;
+private VisionDirectedDrive vision;
+private CircleFinder circle;
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -101,14 +105,14 @@ double throttleDynamic = 0.0;
         }
         
        
-        try {
+       /* try {
             re1 = new Relay(3);
             re2 = new Relay(4);
             auxDrive = new AuxDriver(joy3);
         } catch (IndexOutOfBoundsException e) {
             System.err.println("Unable to init devices correctly!" );
             e.printStackTrace();
-        }
+        }*/
          
       
        try
@@ -146,6 +150,8 @@ double throttleDynamic = 0.0;
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
         dsout.updateLCD();
+        vision = new VisionDirectedDrive(gyro, joy1, drive, ultrasonicRF, ir, kickerControl);
+        circle = new CircleFinder(gyro,joy1,drive);
     }
 
     /**
@@ -159,7 +165,7 @@ double throttleDynamic = 0.0;
             if(!transducer.get()){compressorRelay.set(Relay.Value.kOn);}
             else {compressorRelay.set(Relay.Value.kOff);}
         }
-        
+      /*
         leftFrontJag.set(0);
         rightFrontJag.set(0);
         leftRearJag.set(0);
@@ -171,7 +177,9 @@ double throttleDynamic = 0.0;
         rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        
+        */
+
+        vision.autonomousZoneOne();
          }
 
     /**
@@ -224,7 +232,7 @@ double throttleDynamic = 0.0;
         psi = pressure.getAverageVoltage()*37.76-32.89;
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));   
        
-    
+        circle.centerOnCircle(joy1.getRawButton(1));
 
        
         
