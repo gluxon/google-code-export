@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.PIDSource;
  * @author Team 178 Programming devision
  */
 public class UltrasonicFHS extends AnalogChannel implements PIDSource{
-    private final double SCALE_FACTOR = 0.0; //to be changed based on results from testing the UltraSonic
+    private final double SCALE_FACTOR = (1/.00952); //to be changed based on results from testing the UltraSonic
     private final double OFFSET = 0.0; //to be changed based on results from testing
 
 
