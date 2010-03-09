@@ -10,11 +10,13 @@ package edu.wpi.first.wpilibj.templates;
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
+import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.input.AuxDriver;
+import edu.fhs.vision.VisionDirectedDrive;
+import edu.fhs.vision.CircleFinder;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.camera.*;
-import edu.wpi.first.wpilibj.image.*;
-
+import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.image.ColorImage;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -51,10 +53,10 @@ private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
 private AnalogChannel IR;
-private AnalogChannel ultrasonic1;
-private AnalogChannel ultrasonic2;
-private AnalogChannel ultrasonic3;
-private AnalogChannel ultrasonic4;
+private UltrasonicFHS ultrasonicLF;
+private UltrasonicFHS ultrasonicRF;
+private UltrasonicFHS ultrasonicLB;
+private UltrasonicFHS ultrasonicRB;
 private Gyro gyro;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int UDelay = 10;
@@ -67,6 +69,9 @@ private double IRV;
 private double psi;
 private int joy1Angle = 0;
 private double throttleDynamic = 0.0;
+private VisionDirectedDrive vision;
+private CircleFinder circle;
+
     /**    *
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -146,10 +151,10 @@ private double throttleDynamic = 0.0;
         {
             pressure = new AnalogChannel(1,1);
             IR = new AnalogChannel(1,2);
-            ultrasonic1 = new AnalogChannel(1,3);
-            ultrasonic2 = new AnalogChannel(1,4);
-            ultrasonic3 = new AnalogChannel(1,5);
-            ultrasonic4 = new AnalogChannel(1,6);
+            ultrasonicLF = new UltrasonicFHS(1,3);
+            ultrasonicLB = new UltrasonicFHS(1,4);
+            ultrasonicRF = new UltrasonicFHS(1,5);
+            ultrasonicRB= new UltrasonicFHS(1,6);
         }
          catch(NullPointerException n)
          {
@@ -193,6 +198,7 @@ private double throttleDynamic = 0.0;
         leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         */
+        vision.autonomousZoneOne();
          }
 
     /**
@@ -252,11 +258,34 @@ private double throttleDynamic = 0.0;
             
         //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
         /*
-        try{
-            image1 = axisCamera1.getImage();
+        
+        
+         
+        dsout.println(DriverStationLCD.Line.kMain6, 1,"Voltage" + truncate(ultrasonicLF.getAverageVoltage()) );
+        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
+        psi = pressure.getAverageVoltage()*37.76-32.89;
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));   
+       
+        circle.centerOnCircle(joy1.getRawButton(1));
+
+       
+        
+        if(joy1.getRawButton(4))
+        {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
+//             pneumatics.kick(kickerControl);
+            kickerControl.getSolenoid1().set(true);
+            kickerControl.getSolenoid2().set(true);
+            kickerControl.getSolenoid3().set(true);
+            kickerControl.getSolenoid4().set(true);
         }
-        catch(AxisCameraException cameraEx){
-            cameraEx.printStackTrace();
+        else
+        {
+             dsout.println(DriverStationLCD.Line.kUser5, 1, "");
+             kickerControl.getSolenoid1().set(false);
+             kickerControl.getSolenoid2().set(false);
+             kickerControl.getSolenoid3().set(false);
+             kickerControl.getSolenoid4().set(false);
         }
         catch(NIVisionException ve){
             ve.printStackTrace();
@@ -296,11 +325,11 @@ private double throttleDynamic = 0.0;
 
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        if(ultrasonic1 != null)
+        if(ultrasonicLF != null)
         {
             if(UDelay == 10)
             {
-                ultraV = ultrasonic1.getAverageVoltage();
+                ultraV = ultrasonicLF.getAverageVoltage();
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 UDelay = 0;
             }
