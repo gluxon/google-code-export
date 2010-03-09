@@ -6,7 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package edu.wpi.first.wpilibj.templates;
-
+import edu.fhs.input.IRRangeFinderFHS;
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
@@ -52,7 +52,7 @@ private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
-private AnalogChannel IR;
+private IRRangeFinderFHS IR;
 private UltrasonicFHS ultrasonicLF;
 private UltrasonicFHS ultrasonicRF;
 private UltrasonicFHS ultrasonicLB;
@@ -150,11 +150,12 @@ private CircleFinder circle;
         try
         {
             pressure = new AnalogChannel(1,1);
-            IR = new AnalogChannel(1,2);
+            IR = new IRRangeFinderFHS(1,2);
             ultrasonicLF = new UltrasonicFHS(1,3);
             ultrasonicLB = new UltrasonicFHS(1,4);
             ultrasonicRF = new UltrasonicFHS(1,5);
             ultrasonicRB= new UltrasonicFHS(1,6);
+            gyro = new Gyro(1,7);
         }
          catch(NullPointerException n)
          {
@@ -165,7 +166,10 @@ private CircleFinder circle;
         {
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
+        
         dsout.updateLCD();
+        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRF,IR,kickerControl);
+        circle = new CircleFinder(gyro,joy1,drive);
     }
 
     /**
@@ -185,7 +189,7 @@ private CircleFinder circle;
                 compressorRelay.set(Relay.Value.kOff);
             }
         }
-        
+        /*
         leftFrontJag.set(0);
         rightFrontJag.set(0);
         leftRearJag.set(0);
