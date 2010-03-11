@@ -58,6 +58,7 @@ private UltrasonicFHS ultrasonicRF;
 private UltrasonicFHS ultrasonicLB;
 private UltrasonicFHS ultrasonicRB;
 private Gyro gyro;
+private Gyro gyro2;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int UDelay = 10;
 private int IRDelay = 10;
@@ -149,13 +150,14 @@ private CircleFinder circle;
 
         try
         {
-            pressure = new AnalogChannel(1,1);
-            IR = new IRRangeFinderFHS(1,2);
+            //pressure = new AnalogChannel(1,1);
+            //IR = new IRRangeFinderFHS(1,2);
             ultrasonicLF = new UltrasonicFHS(1,3);
             ultrasonicLB = new UltrasonicFHS(1,4);
             ultrasonicRF = new UltrasonicFHS(1,5);
             ultrasonicRB= new UltrasonicFHS(1,6);
-            gyro = new Gyro(1,7);
+            gyro = new Gyro(1,1);
+            gyro2 = new Gyro(1,2);
         }
          catch(NullPointerException n)
          {
@@ -337,7 +339,7 @@ private CircleFinder circle;
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 UDelay = 0;
             }
-            dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
+            //dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
             UDelay++;
         }
         if(IR != null && pressure != null)
@@ -348,9 +350,11 @@ private CircleFinder circle;
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 IRDelay = 0;
             }
-            dsout.println(DriverStationLCD.Line.kUser5, 1, "IR voltage: " + IRV);
+            //dsout.println(DriverStationLCD.Line.kUser5, 1, "IR voltage: " + IRV);
             IRDelay++;
         }
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "gyro1: " + gyro.getAngle());
+        dsout.println(DriverStationLCD.Line.kUser5, 1, "gyro2: " + gyro2.getAngle());
         dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
         /*
         dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
