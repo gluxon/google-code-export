@@ -329,7 +329,7 @@ private CircleFinder circle;
 
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        if(ultrasonicLF != null)
+        if(ultrasonicLF != null && pressure != null)
         {
             if(UDelay == 10)
             {
@@ -340,7 +340,7 @@ private CircleFinder circle;
             dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
             UDelay++;
         }
-        if(IR != null)
+        if(IR != null && pressure != null)
         {
             if(IRDelay == 10)
             {
