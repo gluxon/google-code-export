@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj.image.ColorImage;
  */
 public class RobotTemplate extends IterativeRobot
 {
+    public static final int SLOT_1 = 1;
+    public static final int SLOT_8 = 8;
 private AuxDriver auxDrive;
 private Joystick joy1;
 private Joystick joy2;
@@ -106,7 +108,7 @@ private CircleFinder circle;
        dsout = DriverStationLCD.getInstance();
         try
         {
-            compressorRelay = new Relay(8,Relay.Direction.kForward);
+            compressorRelay = new Relay(SLOT_8,Relay.Direction.kForward);
             transducer = new DigitalInput(10);
         }
         catch(NullPointerException n)
@@ -135,10 +137,10 @@ private CircleFinder circle;
         dsout.updateLCD();
        try
        {
-            solenoid1 = new Solenoid(8,1);
-            solenoid2 = new Solenoid(8,2);
-            solenoid3 = new Solenoid(8,3);
-            solenoid4 = new Solenoid(8,4);
+            solenoid1 = new Solenoid(SLOT_8,1);
+            solenoid2 = new Solenoid(SLOT_8,2);
+            solenoid3 = new Solenoid(SLOT_8,3);
+            solenoid4 = new Solenoid(SLOT_8,4);
             kickerControl.setSolenoid1(solenoid1);
             kickerControl.setSolenoid2(solenoid2);
             kickerControl.setSolenoid3(solenoid3);
@@ -152,10 +154,10 @@ private CircleFinder circle;
         {
             //pressure = new AnalogChannel(1,1);
             //IR = new IRRangeFinderFHS(1,2);
-            ultrasonicLF = new UltrasonicFHS(1,3);
-            ultrasonicLB = new UltrasonicFHS(1,4);
-            ultrasonicRF = new UltrasonicFHS(1,5);
-            ultrasonicRB= new UltrasonicFHS(1,6);
+            ultrasonicLF = new UltrasonicFHS(SLOT_1,3);
+            ultrasonicLB = new UltrasonicFHS(SLOT_1,4);
+            ultrasonicRF = new UltrasonicFHS(SLOT_1,5);
+            ultrasonicRB= new UltrasonicFHS(SLOT_1,6);
             gyro = new Gyro(1,1);
             gyro2 = new Gyro(1,2);
         }
