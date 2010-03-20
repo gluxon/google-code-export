@@ -395,6 +395,24 @@ private CircleFinder circle;
              kickerControl.getSolenoid4().set(false);
              kickerDelay++;
         }
+
+        if(joy2.getRawButton(3))
+        {
+            armAngle.set(true);
+        }
+        else{armAngle.set(false);}
+        if(joy2.getRawButton(7))
+        {
+            armExtention.set(true);
+        }
+        else{armExtention.set(false);}
+
+        if(joy2.getRawButton(1))
+        {
+            armWinch.set(joy2.getY());
+        }
+        else{armWinch.set(0);}
+
         dsout.updateLCD();
     }
 
