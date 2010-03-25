@@ -36,7 +36,7 @@ private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
-private Victor armWinch;
+private Jaguar armWinch;
 private RobotDrive drive;
 private ColorImage image1;
 private AxisCamera axisCamera1;
@@ -48,8 +48,10 @@ private Solenoid solenoid1;
 private Solenoid solenoid2;
 private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
 private Solenoid solenoid4;
-private Solenoid armAngle;
-private Solenoid armExtention;
+private Solenoid armAngleOut;
+private Solenoid armAngleIn;
+private Solenoid armExtentionOut;
+private Solenoid armExtentionIn;
 private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
@@ -100,9 +102,11 @@ private CircleFinder circle;
                         super.set(d * -1);
                     }
                 };
-        armWinch = new Victor(5);
-        armAngle = new Solenoid(5);
-        armExtention = new Solenoid(6);
+        armWinch = new Jaguar(5);
+        armAngleOut = new Solenoid(5);
+        armAngleIn = new Solenoid(6);
+        armExtentionOut = new Solenoid(7);
+        armExtentionIn = new Solenoid(8);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
        dsout = DriverStationLCD.getInstance();
@@ -299,28 +303,35 @@ private CircleFinder circle;
             ve.printStackTrace();
         }
          * */
-        if(joy2.getRawButton(2))
-        {
-            leftFrontJag.set(-1);
-            rightFrontJag.set(1);
-            leftRearJag.set(-1);
-            rightRearJag.set(1);
-        }
         if(joy2.getRawButton(3))
         {
-            armExtention.set(true);
+            armExtentionIn.set(false);
+            armExtentionOut.set(true);
         }
         else if(joy2.getRawButton(4))
         {
-            armExtention.set(false);
+            armExtentionIn.set(true);
+            armExtentionOut.set(false);
+        }
+        else
+        {
+            armExtentionIn.set(false);
+            armExtentionOut.set(false);
         }
         if(joy2.getRawButton(5))
         {
-            armAngle.set(true);
+            armAngleIn.set(false);
+            armAngleOut.set(true);
         }
         else if(joy2.getRawButton(6))
         {
-            armAngle.set(false);
+            armAngleIn.set(true);
+            armAngleOut.set(false);
+        }
+        else
+        {
+            armAngleIn.set(false);
+            armAngleOut.set(false);
         }
         if(joy2.getTrigger())
         {
@@ -395,23 +406,6 @@ private CircleFinder circle;
              kickerControl.getSolenoid4().set(false);
              kickerDelay++;
         }
-
-        if(joy2.getRawButton(3))
-        {
-            armAngle.set(true);
-        }
-        else{armAngle.set(false);}
-        if(joy2.getRawButton(7))
-        {
-            armExtention.set(true);
-        }
-        else{armExtention.set(false);}
-
-        if(joy2.getRawButton(1))
-        {
-            armWinch.set(joy2.getY());
-        }
-        else{armWinch.set(0);}
 
         dsout.updateLCD();
     }
