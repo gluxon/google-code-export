@@ -6,7 +6,6 @@
 /*----------------------------------------------------------------------------*/
 
 package edu.wpi.first.wpilibj.templates;
-import edu.fhs.input.IRRangeFinderFHS;
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
@@ -57,10 +56,8 @@ private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
 private UltrasonicFHS IR;
-private UltrasonicFHS ultrasonicLF;
-private UltrasonicFHS ultrasonicRF;
-private UltrasonicFHS ultrasonicLB;
-private UltrasonicFHS ultrasonicRB;
+private UltrasonicFHS ultrasonicLeft;
+private UltrasonicFHS ultrasonicRight;
 private Gyro gyro;
 private Gyro gyro2;
 private PitchSmoothing pitchAdj = new PitchSmoothing(2);
@@ -158,10 +155,8 @@ private CircleFinder circle;
         {
             //pressure = new AnalogChannel(1,1);
             //IR = new IRRangeFinderFHS(1,2);
-            ultrasonicLF = new UltrasonicFHS(SLOT_1,3);
-            ultrasonicLB = new UltrasonicFHS(SLOT_1,4);
-            ultrasonicRF = new UltrasonicFHS(SLOT_1,5);
-            ultrasonicRB= new UltrasonicFHS(SLOT_1,6);
+            ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
+            ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
             gyro = new Gyro(1,1);
             gyro2 = new Gyro(1,2);
         }
@@ -176,7 +171,7 @@ private CircleFinder circle;
         }
         
         dsout.updateLCD();
-        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRF,IR,kickerControl);
+        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,IR,kickerControl);
         circle = new CircleFinder(gyro,joy1,drive);
     }
 
@@ -198,7 +193,13 @@ private CircleFinder circle;
             }
         }
 
-
+        if(ultrasonicRight.getRangeInches() > 110)
+        {
+            leftFrontJag.set(0);
+            rightFrontJag.set(0);
+            leftRearJag.set(0);
+            rightRearJag.set(0);
+        }
 
         /*
         leftFrontJag.set(0);
@@ -347,11 +348,11 @@ private CircleFinder circle;
 
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        if(ultrasonicLF != null && pressure != null)
+        if(ultrasonicLeft != null && pressure != null)
         {
             if(UDelay == 10)
             {
-                ultraV = ultrasonicLF.getAverageVoltage();
+                ultraV = ultrasonicLeft.getAverageVoltage();
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 UDelay = 0;
             }
