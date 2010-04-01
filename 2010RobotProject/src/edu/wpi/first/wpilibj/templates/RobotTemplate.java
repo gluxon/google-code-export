@@ -7,13 +7,10 @@
 
 package edu.wpi.first.wpilibj.templates;
 import edu.fhs.actuators.KickerControl;
-import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.vision.VisionDirectedDrive;
-import edu.fhs.vision.CircleFinder;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.camera.AxisCamera;
-import edu.wpi.first.wpilibj.image.ColorImage;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -58,6 +55,7 @@ private int kickerDelay2 = 0;
 private boolean kicked = false;
 private double psi;
 private VisionDirectedDrive vision;
+private int fieldPosition;
 
     /**    *
      * This function is run when the robot is first started up and should be
@@ -163,7 +161,7 @@ private VisionDirectedDrive vision;
      */
     public void autonomousPeriodic()
     {
-        
+        fieldPosition = 1;
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
@@ -185,7 +183,18 @@ private VisionDirectedDrive vision;
         }
         else
         {
-            vision.autonomousZoneOne();
+            if(fieldPosition == 1)
+            {
+                vision.autonomousCloseZone();
+            }
+            else if(fieldPosition == 2)
+            {
+                vision.autonomousMiddleZone();
+            }
+            else if(fieldPosition == 3)
+            {
+                vision.autonomousFarZone();
+            }
         }
 
         /*
