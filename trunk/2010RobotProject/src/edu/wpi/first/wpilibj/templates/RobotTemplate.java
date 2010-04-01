@@ -7,10 +7,8 @@
 
 package edu.wpi.first.wpilibj.templates;
 import edu.fhs.actuators.KickerControl;
-import edu.fhs.actuators.PitchSmoothing;
 import edu.fhs.actuators.Pneumatics;
 import edu.fhs.input.UltrasonicFHS;
-import edu.fhs.input.AuxDriver;
 import edu.fhs.vision.VisionDirectedDrive;
 import edu.fhs.vision.CircleFinder;
 import edu.wpi.first.wpilibj.*;
@@ -27,20 +25,14 @@ public class RobotTemplate extends IterativeRobot
 {
     public static final int SLOT_1 = 1;
     public static final int SLOT_8 = 8;
-private AuxDriver auxDrive;
 private Joystick joy1;
 private Joystick joy2;
-private Joystick joy3;
 private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
 private Victor armWinch;
 private RobotDrive drive;
-private ColorImage image1;
-private AxisCamera axisCamera1;
-private Relay re1;
-private Relay re2;
 private Relay compressorRelay;
 private DigitalInput transducer;
 private Solenoid solenoid1;
@@ -53,26 +45,19 @@ private Solenoid armExtentionOut;
 private Solenoid armExtentionIn;
 private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
-private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
-private UltrasonicFHS IR;
+private UltrasonicFHS ultrasonicKicker;
 private UltrasonicFHS ultrasonicLeft;
 private UltrasonicFHS ultrasonicRight;
 private Gyro gyro;
 private Gyro gyro2;
-private PitchSmoothing pitchAdj = new PitchSmoothing(2);
 private int UDelay = 10;
 private int IRDelay = 10;
 private int kickerDelay = 100;
 private int kickerDelay2 = 0;
 private boolean kicked = false;
-private double ultraV;
-private double IRV;
 private double psi;
-private int joy1Angle = 0;
-private double throttleDynamic = 0.0;
 private VisionDirectedDrive vision;
-private CircleFinder circle;
 
     /**    *
      * This function is run when the robot is first started up and should be
@@ -82,7 +67,6 @@ private CircleFinder circle;
     {
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
-        joy3 = new Joystick(3);
         leftFrontJag = new Jaguar(1);
         leftRearJag = new Jaguar(3);
         rightFrontJag = new Jaguar(2)
@@ -153,12 +137,12 @@ private CircleFinder circle;
 
         try
         {
-            //pressure = new AnalogChannel(1,1);
-            //IR = new IRRangeFinderFHS(1,2);
+            pressure = new AnalogChannel(SLOT_1,7);
+            ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
             ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
-                ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
-            gyro = new Gyro(1,1);
-            gyro2 = new Gyro(1,2);
+            ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
+            gyro = new Gyro(SLOT_1,1);
+            gyro2 = new Gyro(SLOT_1,2);
         }
          catch(NullPointerException n)
          {
@@ -171,8 +155,7 @@ private CircleFinder circle;
         }
         
         dsout.updateLCD();
-        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,IR,kickerControl);
-        circle = new CircleFinder(gyro,joy1,drive);
+        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,ultrasonicKicker,kickerControl);
     }
 
     /**
@@ -248,24 +231,7 @@ private CircleFinder circle;
         {
             compressorRelay.set(Relay.Value.kOff);
         }
-
-
-
-            /*if(joy1.getX() < -0.1)
-            {
-                throttleDynamic = -joy1.getX();
-                joy1Angle = 270;
-            }
-            else if(joy1.getX() > 0.1)
-            {
-                throttleDynamic = joy1.getX();
-                joy1Angle = 90;
-            }
-            else
-            {
-                throttleDynamic = joy1.getY();
-                joy1Angle = 0;
-            }*/
+         
         if(joy1.getRawButton(7) == true)
         {
             drive.holonomicDrive(-joy1.getX(), 90,joy1.getThrottle());
@@ -275,48 +241,13 @@ private CircleFinder circle;
             rightRearJag.set(rightRearJag.get()*(10.0/7.0));
         }
         else{drive.holonomicDrive(-joy1.getY(), 0,joy1.getThrottle());}
-            
-        //drive.tankDrive(joy1.getY(),joy2.getY());//TankDrive
-        /*
-        
-        
-         
-        dsout.println(DriverStationLCD.Line.kMain6, 1,"Voltage" + truncate(ultrasonicLF.getAverageVoltage()) );
-        dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
-        psi = pressure.getAverageVoltage()*37.76-32.89;
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));   
-       
-        circle.centerOnCircle(joy1.getRawButton(1));
-
-       
-        
-        if(joy1.getRawButton(4))
-        {
-             dsout.println(DriverStationLCD.Line.kUser5, 1, "Kicking...");
-//             pneumatics.kick(kickerControl);
-            kickerControl.getSolenoid1().set(true);
-            kickerControl.getSolenoid2().set(true);
-            kickerControl.getSolenoid3().set(true);
-            kickerControl.getSolenoid4().set(true);
-        }
-        else
-        {
-             dsout.println(DriverStationLCD.Line.kUser5, 1, "");
-             kickerControl.getSolenoid1().set(false);
-             kickerControl.getSolenoid2().set(false);
-             kickerControl.getSolenoid3().set(false);
-             kickerControl.getSolenoid4().set(false);
-        }
-        catch(NIVisionException ve){
-            ve.printStackTrace();
-        }
-         * */
+               
         if(joy2.getRawButton(3))
         {
             armExtentionIn.set(false);
             armExtentionOut.set(true);
         }
-        else if(joy2.getRawButton(4))
+        else if(joy2.getRawButton(2))
         {
             armExtentionIn.set(true);
             armExtentionOut.set(false);
@@ -326,12 +257,12 @@ private CircleFinder circle;
             armExtentionIn.set(false);
             armExtentionOut.set(false);
         }
-        if(joy2.getRawButton(5))
+        if(joy2.getRawButton(6))
         {
             armAngleIn.set(false);
             armAngleOut.set(true);
         }
-        else if(joy2.getRawButton(6))
+        else if(joy2.getRawButton(7))
         {
             armAngleIn.set(true);
             armAngleOut.set(false);
@@ -356,22 +287,20 @@ private CircleFinder circle;
         {
             if(UDelay == 10)
             {
-                ultraV = ultrasonicLeft.getAverageVoltage();
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 UDelay = 0;
             }
             //dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
             UDelay++;
         }
-        if(IR != null && pressure != null)
+        if(ultrasonicKicker != null && pressure != null)
         {
             if(IRDelay == 10)
             {
-                IRV = IR.getAverageVoltage();
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 IRDelay = 0;
             }
-            //dsout.println(DriverStationLCD.Line.kUser5, 1, "IR voltage: " + IRV);
+            
             IRDelay++;
         }
         dsout.println(DriverStationLCD.Line.kUser4, 1, "gyro1: " + gyro.getAngle());
@@ -385,8 +314,6 @@ private CircleFinder circle;
          * */
         if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
         {
-//          pneumatics.kick(kickerControl);
-            kickerControl.getSolenoid1().set(true);
             kickerControl.getSolenoid2().set(true);
             kickerControl.getSolenoid3().set(true);
             kickerControl.getSolenoid4().set(true);
