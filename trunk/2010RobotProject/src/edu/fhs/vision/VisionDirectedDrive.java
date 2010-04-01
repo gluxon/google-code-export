@@ -60,7 +60,7 @@ public class VisionDirectedDrive{
         driveTowardsRamp.setSetpoint(DISTANCE_FROM_RAMP);
     }
     
-    public void autonomousZoneOne(){
+    public void autonomousCloseZone(){
 
         
         switch (mode){
@@ -82,7 +82,7 @@ public class VisionDirectedDrive{
         
     }
     
-    public void autonomousZoneTwo(){
+    public void autonomousMiddleZone(){
         
         switch (mode){
 
@@ -128,8 +128,13 @@ public class VisionDirectedDrive{
 
             default: break;
         }
-        
     }
+
+        public void autonomousFarZone(){
+
+        }
+        
+    
     
     public void kick(boolean k){
         kc.getSolenoid1().set(k);
