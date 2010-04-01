@@ -174,7 +174,7 @@ private int fieldPosition;
             }
         }
 
-        if(ultrasonicRight.getRangeInches() > 110)
+        if(ultrasonicLeft.getRangeInches() > 110)
         {
             leftFrontJag.set(0);
             rightFrontJag.set(0);
