@@ -36,7 +36,7 @@ private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
-private Jaguar armWinch;
+private Victor armWinch;
 private RobotDrive drive;
 private ColorImage image1;
 private AxisCamera axisCamera1;
@@ -56,7 +56,7 @@ private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private Pneumatics pneumatics = new Pneumatics();
 private AnalogChannel pressure;
-private IRRangeFinderFHS IR;
+private UltrasonicFHS IR;
 private UltrasonicFHS ultrasonicLF;
 private UltrasonicFHS ultrasonicRF;
 private UltrasonicFHS ultrasonicLB;
@@ -102,7 +102,7 @@ private CircleFinder circle;
                         super.set(d * -1);
                     }
                 };
-        armWinch = new Jaguar(5);
+        armWinch = new Victor(5);
         armAngleOut = new Solenoid(5);
         armAngleIn = new Solenoid(6);
         armExtentionOut = new Solenoid(7);
@@ -197,6 +197,9 @@ private CircleFinder circle;
                 compressorRelay.set(Relay.Value.kOff);
             }
         }
+
+
+
         /*
         leftFrontJag.set(0);
         rightFrontJag.set(0);

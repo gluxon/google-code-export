@@ -29,13 +29,13 @@ public class VisionDirectedDrive{
     private int kickingDelay;
     private PIDController driveTowardsRamp;
     private UltrasonicFHS ultraFrontRight;
-    private IRRangeFinderFHS ir;
+    private UltrasonicFHS ir;
     private KickerControl kc;
     private final double DISTANCE_FROM_RAMP = 24.0;
-    private final double KICKING_DISTANCE_THRESHHOLD = 9.0;
+    private final double KICKING_DISTANCE_THRESHHOLD = 7.0;
     
 
-    public VisionDirectedDrive(Gyro g, Joystick j, RobotDrive d,UltrasonicFHS fr,IRRangeFinderFHS i,KickerControl k){
+    public VisionDirectedDrive(Gyro g, Joystick j, RobotDrive d,UltrasonicFHS fr,UltrasonicFHS i,KickerControl k){
         gyro = g;
         js = j;
         drive = d;
