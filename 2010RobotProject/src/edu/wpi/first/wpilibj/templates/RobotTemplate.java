@@ -156,7 +156,7 @@ private CircleFinder circle;
             //pressure = new AnalogChannel(1,1);
             //IR = new IRRangeFinderFHS(1,2);
             ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
-            ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
+                ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
             gyro = new Gyro(1,1);
             gyro2 = new Gyro(1,2);
         }
@@ -200,6 +200,10 @@ private CircleFinder circle;
             leftRearJag.set(0);
             rightRearJag.set(0);
         }
+        else
+        {
+            vision.autonomousZoneOne();
+        }
 
         /*
         leftFrontJag.set(0);
@@ -214,7 +218,7 @@ private CircleFinder circle;
         leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
         */
-        vision.autonomousZoneOne();
+        
          }
 
     /**
