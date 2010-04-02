@@ -103,20 +103,6 @@ private int fieldPosition;
                 compressorRelay.set(Relay.Value.kOff);
         }
         
-        /*
-        gyro = new Gyro(1,9);
-        axisCamera1 = AxisCamera.getInstance();
-        try {
-            re1 = new Relay(3);
-            re2 = new Relay(4);
-            auxDrive = new AuxDriver(joy3);
-            ultra1 = new Ultrasonic(5,6);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Unable to init devices correctly!" );
-            e.printStackTrace();
-        }
-         * */
-        
         dsout.updateLCD();
        try
        {
@@ -136,9 +122,9 @@ private int fieldPosition;
         try
         {
             pressure = new AnalogChannel(SLOT_1,7);
-            ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
-            ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
-            ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
+            //ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
+            //ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
+            //ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
             gyro = new Gyro(SLOT_1,1);
             gyro2 = new Gyro(SLOT_1,2);
         }
@@ -153,7 +139,7 @@ private int fieldPosition;
         }
         
         dsout.updateLCD();
-        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,ultrasonicKicker,kickerControl);
+        //vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,ultrasonicKicker,kickerControl);
     }
 
     /**
@@ -183,7 +169,7 @@ private int fieldPosition;
                 compressorRelay.set(Relay.Value.kOff);
             }
         }
-
+/*
         if(ultrasonicLeft.getRangeInches() > 110)
         {
             leftFrontJag.set(0);
@@ -206,7 +192,7 @@ private int fieldPosition;
                 vision.autonomousFarZone(); //does nothing
             }
         }
-
+*/
         /*
         leftFrontJag.set(0);
         rightFrontJag.set(0);
@@ -252,7 +238,9 @@ private int fieldPosition;
         }
          
         drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
-               
+
+        psi = pressure.getAverageVoltage()*37.76-32.89;
+
         if(joy2.getRawButton(3))
         {
             armExtentionIn.set(false);
