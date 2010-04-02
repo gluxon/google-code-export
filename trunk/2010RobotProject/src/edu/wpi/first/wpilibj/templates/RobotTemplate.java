@@ -161,7 +161,17 @@ private int fieldPosition;
      */
     public void autonomousPeriodic()
     {
-        fieldPosition = 1;
+        boolean digitalIn1 = DriverStation.getInstance().getDigitalIn(1);
+        boolean digitalIn2 = DriverStation.getInstance().getDigitalIn(2);
+        boolean digitalIn3 = DriverStation.getInstance().getDigitalIn(3);
+
+        int lightOne = digitalIn1 ? 1 : 0;
+        int lightTwo = digitalIn2 ? 1 : 0;
+        int lightThree = digitalIn3 ? 1 : 0;
+        fieldPosition = lightOne + lightTwo + lightThree;
+        if (fieldPosition == 0 || fieldPosition > 3) {
+            fieldPosition = 0;
+        }
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
