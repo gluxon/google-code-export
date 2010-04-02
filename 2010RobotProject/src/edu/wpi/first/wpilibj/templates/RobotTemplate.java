@@ -193,7 +193,7 @@ private int fieldPosition;
             }
             else if(fieldPosition == 3)
             {
-                vision.autonomousFarZone();
+                vision.autonomousFarZone(); //does nothing
             }
         }
 
@@ -241,15 +241,7 @@ private int fieldPosition;
             compressorRelay.set(Relay.Value.kOff);
         }
          
-        if(joy1.getRawButton(7) == true)
-        {
-            drive.holonomicDrive(-joy1.getX(), 90,joy1.getThrottle());
-            leftFrontJag.set(leftFrontJag.get()*(10.0/7.0));
-            rightFrontJag.set(rightFrontJag.get()*(10.0/7.0));
-            leftRearJag.set(leftRearJag.get()*(10.0/7.0));
-            rightRearJag.set(rightRearJag.get()*(10.0/7.0));
-        }
-        else{drive.holonomicDrive(-joy1.getY(), 0,joy1.getThrottle());}
+        drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
                
         if(joy2.getRawButton(3))
         {
