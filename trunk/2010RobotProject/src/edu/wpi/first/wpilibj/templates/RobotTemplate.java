@@ -122,9 +122,9 @@ private int fieldPosition;
         try
         {
             pressure = new AnalogChannel(SLOT_1,7);
-            //ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
-            //ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
-            //ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
+            ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
+            ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
+            ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
             gyro = new Gyro(SLOT_1,1);
             gyro2 = new Gyro(SLOT_1,2);
         }
@@ -142,9 +142,6 @@ private int fieldPosition;
         //vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicRight,ultrasonicKicker,kickerControl);
     }
 
-    /**
-     * This function is called periodically during autonomous
-     */
     public void autonomousPeriodic()
     {
         boolean digitalIn1 = DriverStation.getInstance().getDigitalIn(1);
@@ -169,7 +166,7 @@ private int fieldPosition;
                 compressorRelay.set(Relay.Value.kOff);
             }
         }
-/*
+
         if(ultrasonicLeft.getRangeInches() > 110)
         {
             leftFrontJag.set(0);
@@ -192,26 +189,9 @@ private int fieldPosition;
                 vision.autonomousFarZone(); //does nothing
             }
         }
-*/
-        /*
-        leftFrontJag.set(0);
-        rightFrontJag.set(0);
-        leftRearJag.set(0);
-        rightRearJag.set(0);
-        /*
-        double inputSpeed = 0.5;
-        updateDashboard();
-        leftFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        rightFrontJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        leftRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        rightRearJag.set(pitchAdj.gyroAutonomousAngleSpeedAdjust(inputSpeed, isAutonomous(), gyro.getAngle()));
-        */
-        
-         }
 
-    /**
-     * This function is called periodically during operator control
-     */
+     
+    }
     public void teleopPeriodic()
     {
 
