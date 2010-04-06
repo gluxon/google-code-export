@@ -10,6 +10,8 @@ import edu.fhs.actuators.KickerControl;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.vision.VisionDirectedDrive;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.samples.Target;
+import java.util.Date;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -56,6 +58,8 @@ private boolean kicked = false;
 private double psi;
 private VisionDirectedDrive vision;
 private int fieldPosition;
+private Date time = new Date();
+private Target[] targets = new Target[1];
 
     /**    *
      * This function is run when the robot is first started up and should be
@@ -195,7 +199,8 @@ private int fieldPosition;
     public void teleopPeriodic()
     {
 
-        updateDashboard();
+        updateDashboardLow();
+        updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
@@ -329,7 +334,7 @@ private int fieldPosition;
         return ((double) ((int) (100 * rawDouble))) / 100;
     }
 
-    void updateDashboard() {
+    void updateDashboardLow() {
         Dashboard lowDashData = DriverStation.getInstance().getDashboardPackerLow();
         lowDashData.addCluster();
         {
@@ -406,5 +411,57 @@ private int fieldPosition;
         lowDashData.finalizeCluster();
         lowDashData.commit();
 
+    }
+
+    public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate,
+            double targetX, Target[] targets) {
+
+        Dashboard highDashData = DriverStation.getInstance().getDashboardPackerHigh();
+        highDashData.addCluster(); // wire (2 elements)
+        {
+            highDashData.addCluster(); // tracking data
+            {
+                highDashData.addDouble(joyStickX); // Joystick X
+                highDashData.addDouble(((gyroAngle + 360.0 + 180.0) % 360.0) - 180.0); // angle
+                highDashData.addDouble(gyroRate); // angular rate
+                highDashData.addDouble(targetX); // other X
+                }
+            highDashData.finalizeCluster();
+            highDashData.addCluster(); // target Info (2 elements)
+            {
+                highDashData.addArray();
+                {
+                    for (int i = 0; i < targets.length; i++) {
+                        highDashData.addCluster(); // targets
+                        {
+                            highDashData.addDouble(targets[i].m_score); // target score
+                            highDashData.addCluster(); // Circle Description (5 elements)
+                            {
+                                highDashData.addCluster(); // Position (2 elements)
+                                {
+                                    highDashData.addFloat((float) (targets[i].m_xPos / targets[i].m_xMax)); // X
+                                    highDashData.addFloat((float) targets[i].m_yPos); // Y
+                                    }
+                                highDashData.finalizeCluster();
+
+                                highDashData.addDouble(targets[i].m_rotation); // Angle
+                                highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
+                                highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
+                                highDashData.addDouble(targets[i].m_rawScore); // Raw score
+                                }
+                            highDashData.finalizeCluster(); // Position
+                            }
+                        highDashData.finalizeCluster(); // targets
+                        }
+                }
+                highDashData.finalizeArray();
+
+
+                highDashData.addInt((int) time.getTime());
+            }
+            highDashData.finalizeCluster(); // target Info
+            }
+        highDashData.finalizeCluster(); // wire
+        highDashData.commit();
     }
 }
