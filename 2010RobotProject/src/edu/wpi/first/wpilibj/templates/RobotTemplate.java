@@ -196,7 +196,14 @@ private Target[] targets = new Target[1];
     {
 
         updateDashboardLow();
-        updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
+        if(gyro != null)
+        {
+            updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
+        }
+        else
+        {
+            updateDashboardHigh(0.0, 0.0, 0.0, 0.0, targets);
+        }
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
