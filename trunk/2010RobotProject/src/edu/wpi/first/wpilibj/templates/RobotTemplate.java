@@ -122,7 +122,7 @@ private Target[] targets = new Target[1];
         try
         {
             pressure = new AnalogChannel(SLOT_1,7);
-            ultrasonicKicker = new UltrasonicFHS(SLOT_1,8);
+            ultrasonicKicker = new UltrasonicFHS(SLOT_1,6);
             ultrasonicLeft = new UltrasonicFHS(SLOT_1,3);
             ultrasonicRight = new UltrasonicFHS(SLOT_1,4);
             gyro = new Gyro(SLOT_1,1);
