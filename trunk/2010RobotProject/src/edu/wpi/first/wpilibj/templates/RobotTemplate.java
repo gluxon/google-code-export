@@ -419,70 +419,52 @@ private Target[] targets = new Target[1];
 
     public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate,
             double targetX, Target[] targets) {
-
         Dashboard highDashData = DriverStation.getInstance().getDashboardPackerHigh();
         highDashData.addCluster(); // wire (2 elements)
-        {
-            highDashData.addCluster(); // tracking data
-            {
-                highDashData.addDouble(joyStickX); // Joystick X
-                highDashData.addDouble(((gyroAngle + 360.0 + 180.0) % 360.0) - 180.0); // angle
-                highDashData.addDouble(gyroRate); // angular rate
-                highDashData.addDouble(targetX); // other X
-                }
+        highDashData.addCluster(); // tracking data
+        highDashData.addDouble(joyStickX); // Joystick X
+        highDashData.addDouble(((gyroAngle + 360.0 + 180.0) % 360.0) - 180.0); // angle
+        highDashData.addDouble(gyroRate); // angular rate
+        highDashData.addDouble(targetX); // other X
+        highDashData.finalizeCluster();
+        highDashData.addCluster(); // target Info (2 elements)
+        highDashData.addArray();
+        for (int i = 0; i < targets.length; i++) {
+            highDashData.addCluster(); // targets
+
+            double targetScore = 0;
+            double m_xPos = 0;
+            double m_xMax = 1; //this becomes a divisor
+            double m_yPos = 0;
+            if (targets != null & targets[i] != null) {
+                targetScore = targets[i].m_score;
+                m_xPos = targets[i].m_xPos;
+                m_xMax = targets[i].m_xMax;
+                m_yPos = targets[i].m_yPos;
+            }
+            highDashData.addDouble(targetScore); // target score
+            highDashData.addCluster(); // Circle Description (5 elements)
+            highDashData.addCluster(); // Position (2 elements)
+            highDashData.addFloat((float) (m_xPos / m_xMax)); // X
+            highDashData.addFloat((float) m_yPos); // Y
             highDashData.finalizeCluster();
-            highDashData.addCluster(); // target Info (2 elements)
-            {
-                highDashData.addArray();
-                {
-                    for (int i = 0; i < targets.length; i++) {
-                        highDashData.addCluster(); // targets
-                        {
-                            double targetScore = 0;
-                            double m_xPos = 0;
-                            double m_xMax = 1; //this becomes a divisor
-                            double m_yPos = 0;
-                            if (targets != null & targets[i] != null) {
-                                targetScore = targets[i].m_score;
-                                m_xPos = targets[i].m_xPos;
-                                m_xMax = targets[i].m_xMax;
-                                m_yPos = targets[i].m_yPos;
-                            }
-                            highDashData.addDouble(targetScore); // target score
-                            highDashData.addCluster(); // Circle Description (5 elements)
-                            {
-                                highDashData.addCluster(); // Position (2 elements)
-                                {
-
-
-                                    highDashData.addFloat((float) (m_xPos / m_xMax)); // X
-
-                                    highDashData.addFloat((float) m_yPos); // Y
-                                }
-                                highDashData.finalizeCluster();
-                                if (targets == null || targets[i]==null) {
-                                    highDashData.addDouble(0d); // Angle
-                                    highDashData.addDouble(0d); // Major Radius
-                                    highDashData.addDouble(0d); // Minor Radius
-                                    highDashData.addDouble(0d); // Raw score
-                                } else {
-                                    highDashData.addDouble(targets[i].m_rotation); // Angle
-                                    highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
-                                    highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
-                                    highDashData.addDouble(targets[i].m_rawScore); // Raw score
-                                }
-                            highDashData.finalizeCluster(); // Position
-                            }
-                        highDashData.finalizeCluster(); // targets
-                        }
-                }
-                highDashData.finalizeArray();
-
-
-                highDashData.addInt((int) time.getTime());
+            if (targets == null || targets[i] == null) {
+                highDashData.addDouble(0d); // Angle
+                highDashData.addDouble(0d); // Major Radius
+                highDashData.addDouble(0d); // Minor Radius
+                highDashData.addDouble(0d); // Raw score
+            } else {
+                highDashData.addDouble(targets[i].m_rotation); // Angle
+                highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
+                highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
+                highDashData.addDouble(targets[i].m_rawScore); // Raw score
             }
-            highDashData.finalizeCluster(); // target Info
-            }
+            highDashData.finalizeCluster(); // Position
+        }
+        highDashData.finalizeCluster(); // targets
+        highDashData.finalizeArray();
+        highDashData.addInt((int) time.getTime());
+        highDashData.finalizeCluster(); // target Info
         highDashData.finalizeCluster(); // wire
         highDashData.commit();
     }
