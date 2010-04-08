@@ -38,10 +38,8 @@ private Solenoid solenoid1;
 private Solenoid solenoid2;
 private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
 private Solenoid solenoid4;
-private Solenoid armAngleOut;
-private Solenoid armAngleIn;
-private Solenoid armExtentionOut;
-private Solenoid armExtentionIn;
+private Solenoid armAngle;
+private Solenoid armExtention;
 private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private AnalogChannel pressure;
@@ -86,10 +84,8 @@ private Target[] targets = new Target[1];
                     }
                 };
         armWinch = new Victor(5);
-        armAngleOut = new Solenoid(5);
-        armAngleIn = new Solenoid(6);
-        armExtentionOut = new Solenoid(7);
-        armExtentionIn = new Solenoid(8);
+        armAngle = new Solenoid(5);
+        armExtention = new Solenoid(7);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
        dsout = DriverStationLCD.getInstance();
@@ -222,43 +218,44 @@ private Target[] targets = new Target[1];
             compressorRelay.set(Relay.Value.kOff);
         }
          
-        drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+        if(joy1.getMagnitude() > .5 || joy1.getMagnitude() < -.5)
+        {
+            drive.holonomicDrive(joy1.getMagnitude() * 2, joy1.getDirectionDegrees(),joy1.getThrottle());
+        }
+        else
+        {
+            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+        }
 
         psi = pressure.getAverageVoltage()*37.76-32.89;
 
         if(joy2.getRawButton(3))
         {
-            armExtentionIn.set(false);
-            armExtentionOut.set(true);
+            armExtention.set(true);
         }
         else if(joy2.getRawButton(2))
         {
-            armExtentionIn.set(true);
-            armExtentionOut.set(false);
+            armExtention.set(false);
         }
         else
         {
-            armExtentionIn.set(false);
-            armExtentionOut.set(false);
+            armExtention.set(false);
         }
         if(joy2.getRawButton(6))
         {
-            armAngleIn.set(false);
-            armAngleOut.set(true);
+            armAngle.set(true);
         }
         else if(joy2.getRawButton(7))
         {
-            armAngleIn.set(true);
-            armAngleOut.set(false);
+            armAngle.set(false);
         }
         else
         {
-            armAngleIn.set(false);
-            armAngleOut.set(false);
+            armAngle.set(false);
         }
         if(joy2.getTrigger())
         {
-            armWinch.set(joy2.getY());
+            armWinch.set(joy2.getY()*10);
         }
         else
         {
