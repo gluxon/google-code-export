@@ -26,7 +26,7 @@
 		<Item Name="WCA.vi" Type="VI" URL="../WCA.vi"/>
 		<Item Name="Voltage Logger.vi" Type="VI" URL="../Voltage Logger.vi"/>
 		<Item Name="MockDashIn.vi" Type="VI" URL="../MockDashIn.vi"/>
-		<Item Name="Testing.vi" Type="VI" URL="../Testing.vi"/>
+		<Item Name="Test UDP Read.vi" Type="VI" URL="../Test UDP Read.vi"/>
 		<Item Name="TestData.lvclass" Type="LVClass" URL="../TestData.lvclass"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
