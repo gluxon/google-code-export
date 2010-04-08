@@ -438,20 +438,38 @@ private Target[] targets = new Target[1];
                     for (int i = 0; i < targets.length; i++) {
                         highDashData.addCluster(); // targets
                         {
-                            highDashData.addDouble(targets[i].m_score); // target score
+                            double targetScore = 0;
+                            double m_xPos = 0;
+                            double m_xMax = 1; //this becomes a divisor
+                            double m_yPos = 0;
+                            if (targets != null & targets[i] != null) {
+                                targetScore = targets[i].m_score;
+                                m_xPos = targets[i].m_xPos;
+                                m_xMax = targets[i].m_xMax;
+                                m_yPos = targets[i].m_yPos;
+                            }
+                            highDashData.addDouble(targetScore); // target score
                             highDashData.addCluster(); // Circle Description (5 elements)
                             {
                                 highDashData.addCluster(); // Position (2 elements)
                                 {
-                                    highDashData.addFloat((float) (targets[i].m_xPos / targets[i].m_xMax)); // X
-                                    highDashData.addFloat((float) targets[i].m_yPos); // Y
-                                    }
-                                highDashData.finalizeCluster();
 
-                                highDashData.addDouble(targets[i].m_rotation); // Angle
-                                highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
-                                highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
-                                highDashData.addDouble(targets[i].m_rawScore); // Raw score
+
+                                    highDashData.addFloat((float) (m_xPos / m_xMax)); // X
+
+                                    highDashData.addFloat((float) m_yPos); // Y
+                                }
+                                highDashData.finalizeCluster();
+                                if (targets == null || targets[i]==null) {
+                                    highDashData.addDouble(0d); // Angle
+                                    highDashData.addDouble(0d); // Major Radius
+                                    highDashData.addDouble(0d); // Minor Radius
+                                    highDashData.addDouble(0d); // Raw score
+                                } else {
+                                    highDashData.addDouble(targets[i].m_rotation); // Angle
+                                    highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
+                                    highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
+                                    highDashData.addDouble(targets[i].m_rawScore); // Raw score
                                 }
                             highDashData.finalizeCluster(); // Position
                             }
