@@ -68,7 +68,13 @@ private Target[] targets = new Target[1];
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         leftFrontJag = new Jaguar(1);
-        leftRearJag = new Jaguar(3);
+        leftRearJag = new Jaguar(3)
+                {
+                  public void set(double d)
+                    {
+                        super.set(d * -1);
+                    }
+                };
         rightFrontJag = new Jaguar(2)
                 {
                   public void set(double d)
@@ -76,13 +82,7 @@ private Target[] targets = new Target[1];
                         super.set(d * -1);
                     }
                 };
-         rightRearJag = new Jaguar(4)
-                {
-                  public void set(double d)
-                    {
-                        super.set(d * -1);
-                    }
-                };
+         rightRearJag = new Jaguar(4);
         armWinch = new Victor(5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(7);
@@ -167,7 +167,10 @@ private Target[] targets = new Target[1];
             }
         }
 
-        if(ultrasonicLeft.getRangeInches() > 110)
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
+        dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "kUlt: " + ultrasonicKicker.getRangeInches());
+        /*if(ultrasonicLeft.getRangeInches() > 110)
         {
             leftFrontJag.set(0);
             rightFrontJag.set(0);
@@ -175,7 +178,7 @@ private Target[] targets = new Target[1];
             rightRearJag.set(0);
         }
         else
-        {
+        */{
             if(fieldPosition == 1)
             {
                 vision.autonomousCloseZone();
@@ -189,6 +192,7 @@ private Target[] targets = new Target[1];
                 vision.autonomousFarZone(); //does nothing
             }
         }
+        dsout.updateLCD();
 
      
     }
@@ -225,7 +229,7 @@ private Target[] targets = new Target[1];
             compressorRelay.set(Relay.Value.kOff);
         }
          
-        if(joy1.getMagnitude() > .5 || joy1.getMagnitude() < -.5)
+        if(joy1.getRawButton(7))
         {
             drive.holonomicDrive(joy1.getMagnitude() * 2, joy1.getDirectionDegrees(),joy1.getThrottle());
         }
@@ -291,9 +295,9 @@ private Target[] targets = new Target[1];
             
             IRDelay++;
         }
-        dsout.println(DriverStationLCD.Line.kUser4, 1, "gyro1: " + gyro.getAngle());
-        dsout.println(DriverStationLCD.Line.kUser5, 1, "gyro2: " + gyro2.getAngle());
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "pressure: " + truncate(psi));
+        dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
+        dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
+        dsout.println(DriverStationLCD.Line.kUser3, 1, "kUlt: " + ultrasonicKicker.getRangeInches());
         /*
         dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
         String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
