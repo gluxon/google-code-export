@@ -35,11 +35,11 @@ public class CircleFinder{
 
 
 
-    public CircleFinder(Gyro g , Joystick j, RobotDrive d){
+    public CircleFinder(Gyro Gyro , Joystick joystick, RobotDrive robotDrive){
         lastEnable = false;
-        gyro = g;
-        js = j;
-        drive = d;
+        gyro = Gyro;
+        js = joystick;
+        drive = robotDrive;
         cam = AxisCamera.getInstance();
         turnController = new PIDController(.08 , 0.0 , 0.5 , gyro , new PIDOutput(){
             public void pidWrite(double output) {
