@@ -82,7 +82,7 @@ public class VisionDirectedDrive{
         switch (mode){
 
             case 0: if(ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
-                        drive.holonomicDrive(.3,0,0);
+                        drive.holonomicDrive(.5,0,0);
                     }else{
                         drive.holonomicDrive(0,0,0);
                         mode++;
@@ -132,10 +132,12 @@ public class VisionDirectedDrive{
     
     
     public void kick(boolean k){
+        /*
         kc.getSolenoid1().set(k);
         kc.getSolenoid2().set(k);
         kc.getSolenoid3().set(k);
         kc.getSolenoid4().set(k);
+        */
     }
 }
 
