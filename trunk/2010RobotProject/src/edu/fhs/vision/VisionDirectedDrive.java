@@ -6,7 +6,6 @@
 package edu.fhs.vision;
 
 import edu.fhs.input.UltrasonicFHS;
-import edu.fhs.input.IRRangeFinderFHS;
 import edu.fhs.actuators.KickerControl;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.Joystick;
@@ -20,8 +19,6 @@ import edu.wpi.first.wpilibj.RobotDrive;
  */
 public class VisionDirectedDrive{
 
-    private Gyro gyro;
-    private Joystick js;
     private RobotDrive drive;
     private CircleFinder circleFinder;
     private int mode;
@@ -35,20 +32,18 @@ public class VisionDirectedDrive{
     private final double KICKING_DISTANCE_THRESHHOLD = 7.0;
     
 
-    public VisionDirectedDrive(Gyro g, Joystick j, RobotDrive d,UltrasonicFHS fr,UltrasonicFHS i,KickerControl k){
-        gyro = g;
-        js = j;
-        drive = d;
-        circleFinder = new CircleFinder(g,j,d);
+    public VisionDirectedDrive(Gyro Gyro, Joystick joystick, RobotDrive drive,UltrasonicFHS fr,UltrasonicFHS ultrasonic,KickerControl kicker){
+        this.drive = drive;
+        circleFinder = new CircleFinder(Gyro,joystick,this.drive);
         mode = 0;
         lastMode = 0;
         ultraFrontRight = fr;
-        ir=i;
-        kc = k;
+        ir=ultrasonic;
+        kc = kicker;
         kickingDelay = 0;
         driveTowardsRamp = new PIDController(.5,.2,.8,ultraFrontRight,new PIDOutput(){
             public void pidWrite(double output){
-                drive.holonomicDrive(output, 0, 0);
+                VisionDirectedDrive.this.drive.holonomicDrive(output, 0, 0);
             }
         });
     }
