@@ -18,6 +18,7 @@
 			<Item Name="Receive DS Packet.vi" Type="VI" URL="../Receive DS Packet.vi"/>
 			<Item Name="App EXE.ico" Type="Document" URL="../App EXE.ico"/>
 			<Item Name="Decode Status Byte.vi" Type="VI" URL="../Decode Status Byte.vi"/>
+			<Item Name="UDP Sender.vi" Type="VI" URL="../UDP Sender.vi"/>
 		</Item>
 		<Item Name="TypeDefs" Type="Folder">
 			<Item Name="DStoPCPacketTypeDef.ctl" Type="VI" URL="../DStoPCPacketTypeDef.ctl"/>
@@ -94,10 +95,10 @@
 				<Item Name="UDP Multicast Open.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/tcp.llb/UDP Multicast Open.vi"/>
 				<Item Name="UDP Multicast Read-Only Open.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/tcp.llb/UDP Multicast Read-Only Open.vi"/>
 				<Item Name="UDP Multicast Read-Write Open.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/tcp.llb/UDP Multicast Read-Write Open.vi"/>
-				<Item Name="subElapsedTime.vi" Type="VI" URL="/&lt;vilib&gt;/express/express execution control/ElapsedTimeBlock.llb/subElapsedTime.vi"/>
-				<Item Name="FormatTime String.vi" Type="VI" URL="/&lt;vilib&gt;/express/express execution control/ElapsedTimeBlock.llb/FormatTime String.vi"/>
 				<Item Name="NetworkVariable.lvlib" Type="Library" URL="/&lt;vilib&gt;/Robotics Library/WPI/NetworkVariable/NetworkVariable.lvlib"/>
 				<Item Name="Error Cluster From Error Code.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Error Cluster From Error Code.vi"/>
+				<Item Name="FormatTime String.vi" Type="VI" URL="/&lt;vilib&gt;/express/express execution control/ElapsedTimeBlock.llb/FormatTime String.vi"/>
+				<Item Name="subElapsedTime.vi" Type="VI" URL="/&lt;vilib&gt;/express/express execution control/ElapsedTimeBlock.llb/subElapsedTime.vi"/>
 			</Item>
 			<Item Name="nivissvc.dll" Type="Document" URL="nivissvc.dll">
 				<Property Name="NI.PreserveRelativePath" Type="Bool">true</Property>
@@ -106,6 +107,8 @@
 				<Property Name="NI.PreserveRelativePath" Type="Bool">true</Property>
 			</Item>
 			<Item Name="lvsound2.dll" Type="Document" URL="../../../../../../../Program Files/National Instruments/LabVIEW 8.6/resource/lvsound2.dll"/>
+			<Item Name="DSPacketHighPriority.ctl" Type="VI" URL="../DSPacketHighPriority.ctl"/>
+			<Item Name="DSPacketLowPriority.ctl" Type="VI" URL="../DSPacketLowPriority.ctl"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build">
 			<Item Name="FRC Dashboard" Type="EXE">
