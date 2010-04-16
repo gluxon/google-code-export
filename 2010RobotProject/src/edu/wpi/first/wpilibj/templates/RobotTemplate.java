@@ -231,7 +231,11 @@ private Target[] targets = new Target[1];
          
         if(joy1.getRawButton(7))
         {
-            drive.holonomicDrive(joy1.getMagnitude() * 2, joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            setDoubleSpeed(leftFrontJag);
+            setDoubleSpeed(leftRearJag);
+            setDoubleSpeed(rightFrontJag);
+            setDoubleSpeed(rightRearJag);
         }
         else
         {
@@ -391,7 +395,7 @@ private Target[] targets = new Target[1];
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.addByte(Solenoid.getAll());
-        lowDashData.addDouble(999.123d);
+        lowDashData.addDouble(psi);
         lowDashData.finalizeCluster();
         lowDashData.commit();
 
@@ -447,5 +451,14 @@ private Target[] targets = new Target[1];
         highDashData.finalizeCluster(); // target Info
         highDashData.finalizeCluster(); // wire
         highDashData.commit();
+    }
+
+    private void setDoubleSpeed(Jaguar jag) {
+        double baseValue = jag.get();
+        if(baseValue > 1 || baseValue < -1)
+        {
+            return;
+        }
+        jag.set(baseValue*2);
     }
 }
