@@ -85,7 +85,7 @@ public class VisionDirectedDrive{
         switch (mode){
 
             
-            case 0: if((pressure.getAverageVoltage()*37.76-32.89) > 50){
+            case 0: if((pressure.getAverageVoltage()*37.76-32.89) > 40){
                         mode++;
                     }break;
             
