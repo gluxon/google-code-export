@@ -68,7 +68,7 @@ private Target[] targets = new Target[1];
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         leftFrontJag = new Jaguar(1);
-        leftRearJag = new Jaguar(3);
+        leftRearJag = new Jaguar(7);
         rightFrontJag = new Jaguar(2)
                 {
                   public void set(double d)
@@ -76,7 +76,7 @@ private Target[] targets = new Target[1];
                         super.set(d * -1);
                     }
                 };
-        rightRearJag = new Jaguar(4)
+        rightRearJag = new Jaguar(8)
                 {
                   public void set(double d)
                     {
