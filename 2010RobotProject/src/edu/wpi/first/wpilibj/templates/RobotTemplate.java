@@ -68,13 +68,7 @@ private Target[] targets = new Target[1];
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         leftFrontJag = new Jaguar(1);
-        leftRearJag = new Jaguar(3)
-                {
-                  public void set(double d)
-                    {
-                        super.set(d * -1);
-                    }
-                };
+        leftRearJag = new Jaguar(3);
         rightFrontJag = new Jaguar(2)
                 {
                   public void set(double d)
@@ -82,7 +76,13 @@ private Target[] targets = new Target[1];
                         super.set(d * -1);
                     }
                 };
-         rightRearJag = new Jaguar(4);
+        rightRearJag = new Jaguar(4)
+                {
+                  public void set(double d)
+                    {
+                        super.set(d * -1);
+                    }
+                };
         armWinch = new Victor(5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(7);
@@ -100,7 +100,7 @@ private Target[] targets = new Target[1];
         }
         if(compressorRelay != null && transducer != null)
         {
-                compressorRelay.set(Relay.Value.kOff);
+                compressorRelay.set(Relay.Value.kOn);
         }
         
         dsout.updateLCD();
@@ -139,7 +139,7 @@ private Target[] targets = new Target[1];
         }
         
         dsout.updateLCD();
-        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl);
+        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl,pressure);
     }
 
     public void autonomousPeriodic()
@@ -200,14 +200,14 @@ private Target[] targets = new Target[1];
     {
 
         updateDashboardLow();
-        if(gyro != null)
-        {
-            updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
-        }
-        else
-        {
-            updateDashboardHigh(0.0, 0.0, 0.0, 0.0, targets);
-        }
+//        if(gyro != null)
+//        {
+//            updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
+//        }
+//        else
+//        {
+//            updateDashboardHigh(0.0, 0.0, 0.0, 0.0, targets);
+//        }
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
@@ -306,6 +306,7 @@ private Target[] targets = new Target[1];
          * */
         if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
         {
+            kickerControl.getSolenoid1().set(true);
             kickerControl.getSolenoid2().set(true);
             kickerControl.getSolenoid3().set(true);
             kickerControl.getSolenoid4().set(true);

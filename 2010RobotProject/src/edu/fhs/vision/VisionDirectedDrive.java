@@ -7,6 +7,7 @@ package edu.fhs.vision;
 
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.actuators.KickerControl;
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
@@ -28,11 +29,12 @@ public class VisionDirectedDrive{
     private UltrasonicFHS ultraFrontRight;
     private UltrasonicFHS ir;
     private KickerControl kc;
+    private AnalogChannel pressure;
     private final double DISTANCE_FROM_RAMP = 24.0;
-    private final double KICKING_DISTANCE_THRESHHOLD = 7.0;
+    private final double KICKING_DISTANCE_THRESHHOLD = 10.0;
     
 
-    public VisionDirectedDrive(Gyro Gyro, Joystick joystick, RobotDrive drive,UltrasonicFHS fr,UltrasonicFHS ultrasonic,KickerControl kicker){
+    public VisionDirectedDrive(Gyro Gyro, Joystick joystick, RobotDrive drive,UltrasonicFHS fr,UltrasonicFHS ultrasonic,KickerControl kicker, AnalogChannel psi){
         this.drive = drive;
         circleFinder = new CircleFinder(Gyro,joystick,this.drive);
         mode = 0;
@@ -41,6 +43,7 @@ public class VisionDirectedDrive{
         ir=ultrasonic;
         kc = kicker;
         kickingDelay = 0;
+        pressure = psi;
         driveTowardsRamp = new PIDController(.5,.2,.8,ultraFrontRight,new PIDOutput(){
             public void pidWrite(double output){
                 VisionDirectedDrive.this.drive.holonomicDrive(output, 0, 0);
@@ -81,14 +84,19 @@ public class VisionDirectedDrive{
         
         switch (mode){
 
-            case 0: if(ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
+            
+            case 0: if((pressure.getAverageVoltage()*37.76-32.89) > 50){
+                        mode++;
+                    }break;
+            
+            case 1: if(ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
                         drive.holonomicDrive(.5,0,0);
                     }else{
                         drive.holonomicDrive(0,0,0);
                         mode++;
                     }break;
 
-            case 1: if(kickingDelay == 0){
+            case 2: if(kickingDelay == 0){
                         kick(true);
                         kickingDelay++;
                     }else if(kickingDelay < 250){
@@ -99,18 +107,18 @@ public class VisionDirectedDrive{
                         mode++;
                     }break;
 
-            case 2: if (ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
+            case 3: if (ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
                         drive.holonomicDrive(.3,90,0);
                     }else{
                         mode++;
                     }break;
 
-            case 3: circleFinder.centerOnCircle(!circleFinder.isOnTarget());
+            case 4: circleFinder.centerOnCircle(!circleFinder.isOnTarget());
                     if(circleFinder.isOnTarget()){
                         mode++;
                     }break;
 
-            case 4: if(kickingDelay == 0){
+            case 5: if(kickingDelay == 0){
                         kick(true);
                         kickingDelay++;
                     }else if(kickingDelay < 250){
@@ -132,12 +140,12 @@ public class VisionDirectedDrive{
     
     
     public void kick(boolean k){
-        /*
+        
         kc.getSolenoid1().set(k);
         kc.getSolenoid2().set(k);
         kc.getSolenoid3().set(k);
         kc.getSolenoid4().set(k);
-        */
+        
     }
 }
 
