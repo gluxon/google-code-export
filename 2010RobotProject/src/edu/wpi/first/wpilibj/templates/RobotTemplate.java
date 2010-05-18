@@ -168,7 +168,7 @@ private Target[] targets = new Target[1];
         }
 
         dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
-        dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
+        //dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
         dsout.println(DriverStationLCD.Line.kUser3, 1, "kUlt: " + ultrasonicKicker.getRangeInches());
         /*if(ultrasonicLeft.getRangeInches() > 110)
         {
@@ -460,5 +460,6 @@ private Target[] targets = new Target[1];
             return;
         }
         jag.set(baseValue*2);
+        jag.set(jag.get());
     }
 }

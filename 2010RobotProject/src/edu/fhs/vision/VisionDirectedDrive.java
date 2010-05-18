@@ -8,6 +8,7 @@ package edu.fhs.vision;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.actuators.KickerControl;
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
@@ -64,6 +65,8 @@ public class VisionDirectedDrive{
         switch (mode){
             case 0: circleFinder.centerOnCircle(!circleFinder.isOnTarget());
                     if(circleFinder.isOnTarget()){
+                        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET           ");
+                        System.out.println("found");
                         mode++;
                     }break;
             case 1: if(lastMode ==0){
@@ -72,8 +75,13 @@ public class VisionDirectedDrive{
                     }else if(driveTowardsRamp.onTarget()){
                         driveTowardsRamp.disable();
                         mode++;
+                        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "DRIVING TO TARGET");
+                        System.out.println("driving");
                     }break;
-            default: break;
+            default:
+                DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET NOT FOUND ");
+                System.out.println("no target");
+                break;
         }
 
       
