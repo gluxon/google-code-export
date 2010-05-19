@@ -59,33 +59,39 @@ public class VisionDirectedDrive{
         driveTowardsRamp.setSetpoint(DISTANCE_FROM_RAMP);
     }
     
-    public void autonomousCloseZone(){
+    public void autonomousCloseZone() {
 
-        
-        switch (mode){
-            case 0: circleFinder.centerOnCircle(!circleFinder.isOnTarget());
-                    if(circleFinder.isOnTarget()){
-                        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET           ");
-                        System.out.println("found");
-                        mode++;
-                    }break;
-            case 1: if(lastMode ==0){
-                        driveTowardsRamp.enable();
-                        lastMode++;
-                    }else if(driveTowardsRamp.onTarget()){
-                        driveTowardsRamp.disable();
-                        mode++;
-                        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "DRIVING TO TARGET");
-                        System.out.println("driving");
-                    }break;
+
+        switch (mode) {
+            case 0:
+                DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET           ");
+                circleFinder.centerOnCircle(!circleFinder.isOnTarget());
+
+                if (circleFinder.isOnTarget()) {
+
+                    System.out.println("found");
+                    mode++;
+                }
+                break;
+            case 1:
+                if (lastMode == 0) {
+                    driveTowardsRamp.enable();
+                    lastMode++;
+                } else if (driveTowardsRamp.onTarget()) {
+                    driveTowardsRamp.disable();
+                    mode++;
+                    DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "DRIVING TO TARGET");
+                    System.out.println("driving");
+                }
+                break;
             default:
                 DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET NOT FOUND ");
                 System.out.println("no target");
                 break;
         }
 
-      
-        
+
+
     }
     
     public void autonomousMiddleZone(){
