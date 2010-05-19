@@ -5,6 +5,8 @@
 
 package edu.fhs.vision;
 
+import edu.fhs.util.StringUtil;
+import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Gyro;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -58,12 +60,16 @@ public class CircleFinder{
         turnController.disable();
     }
 
-    public void centerOnCircle(boolean enable){ //enables PID controller.  Will overide user input to robot.
-        if(enable == false){
+    
+
+    public void centerOnCircle(boolean enable) { //enables PID controller.  Will overide user input to robot.
+        if (enable == false) {
+            DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET DISABLED");
             turnController.disable();
             lastEnable = false;
-        }else{
-            if(!lastEnable){
+        } else {
+            DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET ENABLED   ");
+            if (!lastEnable) {
                 lastEnable = true;
                 turnController.enable();
                 turnController.setSetpoint(gyro.pidGet());
@@ -73,12 +79,17 @@ public class CircleFinder{
                 if (cam.freshImage()) {// && turnController.onTarget()) {
                     targetFound = false;
                     double gyroAngle = gyro.pidGet();
+                    String angleStr = String.valueOf(gyroAngle);
+					String angleLabel = "Angle: ";
+                    
+
+                    DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser6, 1, StringUtil.toFixedMessage(angleLabel, angleStr));
                     image = cam.getImage();
                     Thread.yield();
                     Target[] targets = Target.findCircularTargets(image);
+                    DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, StringUtil.toFixedMessage("Targets: ", String.valueOf(targets.length)));
                     Thread.yield();
                     if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
-                        
                         Target[] newTargets = new Target[targets.length + 1];
                         newTargets[0] = new Target();
                         newTargets[0].m_majorRadius = 0;
@@ -90,7 +101,7 @@ public class CircleFinder{
                         noCircleFound();
                     } else {
                         targetFound = true;
-                       
+
                         turnController.setSetpoint(gyroAngle + targets[0].getHorizontalAngle());
                     }
                 }
