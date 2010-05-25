@@ -50,7 +50,11 @@ public class Target {
                 "  Radius major: " + m_majorRadius + " minor: " + m_minorRadius + "\n" +
                 "  Rotation: " + m_rotation + " Score: " + m_score + " Both Found: " + m_bothFound + "\n";
     }
-    static EllipseDescriptor ellipseDescriptor = new EllipseDescriptor(3, 200, 3, 100);
+	static double minMajorRadius = 60; //orig 3
+    static double maxMajorRadius = 200; //orig 200
+    static double minMinorRadius = 60; //orig 3
+    static double maxMinorRadius = 200; //orig 200
+    static EllipseDescriptor ellipseDescriptor = new EllipseDescriptor(60, 200, 60, 100);
     static CurveOptions curveOptions = new CurveOptions(0, 40, 1, 25, 15, 15, 10, 1, 0);
     static ShapeDetectionOptions shapeOptions = new ShapeDetectionOptions(ShapeDetectionOptions.IMAQ_GEOMETRIC_MATCH_SHIFT_INVARIANT, 0, 0, 75, 125, 500);
 
