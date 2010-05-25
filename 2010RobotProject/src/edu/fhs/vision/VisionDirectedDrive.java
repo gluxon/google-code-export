@@ -65,13 +65,12 @@ public class VisionDirectedDrive{
         switch (mode) {
             case 0:
                 DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, "TARGET           ");
-                circleFinder.centerOnCircle(!circleFinder.isOnTarget());
+                //circleFinder.centerOnCircle(!circleFinder.isOnTarget());
 
-                if (circleFinder.isOnTarget()) {
-
-                    System.out.println("found");
-                    mode++;
-                }
+//                if (circleFinder.isOnTarget()) {
+//
+//                    mode++;
+//                }
                 break;
             case 1:
                 if (lastMode == 0) {

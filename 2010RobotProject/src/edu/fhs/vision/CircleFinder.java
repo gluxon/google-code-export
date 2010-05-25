@@ -81,27 +81,14 @@ public class CircleFinder{
                     double gyroAngle = gyro.pidGet();
                     String angleStr = String.valueOf(gyroAngle);
 					String angleLabel = "Angle: ";
-                    
-
                     DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser6, 1, StringUtil.toFixedMessage(angleLabel, angleStr));
                     image = cam.getImage();
-                    Thread.yield();
                     Target[] targets = Target.findCircularTargets(image);
                     DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, StringUtil.toFixedMessage("Targets: ", String.valueOf(targets.length)));
-                    Thread.yield();
                     if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
-                        Target[] newTargets = new Target[targets.length + 1];
-                        newTargets[0] = new Target();
-                        newTargets[0].m_majorRadius = 0;
-                        newTargets[0].m_minorRadius = 0;
-                        newTargets[0].m_score = 0;
-                        for (int i = 0; i < targets.length; i++) {
-                            newTargets[i + 1] = targets[i];
-                        }
-                        noCircleFound();
+						//do nothing if no targets
                     } else {
                         targetFound = true;
-
                         turnController.setSetpoint(gyroAngle + targets[0].getHorizontalAngle());
                     }
                 }
@@ -121,9 +108,6 @@ public class CircleFinder{
     }
 
 
-    protected void noCircleFound(){
-
-    }
     
     public boolean isTargetInFrame(){
         ColorImage image = null;
