@@ -43,11 +43,18 @@ public class CircleFinder{
         js = joystick;
         drive = robotDrive;
         cam = AxisCamera.getInstance();
+		cam.writeResolution(AxisCamera.ResolutionT.k320x240);
+        cam.writeBrightness(0);
+        gyro.setSensitivity(.007);
+
         turnController = new PIDController(.08 , 0.0 , 0.5 , gyro , new PIDOutput(){
             public void pidWrite(double output) {
                 drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
             }
         }, .005);
+		turnController.setInputRange(-360.0, 360.0);
+        turnController.setTolerance(1 / 90. * 100);
+        turnController.disable();
         targetFound = false;
     }
 
@@ -74,22 +81,31 @@ public class CircleFinder{
                 turnController.enable();
                 turnController.setSetpoint(gyro.pidGet());
             }
+            lastEnable = true;
             ColorImage image = null;
             try {
                 if (cam.freshImage()) {// && turnController.onTarget()) {
-                    targetFound = false;
                     double gyroAngle = gyro.pidGet();
-                    String angleStr = String.valueOf(gyroAngle);
-					String angleLabel = "Angle: ";
-                    DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser6, 1, StringUtil.toFixedMessage(angleLabel, angleStr));
                     image = cam.getImage();
+                    Thread.yield();
                     Target[] targets = Target.findCircularTargets(image);
-                    DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser5, 1, StringUtil.toFixedMessage("Targets: ", String.valueOf(targets.length)));
+                    Thread.yield();
                     if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
-						//do nothing if no targets
+                        System.out.println("No target found");
+                        Target[] newTargets = new Target[targets.length + 1];
+                        newTargets[0] = new Target();
+                        newTargets[0].m_majorRadius = 0;
+                        newTargets[0].m_minorRadius = 0;
+                        newTargets[0].m_score = 0;
+                        for (int i = 0; i < targets.length; i++) {
+                            newTargets[i + 1] = targets[i];
+                        }
+                        //trackerDashboard.updateVisionDashboard(0.0, gyro.getAngle(), 0.0, 0.0, newTargets);
                     } else {
-                        targetFound = true;
+                        System.out.println(targets[0]);
+                        System.out.println("Target Angle: " + targets[0].getHorizontalAngle());
                         turnController.setSetpoint(gyroAngle + targets[0].getHorizontalAngle());
+                        //trackerDashboard.updateVisionDashboard(0.0, gyro.getAngle(), 0.0, targets[0].m_xPos / targets[0].m_xMax, targets);
                     }
                 }
             } catch (NIVisionException ex) {
