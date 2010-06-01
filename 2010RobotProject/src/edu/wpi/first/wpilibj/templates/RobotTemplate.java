@@ -255,21 +255,13 @@ private Target[] targets = new Target[1];
         {
             armExtention.set(true);
         }
-        else if(joy2.getRawButton(2))
-        {
-            armExtention.set(false);
-        }
         else
         {
             armExtention.set(false);
         }
-        if(joy2.getRawButton(6))
+        if(joy2.getRawButton(5))
         {
             armAngle.set(true);
-        }
-        else if(joy2.getRawButton(7))
-        {
-            armAngle.set(false);
         }
         else
         {
