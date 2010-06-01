@@ -1,6 +1,0 @@
-[My Computer]
-My Computer = "172.16.5.230"
-
-[RT CompactRIO Target]
-RT CompactRIO Target = "10.19.59.02"
-

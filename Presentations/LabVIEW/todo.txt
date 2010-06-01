@@ -1,3 +1,0 @@
-05-ConnectorsAndIcon
-	Need to clean up some places where there is typing that's painful to watch.
-
