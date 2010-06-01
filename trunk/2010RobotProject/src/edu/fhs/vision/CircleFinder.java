@@ -86,15 +86,19 @@ public class CircleFinder {
 					Target[] targets = Target.findCircularTargets(image);
 					Thread.yield();
 					if (targets.length == 0 || targets[0].m_score < kScoreThreshold) {
+						//If there are no targets or no targets that meet the minimum
+						//  threshold create at least one...
 						System.out.println("No target found");
 						Target[] newTargets = new Target[targets.length + 1];
 						newTargets[0] = new Target();
 						newTargets[0].m_majorRadius = 0;
 						newTargets[0].m_minorRadius = 0;
 						newTargets[0].m_score = 0;
+						//...and load up all the low scoring targets...
 						for (int i = 0; i < targets.length; i++) {
 							newTargets[i + 1] = targets[i];
 						}
+						//...just so we can send them to the dashboard :-/
 						//trackerDashboard.updateVisionDashboard(0.0, gyro.getAngle(), 0.0, 0.0, newTargets);
 					} else {
 						System.out.println(targets[0]);
