@@ -40,7 +40,7 @@ private Solenoid solenoid3;  //rename relays later according to usasge (elevator
 private Solenoid solenoid4;
 private Solenoid armAngle;
 private Solenoid armExtention;
-private Solenoid airCannon;
+//private Solenoid airCannon;
 private DriverStationLCD dsout;
 private KickerControl kickerControl = new KickerControl();
 private AnalogChannel pressure;
@@ -87,7 +87,7 @@ private Target[] targets = new Target[1];
         armWinch = new Victor(5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(7);
-		airCannon = new Solenoid(8);
+//		airCannon = new Solenoid(8);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
        dsout = DriverStationLCD.getInstance();
@@ -246,9 +246,9 @@ private Target[] targets = new Target[1];
 
         psi = pressure.getAverageVoltage()*37.76-32.89;
 		//keep the solenoid on for as long as the button is pressed
-		if (airCannon != null) {
-			airCannon.set(joy1.getRawButton(6));
-		}
+//		if (airCannon != null) {
+//			airCannon.set(joy1.getRawButton(6));
+//		}
 
 
         if(joy2.getRawButton(3))
