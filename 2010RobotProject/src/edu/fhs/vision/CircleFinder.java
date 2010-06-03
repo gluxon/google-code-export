@@ -43,17 +43,33 @@ public class CircleFinder {
 		cam.writeBrightness(0);
 		gyro.setSensitivity(.007);
 
-		turnController = new PIDController(.08, 0.0, 0.5, gyro, new PIDOutput() {
-
-			public void pidWrite(double output) {
-				drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
-			}
-		}, .005);
+		turnController = new PIDController(.08, 0.0, 0.5, gyro, new TurnOutput(), .005);
 		turnController.setInputRange(-360.0, 360.0);
 		turnController.setTolerance(1 / 90. * 100);
 		turnController.disable();
 		targetFound = false;
 	}
+
+	/**
+	 * Manages turn based on output from the pid controller.
+	 * The joystick inputs will generally be 0 and 0 so for the most
+	 * part just rotate around the center axis.
+	 * @param output
+	 */
+	private class TurnOutput implements PIDOutput {
+
+		/**
+		 * Manages turn based on output from the pid controller.
+		 * The joystick inputs will generally be 0 and 0 so for the most
+		 * part just rotate around the center axis.
+		 * @param output
+		 */
+		public void pidWrite(double output) {
+			drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
+		}
+	}
+
+
 
 	public void intialize() { //call during robotInit
 		cam.writeResolution(AxisCamera.ResolutionT.k320x240);
