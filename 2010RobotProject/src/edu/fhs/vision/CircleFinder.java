@@ -43,7 +43,7 @@ public class CircleFinder {
 		cam.writeBrightness(0);
 		gyro.setSensitivity(.007);
 
-		turnController = new PIDController(.08, 0.0, 0.5, gyro, new TurnOutput(), .005);
+		turnController = new PIDController(.08, 0.0, 0.5, gyro, new RotationContoller(), .005);
 		turnController.setInputRange(-360.0, 360.0);
 		turnController.setTolerance(1 / 90. * 100);
 		turnController.disable();
@@ -56,12 +56,12 @@ public class CircleFinder {
 	 * part just rotate around the center axis.
 	 * @param output
 	 */
-	private class TurnOutput implements PIDOutput {
+	private class RotationContoller implements PIDOutput {
 
 		/**
 		 * Manages turn based on output from the pid controller.
 		 * The joystick inputs will generally be 0 and 0 so for the most
-		 * part just rotate around the center axis.
+		 * part just rotate around the center axis at a speed of "output".
 		 * @param output
 		 */
 		public void pidWrite(double output) {
