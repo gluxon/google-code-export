@@ -69,6 +69,7 @@ public class Target {
 
         lumPlane.free();
 
+
         SortedVector.Comparator targetComparator = new SortedVector.Comparator() {
 
             public int compare(Object target1, Object target2) {
@@ -84,8 +85,14 @@ public class Target {
 
         SortedVector sortedTargetList = new SortedVector(targetComparator);
         SortedVector combinedTargetList = new SortedVector(targetComparator);
+		//Only check the first n targets, ignore all the rest.  
+		//Think of the horrorible consequences of sorting and rechecking 10000 targets...
+		int resultsToCheck = 50;
+		if (results.length < resultsToCheck) {
+			resultsToCheck = results.length;
 
-        for (int i = 0; i < results.length; i++) {
+		}
+        for (int i = 0; i < resultsToCheck; i++) {
             Target target = new Target();
             target.m_rawScore = results[i].m_score;
             target.m_score =
