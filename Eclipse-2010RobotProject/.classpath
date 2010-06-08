@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build" path="src"/>
+	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+	<classpathentry kind="con" path="C:/Users/Adam/sunspotfrcsdk/lib/WPILibJ/src"/>
+	<classpathentry kind="lib" path="C:/Users/Adam/sunspotfrcsdk/lib/WPILibJ/classes.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Adam/sunspotfrcsdk/lib/WPILibJ/suite/WPILibJ_1.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/NetBeans 6.7.1/java2/modules/ext/javac-api-nb-7.0-b07.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Adam/sunspotfrcsdk/lib/squawk_device.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
