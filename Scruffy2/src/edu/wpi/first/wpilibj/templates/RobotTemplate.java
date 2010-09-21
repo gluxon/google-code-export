@@ -39,8 +39,8 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        joy1.getY();
-        joy2.getY();
+        leftMotor.set(joy1.getY());
+        rightMotor.set(joy2.getY());
     }
     
 }
