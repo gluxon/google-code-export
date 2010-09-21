@@ -26,6 +26,7 @@ public class RobotTemplate extends IterativeRobot
     public static final int SLOT_8 = 8;
 private Joystick joy1;
 private Joystick joy2;
+private Joystick joy3;
 private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
@@ -68,20 +69,33 @@ private Target[] targets = new Target[1];
     {
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
-        leftFrontJag = new Jaguar(1);
-        leftRearJag = new Jaguar(7);
+        joy3 = new Joystick(3);
+        leftFrontJag = new Jaguar(1)
+        {
+            public void set(double d)
+            {
+                super.set(d * 0.5);
+            }
+        };
+        leftRearJag = new Jaguar(7)
+        {
+            public void set(double d)
+            {
+                super.set(d * 0.5);
+            }
+        };
         rightFrontJag = new Jaguar(2)
                 {
                   public void set(double d)
                     {
-                        super.set(d * -1);
+                        super.set(d * -0.5);
                     }
                 };
         rightRearJag = new Jaguar(8)
                 {
                   public void set(double d)
                     {
-                        super.set(d * -1);
+                        super.set(d * -0.5);
                     }
                 };
         armWinch = new Victor(5);
@@ -104,7 +118,7 @@ private Target[] targets = new Target[1];
         {
                 compressorRelay.set(Relay.Value.kOn);
         }
-        
+
         dsout.updateLCD();
        try
        {
@@ -134,12 +148,12 @@ private Target[] targets = new Target[1];
          {
              dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
          }
-            
+
         if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
         {
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
-        
+
         dsout.updateLCD();
         vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl,pressure);
     }
@@ -196,7 +210,7 @@ private Target[] targets = new Target[1];
         }
         dsout.updateLCD();
 
-     
+
     }
     public void teleopPeriodic()
     {
@@ -230,14 +244,18 @@ private Target[] targets = new Target[1];
         {
             compressorRelay.set(Relay.Value.kOff);
         }
-         
-        if(joy1.getRawButton(7))
+
+        if(joy3.getRawButton(7))
         {
-            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.holonomicDrive(joy3.getMagnitude(), joy3.getDirectionDegrees(),joy3.getThrottle());
             setDoubleSpeed(leftFrontJag);
             setDoubleSpeed(leftRearJag);
             setDoubleSpeed(rightFrontJag);
             setDoubleSpeed(rightRearJag);
+        }
+        else if(joy3.getRawButton(6))
+        {
+            drive.holonomicDrive(0.0, 0.0, 0.0);
         }
         else
         {
@@ -251,15 +269,15 @@ private Target[] targets = new Target[1];
 //		}
 
 
-        if(joy2.getRawButton(3))
+        /*if(joy2.getRawButton(3))
         {
             armExtention.set(true);
         }
         else
         {
             armExtention.set(false);
-        }
-        if(joy2.getRawButton(5))
+        }*/
+        if(joy3.getRawButton(5) && joy2.getRawButton(5))
         {
             armAngle.set(true);
         }
@@ -267,14 +285,14 @@ private Target[] targets = new Target[1];
         {
             armAngle.set(false);
         }
-        if(joy2.getTrigger())
+        /*if(joy2.getTrigger())
         {
             armWinch.set(joy2.getY()*10);
         }
         else
         {
             armWinch.set(0);
-        }
+        }*/
 
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
@@ -295,7 +313,7 @@ private Target[] targets = new Target[1];
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 IRDelay = 0;
             }
-            
+
             IRDelay++;
         }
         dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
@@ -307,6 +325,7 @@ private Target[] targets = new Target[1];
         dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
         ultrasonic.pidGet()(String)
          * */
+        /*
         if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
         {
             kickerControl.getSolenoid1().set(true);
@@ -337,7 +356,7 @@ private Target[] targets = new Target[1];
              kickerControl.getSolenoid4().set(false);
              kickerDelay++;
         }
-
+        */
         dsout.updateLCD();
     }
 
