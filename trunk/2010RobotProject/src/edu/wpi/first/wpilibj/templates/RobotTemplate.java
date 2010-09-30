@@ -6,13 +6,11 @@
 /*----------------------------------------------------------------------------*/
 
 package edu.wpi.first.wpilibj.templates;
-
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.vision.VisionDirectedDrive;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.samples.Target;
-
 import java.util.Date;
 
 /**
@@ -33,7 +31,7 @@ private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
 private Jaguar rightRearJag;
 private Victor armWinch;
-//private RobotDrive drive;
+private RobotDrive drive;
 private Relay compressorRelay;
 private DigitalInput transducer;
 private Solenoid solenoid1;
@@ -61,8 +59,6 @@ private VisionDirectedDrive vision;
 private int fieldPosition;
 private Date time = new Date();
 private Target[] targets = new Target[1];
-
-private UltrasonicFHS ultras;
 
     /**    *
      * This function is run when the robot is first started up and should be
@@ -93,7 +89,7 @@ private UltrasonicFHS ultras;
         armExtention = new Solenoid(7);
 //		airCannon = new Solenoid(8);
 
-        //drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
        dsout = DriverStationLCD.getInstance();
         try
         {
@@ -120,8 +116,6 @@ private UltrasonicFHS ultras;
             kickerControl.setSolenoid2(solenoid2);
             kickerControl.setSolenoid3(solenoid3);
             kickerControl.setSolenoid4(solenoid4);
-
-            ultras = new UltrasonicFHS(3, 1);
        }
         catch(NullPointerException n){
             dsout.println(DriverStationLCD.Line.kUser4, 0,"ERROR: compressor/regulator not connected");
@@ -147,7 +141,7 @@ private UltrasonicFHS ultras;
         }
         
         dsout.updateLCD();
-        //vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl,pressure);
+        vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl,pressure);
     }
 
     public void autonomousPeriodic()
@@ -200,7 +194,6 @@ private UltrasonicFHS ultras;
                 vision.autonomousFarZone(); //does nothing
             }
         }
-
         dsout.updateLCD();
 
      
@@ -240,7 +233,7 @@ private UltrasonicFHS ultras;
          
         if(joy1.getRawButton(7))
         {
-            //drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
             setDoubleSpeed(leftFrontJag);
             setDoubleSpeed(leftRearJag);
             setDoubleSpeed(rightFrontJag);
@@ -248,12 +241,7 @@ private UltrasonicFHS ultras;
         }
         else
         {
-            leftFrontJag.set(joy1.getY() + joy1.getZ());
-            rightFrontJag.set(-joy1.getY() - joy1.getZ());
-            leftRearJag.set(joy1.getY() + joy1.getZ());
-            rightRearJag.set(-joy1.getY() - joy1.getZ());
-            
-            //drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
         }
 
         psi = pressure.getAverageVoltage()*37.76-32.89;
@@ -275,7 +263,7 @@ private UltrasonicFHS ultras;
         {
             armAngle.set(true);
         }
-        else
+        else//
         {
             armAngle.set(false);
         }
