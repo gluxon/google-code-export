@@ -13,96 +13,93 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.samples.Target;
 import java.util.Date;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class RobotTemplate extends IterativeRobot
 {
     public static final int SLOT_1 = 1;
     public static final int SLOT_8 = 8;
-private Joystick joy1;
-private Joystick joy2;
-private Joystick joy3;
-private Jaguar leftFrontJag;
-private Jaguar rightFrontJag;
-private Jaguar leftRearJag;
-private Jaguar rightRearJag;
-private Victor armWinch;
-private RobotDrive drive;
-private Relay compressorRelay;
-private DigitalInput transducer;
-private Solenoid solenoid1;
-private Solenoid solenoid2;
-private Solenoid solenoid3;  //rename relays later according to usasge (elevator, base roller, etc.)
-private Solenoid solenoid4;
-private Solenoid armAngle;
-private Solenoid armExtention;
-private DriverStationLCD dsout;
-private KickerControl kickerControl = new KickerControl();
-private AnalogChannel pressure;
-private UltrasonicFHS ultrasonicKicker;
-private UltrasonicFHS ultrasonicLeft;
-private UltrasonicFHS ultrasonicFront;
-private Gyro gyro;
-private Gyro gyro2;
-private int UDelay = 10;
-private int IRDelay = 10;
-private int kickerDelay = 100;
-private int kickerDelay2 = 0;
-private boolean kicked = false;
-private double psi;
-private VisionDirectedDrive vision;
-private int fieldPosition;
-private Date time = new Date();
-private Target[] targets = new Target[1];
 
-    /**    *
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
+    private Joystick joy1;
+    private Joystick joy2;
+    private Joystick joy3;
+    private Jaguar leftFrontJag;
+    private Jaguar rightFrontJag;
+    private Jaguar leftRearJag;
+    private Jaguar rightRearJag;
+    private Victor armWinch;
+    private RobotDrive drive;
+    private Relay compressorRelay;
+    private DigitalInput transducer;
+    private Solenoid solenoid1;
+    private Solenoid solenoid2;
+    private Solenoid solenoid3;
+    private Solenoid solenoid4;
+    private Solenoid armAngle;
+    private Solenoid armExtention;
+    private DriverStationLCD dsout;
+    private KickerControl kickerControl = new KickerControl();
+    private AnalogChannel pressure;
+    private UltrasonicFHS ultrasonicKicker;
+    private UltrasonicFHS ultrasonicLeft;
+    private UltrasonicFHS ultrasonicFront;
+    private Gyro gyro;
+    private Gyro gyro2;
+    private int UDelay = 10;
+    private int IRDelay = 10;
+    private int kickerDelay = 100;
+    private int kickerDelay2 = 0;
+    private boolean kicked = false;
+    private double psi;
+    private VisionDirectedDrive vision;
+    private int fieldPosition;
+    private Date time = new Date();
+    private Target[] targets = new Target[1];
+
     public void robotInit()
     {
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
+
         leftFrontJag = new Jaguar(1)
         {
-                  public void set(double d)
-                    {
-                        super.set(d * 0.5);
-                    }
-                };
+            public void set(double d)
+            {
+                super.set(d * 0.5);
+            }
+        };
+
         leftRearJag = new Jaguar(7)
         {
-                  public void set(double d)
-                    {
-                        super.set(d * 0.5);
-                    }
-                };
+            public void set(double d)
+            {
+                super.set(d * 0.5);
+            }
+        };
+
         rightFrontJag = new Jaguar(2)
-                {
-                  public void set(double d)
-                    {
-                        super.set(d * -0.5);
-                    }
-                };
+        {
+            public void set(double d)
+            {
+                super.set(d * -0.5);
+            }
+        };
+
         rightRearJag = new Jaguar(8)
-                {
-                  public void set(double d)
-                    {
-                        super.set(d * -0.5);
-                    }
-                };
+        {
+            public void set(double d)
+            {
+                super.set(d * -0.5);
+            }
+        };
+
         armWinch = new Victor(5);
         armAngle = new Solenoid(5);
         armExtention = new Solenoid(7);
 
         drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
-       dsout = DriverStationLCD.getInstance();
+
+        dsout = DriverStationLCD.getInstance();
+
         try
         {
             compressorRelay = new Relay(SLOT_8,Relay.Direction.kForward);
@@ -114,22 +111,25 @@ private Target[] targets = new Target[1];
         }
         if(compressorRelay != null && transducer != null)
         {
-                compressorRelay.set(Relay.Value.kOn);
+            compressorRelay.set(Relay.Value.kOn);
         }
         
         dsout.updateLCD();
-       try
-       {
+
+        try
+        {
             solenoid1 = new Solenoid(SLOT_8,1);
             solenoid2 = new Solenoid(SLOT_8,2);
             solenoid3 = new Solenoid(SLOT_8,3);
             solenoid4 = new Solenoid(SLOT_8,4);
+
             kickerControl.setSolenoid1(solenoid1);
             kickerControl.setSolenoid2(solenoid2);
             kickerControl.setSolenoid3(solenoid3);
             kickerControl.setSolenoid4(solenoid4);
-       }
-        catch(NullPointerException n){
+        }
+        catch(NullPointerException n)
+        {
             dsout.println(DriverStationLCD.Line.kUser4, 0,"ERROR: compressor/regulator not connected");
         }
 
@@ -142,10 +142,10 @@ private Target[] targets = new Target[1];
             gyro = new Gyro(SLOT_1,1);
             gyro2 = new Gyro(SLOT_1,2);
         }
-         catch(NullPointerException n)
-         {
-             dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
-         }
+        catch(NullPointerException n)
+        {
+            dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
+        }
             
         if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
         {
@@ -165,10 +165,14 @@ private Target[] targets = new Target[1];
         int lightOne = digitalIn1 ? 1 : 0;
         int lightTwo = digitalIn2 ? 1 : 0;
         int lightThree = digitalIn3 ? 1 : 0;
+
         fieldPosition = lightOne + lightTwo + lightThree;
-        if (fieldPosition == 0 || fieldPosition > 3) {
+        
+        if (fieldPosition == 0 || fieldPosition > 3)
+        {
             fieldPosition = 0;
         }
+
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
@@ -184,44 +188,27 @@ private Target[] targets = new Target[1];
         dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
         dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
         dsout.println(DriverStationLCD.Line.kUser3, 1, "kUlt: " + ultrasonicKicker.getRangeInches());
-        /*if(ultrasonicLeft.getRangeInches() > 110)
+        
+        if(fieldPosition == 1)
         {
-            leftFrontJag.set(0);
-            rightFrontJag.set(0);
-            leftRearJag.set(0);
-            rightRearJag.set(0);
+            vision.autonomousCloseZone();
         }
-        else
-        */{
-            if(fieldPosition == 1)
-            {
-                vision.autonomousCloseZone();
-            }
-            else if(fieldPosition == 2)
-            {
-                vision.autonomousMiddleZone();
-            }
-            else if(fieldPosition == 3)
-            {
-                vision.autonomousFarZone(); //does nothing
-            }
+        else if(fieldPosition == 2)
+        {
+            vision.autonomousMiddleZone();
         }
+        else if(fieldPosition == 3)
+        {
+            vision.autonomousFarZone(); //does nothing
+        }
+        
         dsout.updateLCD();
-
-     
     }
     public void teleopPeriodic()
     {
 
         updateDashboardLow();
-//        if(gyro != null)
-//        {
-//            updateDashboardHigh(0.0, gyro.getAngle(), 0.0, 0.0, targets);
-//        }
-//        else
-//        {
-//            updateDashboardHigh(0.0, 0.0, 0.0, 0.0, targets);
-//        }
+
         if(compressorRelay != null && transducer != null)
         {
             if(!transducer.get())
@@ -238,14 +225,15 @@ private Target[] targets = new Target[1];
         {
             compressorRelay.set(Relay.Value.kOn);
         }
+
         if(compressorRelay != null && joy1.getRawButton(5))
         {
             compressorRelay.set(Relay.Value.kOff);
         }
          
-        if(joy2.getRawButton(7))
+        if(joy3.getRawButton(7))
         {
-            drive.holonomicDrive(joy2.getMagnitude(), joy2.getDirectionDegrees(),joy2.getTwist());
+            drive.holonomicDrive(joy3.getMagnitude(), joy3.getDirectionDegrees(),joy3.getTwist());
         }
         else
         {
@@ -254,41 +242,9 @@ private Target[] targets = new Target[1];
 
         psi = pressure.getAverageVoltage()*37.76-32.89;
 
-        /*if(joy2.getRawButton(3))
-        {
-            armExtention.set(true);
-        }
-        else if(joy2.getRawButton(2))
-        {
-            armExtention.set(false);
-        }
-        else
-        {
-            armExtention.set(false);
-        }
-        if(joy2.getRawButton(6))
-        {
-            armAngle.set(true);
-        }
-        else if(joy2.getRawButton(7))
-        {
-            armAngle.set(false);
-        }
-        else
-        {
-            armAngle.set(false);
-        }
-        if(joy2.getTrigger())
-        {
-            armWinch.set(joy2.getY()*10);
-        }
-        else
-        {
-            armWinch.set(0);
-        }
-        */
         dsout.println(DriverStationLCD.Line.kMain6, 1, "LF " + truncate(leftFrontJag.get()) + " LR " + truncate(leftRearJag.get()));
         dsout.println(DriverStationLCD.Line.kUser2, 1, "RF " + truncate(rightFrontJag.get()) + " RR " + truncate(rightRearJag.get()));
+
         if(ultrasonicLeft != null && pressure != null)
         {
             if(UDelay == 10)
@@ -296,7 +252,6 @@ private Target[] targets = new Target[1];
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 UDelay = 0;
             }
-            //dsout.println(DriverStationLCD.Line.kUser4, 1, "U voltage: " + ultraV);
             UDelay++;
         }
         if(ultrasonicKicker != null && pressure != null)
@@ -305,51 +260,50 @@ private Target[] targets = new Target[1];
             {
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 IRDelay = 0;
-            }
-            
+            }    
             IRDelay++;
         }
+
         dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());
         dsout.println(DriverStationLCD.Line.kUser5, 1, "fUlt: " + ultrasonicFront.getRangeInches());
         dsout.println(DriverStationLCD.Line.kUser3, 1, "kUlt: " + ultrasonicKicker.getRangeInches());
-        /*
-        dsout.println(DriverStationLCD.Line.kUser3, 1, "U range: " + );
-        String distanceGivenByUltrasound =  Double.toString(ultrasonic.pidGet());
-        dsout.println(DriverStationLCD.Line.kUser2, 1, distanceGivenByUltrasound);
-        ultrasonic.pidGet()(String)
-         * */
-        if(joy2.getTrigger() == true)
+
+        if(joy3.getTrigger() == true)
         {
-        if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
-        {
-            kickerControl.getSolenoid1().set(true);
-            kickerControl.getSolenoid2().set(true);
-            kickerControl.getSolenoid3().set(true);
-            kickerControl.getSolenoid4().set(true);
-            kickerDelay = 0;
-            kicked = true;
-            if(kickerDelay2 > 25)
+            if((joy1.getRawButton(4) || kicked) && (kickerDelay > 99 || kickerDelay2 > 0))
             {
-                kickerDelay2 = 0;
-                kicked = false;
+                kickerControl.getSolenoid1().set(true);
+                kickerControl.getSolenoid2().set(true);
+                kickerControl.getSolenoid3().set(true);
+                kickerControl.getSolenoid4().set(true);
+                kickerDelay = 0;
+                kicked = true;
+
+                if(kickerDelay2 > 25)
+                {
+                    kickerDelay2 = 0;
+                    kicked = false;
+                }
+                else
+                {
+                    kickerDelay2++;
+                }
             }
-            else{kickerDelay2++;}
-        }
-        else if(joy1.getRawButton(8))
-        {
-            kickerControl.getSolenoid1().set(true);
-            kickerControl.getSolenoid2().set(true);
-            kickerControl.getSolenoid3().set(true);
-            kickerControl.getSolenoid4().set(true);
-        }
-        else
-        {
-             kickerControl.getSolenoid1().set(false);
-             kickerControl.getSolenoid2().set(false);
-             kickerControl.getSolenoid3().set(false);
-             kickerControl.getSolenoid4().set(false);
-             kickerDelay++;
-        }
+            else if(joy1.getRawButton(8))
+            {
+                kickerControl.getSolenoid1().set(true);
+                kickerControl.getSolenoid2().set(true);
+                kickerControl.getSolenoid3().set(true);
+                kickerControl.getSolenoid4().set(true);
+            }
+            else
+            {
+                kickerControl.getSolenoid1().set(false);
+                kickerControl.getSolenoid2().set(false);
+                kickerControl.getSolenoid3().set(false);
+                kickerControl.getSolenoid4().set(false);
+                kickerDelay++;
+            }
         }
         dsout.updateLCD();
     }
