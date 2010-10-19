@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package edu.wpi.first.wpilibj.templates;
+
 import edu.fhs.actuators.KickerControl;
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.vision.VisionDirectedDrive;
@@ -21,37 +22,55 @@ public class RobotTemplate extends IterativeRobot
     private Joystick joy1;
     private Joystick joy2;
     private Joystick joy3;
+
     private Jaguar leftFrontJag;
     private Jaguar rightFrontJag;
     private Jaguar leftRearJag;
     private Jaguar rightRearJag;
+
     private Victor armWinch;
+
     private RobotDrive drive;
+
     private Relay compressorRelay;
+
     private DigitalInput transducer;
+
     private Solenoid solenoid1;
     private Solenoid solenoid2;
     private Solenoid solenoid3;
     private Solenoid solenoid4;
     private Solenoid armAngle;
     private Solenoid armExtention;
+
     private DriverStationLCD dsout;
+
     private KickerControl kickerControl = new KickerControl();
+
     private AnalogChannel pressure;
+
     private UltrasonicFHS ultrasonicKicker;
     private UltrasonicFHS ultrasonicLeft;
     private UltrasonicFHS ultrasonicFront;
+
     private Gyro gyro;
     private Gyro gyro2;
+
     private int UDelay = 10;
     private int IRDelay = 10;
     private int kickerDelay = 100;
     private int kickerDelay2 = 0;
+
     private boolean kicked = false;
+
     private double psi;
+
     private VisionDirectedDrive vision;
+
     private int fieldPosition;
+
     private Date time = new Date();
+
     private Target[] targets = new Target[1];
 
     public void robotInit()
@@ -60,35 +79,35 @@ public class RobotTemplate extends IterativeRobot
         joy2 = new Joystick(2);
         joy3 = new Joystick(3);
 
-        leftFrontJag = new Jaguar(1)
+        leftFrontJag = new Jaguar(1) //Sets Jaguar on port 8
         {
             public void set(double d)
             {
-                super.set(d * 0.5);
+                super.set(d * 0.65); //Sets 65% Speed
             }
         };
 
-        leftRearJag = new Jaguar(7)
+        leftRearJag = new Jaguar(7) //Sets Jaguar on port 8
         {
             public void set(double d)
             {
-                super.set(d * 0.5);
+                super.set(d * 0.65); //Sets 65% Speed
             }
         };
 
-        rightFrontJag = new Jaguar(2)
+        rightFrontJag = new Jaguar(2) //Sets Jaguar on port 8
         {
             public void set(double d)
             {
-                super.set(d * -0.5);
+                super.set(d * -0.65); //Sets 65% Speed
             }
         };
 
-        rightRearJag = new Jaguar(8)
+        rightRearJag = new Jaguar(8) //Sets Jaguar on port 8
         {
             public void set(double d)
             {
-                super.set(d * -0.5);
+                super.set(d * -0.65); //Sets 65% Speed
             }
         };
 
@@ -107,8 +126,9 @@ public class RobotTemplate extends IterativeRobot
         }
         catch(NullPointerException n)
         {
-            dsout.println(DriverStationLCD.Line.kUser3, 0,"ERROR: compressor/regulator not connected");
+            dsout.println(DriverStationLCD.Line.kUser3, 0,"ERROR: compressor/regulator not connected!");
         }
+
         if(compressorRelay != null && transducer != null)
         {
             compressorRelay.set(Relay.Value.kOn);
@@ -130,7 +150,7 @@ public class RobotTemplate extends IterativeRobot
         }
         catch(NullPointerException n)
         {
-            dsout.println(DriverStationLCD.Line.kUser4, 0,"ERROR: compressor/regulator not connected");
+            dsout.println(DriverStationLCD.Line.kUser4, 0,"ERROR: compressor/regulator not connected!");
         }
 
         try
@@ -144,12 +164,12 @@ public class RobotTemplate extends IterativeRobot
         }
         catch(NullPointerException n)
         {
-            dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
+            dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected!");
         }
             
         if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
         {
-            dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
+            dsout.println(DriverStationLCD.Line.kUser6, 1, "Solenoids set to null.");
         }
         
         dsout.updateLCD();
@@ -204,6 +224,7 @@ public class RobotTemplate extends IterativeRobot
         
         dsout.updateLCD();
     }
+
     public void teleopPeriodic()
     {
 
@@ -221,16 +242,6 @@ public class RobotTemplate extends IterativeRobot
             }
         }
 
-        if(compressorRelay != null && joy1.getRawButton(6))
-        {
-            compressorRelay.set(Relay.Value.kOn);
-        }
-
-        if(compressorRelay != null && joy1.getRawButton(5))
-        {
-            compressorRelay.set(Relay.Value.kOff);
-        }
-         
         if(joy3.getRawButton(7))
         {
             drive.holonomicDrive(joy3.getMagnitude(), joy3.getDirectionDegrees(),joy3.getTwist());
@@ -254,6 +265,7 @@ public class RobotTemplate extends IterativeRobot
             }
             UDelay++;
         }
+        
         if(ultrasonicKicker != null && pressure != null)
         {
             if(IRDelay == 10)
@@ -276,12 +288,15 @@ public class RobotTemplate extends IterativeRobot
                 kickerControl.getSolenoid2().set(true);
                 kickerControl.getSolenoid3().set(true);
                 kickerControl.getSolenoid4().set(true);
+
                 kickerDelay = 0;
+
                 kicked = true;
 
                 if(kickerDelay2 > 25)
                 {
                     kickerDelay2 = 0;
+
                     kicked = false;
                 }
                 else
@@ -302,6 +317,7 @@ public class RobotTemplate extends IterativeRobot
                 kickerControl.getSolenoid2().set(false);
                 kickerControl.getSolenoid3().set(false);
                 kickerControl.getSolenoid4().set(false);
+
                 kickerDelay++;
             }
         }
@@ -317,45 +333,59 @@ public class RobotTemplate extends IterativeRobot
         Dashboard lowDashData = DriverStation.getInstance().getDashboardPackerLow();
         lowDashData.addCluster();
         lowDashData.addCluster();
-        //analog modules
         lowDashData.addCluster();
-        for (int i = 1; i <= 8; i++) {
+
+        for (int i = 1; i <= 8; i++)
+        {
             lowDashData.addFloat((float) AnalogModule.getInstance(1).getAverageVoltage(i));
         }
+
         lowDashData.finalizeCluster();
         lowDashData.addCluster();
-        for (int i = 1; i <= 8; i++) {
+        
+        for (int i = 1; i <= 8; i++)
+        {
             lowDashData.addFloat((float) AnalogModule.getInstance(2).getAverageVoltage(i));
         }
+
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.addCluster();
-        //digital modules
         lowDashData.addCluster();
         lowDashData.addCluster();
+
         int module = 4;
+
         lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
         lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
         lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
         lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
         lowDashData.addCluster();
-        for (int i = 1; i <= 10; i++) {
+        
+        for (int i = 1; i <= 10; i++)
+        {
             lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
         }
+
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.addCluster();
         lowDashData.addCluster();
+
         module = 6;
+
         lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
         lowDashData.addByte(DigitalModule.getInstance(module).getRelayReverse());
         lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
         lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
         lowDashData.addCluster();
-        for (int i = 1; i <= 10; i++) {
+        
+        for (int i = 1; i <= 10; i++)
+        {
             lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
         }
+
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
@@ -367,8 +397,8 @@ public class RobotTemplate extends IterativeRobot
 
     }
 
-    public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate,
-            double targetX, Target[] targets) {
+    public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate, double targetX, Target[] targets)
+    {
         Dashboard highDashData = DriverStation.getInstance().getDashboardPackerHigh();
         highDashData.addCluster(); // wire (2 elements)
         highDashData.addCluster(); // tracking data
@@ -379,38 +409,49 @@ public class RobotTemplate extends IterativeRobot
         highDashData.finalizeCluster();
         highDashData.addCluster(); // target Info (2 elements)
         highDashData.addArray();
-        for (int i = 0; i < targets.length; i++) {
+        
+        for (int i = 0; i < targets.length; i++)
+        {
             highDashData.addCluster(); // targets
 
             double targetScore = 0;
             double m_xPos = 0;
             double m_xMax = 1; //this becomes a divisor
             double m_yPos = 0;
-            if (targets != null & targets[i] != null) {
+            
+            if (targets != null & targets[i] != null)
+            {
                 targetScore = targets[i].m_score;
                 m_xPos = targets[i].m_xPos;
                 m_xMax = targets[i].m_xMax;
                 m_yPos = targets[i].m_yPos;
             }
+
             highDashData.addDouble(targetScore); // target score
             highDashData.addCluster(); // Circle Description (5 elements)
             highDashData.addCluster(); // Position (2 elements)
             highDashData.addFloat((float) (m_xPos / m_xMax)); // X
             highDashData.addFloat((float) m_yPos); // Y
             highDashData.finalizeCluster();
-            if (targets == null || targets[i] == null) {
+            
+            if (targets == null || targets[i] == null)
+            {
                 highDashData.addDouble(0d); // Angle
                 highDashData.addDouble(0d); // Major Radius
                 highDashData.addDouble(0d); // Minor Radius
                 highDashData.addDouble(0d); // Raw score
-            } else {
+            }
+            else
+            {
                 highDashData.addDouble(targets[i].m_rotation); // Angle
                 highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
                 highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
                 highDashData.addDouble(targets[i].m_rawScore); // Raw score
             }
+
             highDashData.finalizeCluster(); // Position
         }
+
         highDashData.finalizeCluster(); // targets
         highDashData.finalizeArray();
         highDashData.addInt((int) time.getTime());
@@ -419,12 +460,15 @@ public class RobotTemplate extends IterativeRobot
         highDashData.commit();
     }
 
-    private void setDoubleSpeed(Jaguar jag) {
+    private void setDoubleSpeed(Jaguar jag)
+    {
         double baseValue = jag.get();
+
         if(baseValue > 1 || baseValue < -1)
         {
             return;
         }
+
         jag.set(baseValue*2);
     }
 }
