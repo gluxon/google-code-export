@@ -26,6 +26,7 @@ public class RobotTemplate extends IterativeRobot
     public static final int SLOT_8 = 8;
 private Joystick joy1;
 private Joystick joy2;
+private Joystick joy3;
 private Jaguar leftFrontJag;
 private Jaguar rightFrontJag;
 private Jaguar leftRearJag;
@@ -67,6 +68,7 @@ private Target[] targets = new Target[1];
     {
         joy1 = new Joystick(1);
         joy2 = new Joystick(2);
+        joy3 = new Joystick(3);
         leftFrontJag = new Jaguar(1)
         {
                   public void set(double d)
