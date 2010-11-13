@@ -45,7 +45,6 @@ public class RobotTemplate extends IterativeRobot
     public void robotInit()
     {
         joy1 = new Joystick(1);
-        joy2 = new Joystick(2);
 
         leftMotor = new Victor(MOTOR_LEFT)
         {
@@ -61,8 +60,6 @@ public class RobotTemplate extends IterativeRobot
                 super.set(d * ROBOT_SPEED);
             }
         };
-
-        robotDrive1 = new RobotDrive(leftMotor, rightMotor);
 
         gyro1 = new Gyro(SLOT_1, 1);
         ultrasonic1 = new UltrasonicFHS(SLOT_1, 2);
@@ -104,6 +101,7 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        robotDrive1.tankDrive(joy1, joy2);
+        leftMotor.set(joy1.getY()-joy1.getX());
+        rightMotor.set(joy1.getY()+joy1.getX());
     }
 }
