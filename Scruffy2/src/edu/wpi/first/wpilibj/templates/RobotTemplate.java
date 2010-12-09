@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.samples.Target;
 
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.input.IRRangeFinderFHS;
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.AnalogModule;
 import edu.wpi.first.wpilibj.Dashboard;
 import edu.wpi.first.wpilibj.DigitalModule;
@@ -55,6 +56,7 @@ public class RobotTemplate extends IterativeRobot
     private IRRangeFinderFHS irrange1;
     private GearTooth geartooth1;
     private Accelerometer accel1;
+    private AnalogChannel limitSwitchRight;
     
     public void robotInit()
     {
@@ -76,6 +78,15 @@ public class RobotTemplate extends IterativeRobot
         };
 
         dsout = DriverStationLCD.getInstance();
+
+        try
+        {
+            limitSwitchRight = new AnalogChannel(SLOT_1, 4);
+        }
+        catch(NullPointerException n)
+        {
+            
+        }
 /*
         try
         {
@@ -128,6 +139,8 @@ public class RobotTemplate extends IterativeRobot
     {
         leftMotor.set(joy1.getX()-joy1.getY());
         rightMotor.set(joy1.getX()+joy1.getY());
+
+        dsout.println(DriverStationLCD.Line.kMain6, limitSwitchRight.getValue(), null);
 
         dsout.updateLCD();
     }
