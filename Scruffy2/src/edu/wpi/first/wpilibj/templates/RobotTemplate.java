@@ -14,9 +14,18 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.Accelerometer;
 import edu.wpi.first.wpilibj.GearTooth;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.DriverStationLCD;
+import edu.wpi.first.wpilibj.samples.Target;
 
 import edu.fhs.input.UltrasonicFHS;
 import edu.fhs.input.IRRangeFinderFHS;
+import edu.wpi.first.wpilibj.AnalogModule;
+import edu.wpi.first.wpilibj.Dashboard;
+import edu.wpi.first.wpilibj.DigitalModule;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Solenoid;
+
+import java.util.Date;
 
 public class RobotTemplate extends IterativeRobot
 {
@@ -27,6 +36,11 @@ public class RobotTemplate extends IterativeRobot
     private static final double ROBOT_SPEED = 0.5;
 
     private int AUTONOMOUS_MODE = 0;
+
+    private DriverStationLCD dsout;
+
+    private Date time = new Date();
+    private Target[] targets = new Target[1];
 
     private Joystick joy1;
     private Joystick joy2;
@@ -61,11 +75,20 @@ public class RobotTemplate extends IterativeRobot
             }
         };
 
-        gyro1 = new Gyro(SLOT_1, 1);
-        ultrasonic1 = new UltrasonicFHS(SLOT_1, 2);
-        irrange1 = new IRRangeFinderFHS(SLOT_1, 3);
-        geartooth1 = new GearTooth(SLOT_1, 4);
-        accel1 = new Accelerometer(SLOT_1, 5);
+        dsout = DriverStationLCD.getInstance();
+
+        try
+        {
+            gyro1 = new Gyro(SLOT_1, 1);
+            ultrasonic1 = new UltrasonicFHS(SLOT_1, 2);
+            irrange1 = new IRRangeFinderFHS(SLOT_1, 3);
+            geartooth1 = new GearTooth(SLOT_1, 4);
+            accel1 = new Accelerometer(SLOT_1, 5);
+        }
+        catch(NullPointerException n)
+        {
+            dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: Sensor(s) not connected!");
+        }
     }
 
     public void autonomousPeriodic()
@@ -103,5 +126,113 @@ public class RobotTemplate extends IterativeRobot
     {
         leftMotor.set(joy1.getY()-joy1.getX());
         rightMotor.set(joy1.getY()+joy1.getX());
+    }
+
+    void updateDashboardLow() {
+        Dashboard lowDashData = DriverStation.getInstance().getDashboardPackerLow();
+        lowDashData.addCluster();
+        lowDashData.addCluster();
+        //analog modules
+        lowDashData.addCluster();
+        for (int i = 1; i <= 8; i++) {
+            lowDashData.addFloat((float) AnalogModule.getInstance(1).getAverageVoltage(i));
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.addCluster();
+        for (int i = 1; i <= 8; i++) {
+            lowDashData.addFloat((float) AnalogModule.getInstance(2).getAverageVoltage(i));
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.addCluster();
+        //digital modules
+        lowDashData.addCluster();
+        lowDashData.addCluster();
+        int module = 4;
+        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+        lowDashData.addCluster();
+        for (int i = 1; i <= 10; i++) {
+            lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.addCluster();
+        lowDashData.addCluster();
+        module = 6;
+        lowDashData.addByte(DigitalModule.getInstance(module).getRelayForward());
+        lowDashData.addByte(DigitalModule.getInstance(module).getRelayReverse());
+        lowDashData.addShort(DigitalModule.getInstance(module).getAllDIO());
+        lowDashData.addShort(DigitalModule.getInstance(module).getDIODirection());
+        lowDashData.addCluster();
+        for (int i = 1; i <= 10; i++) {
+            lowDashData.addByte((byte) DigitalModule.getInstance(module).getPWM(i));
+        }
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.finalizeCluster();
+        lowDashData.addByte(Solenoid.getAll());
+        lowDashData.addDouble(0.0);
+        lowDashData.finalizeCluster();
+        lowDashData.commit();
+
+    }
+
+    public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate,
+            double targetX, Target[] targets) {
+        Dashboard highDashData = DriverStation.getInstance().getDashboardPackerHigh();
+        highDashData.addCluster(); // wire (2 elements)
+        highDashData.addCluster(); // tracking data
+        highDashData.addDouble(joyStickX); // Joystick X
+        highDashData.addDouble(((gyroAngle + 360.0 + 180.0) % 360.0) - 180.0); // angle
+        highDashData.addDouble(gyroRate); // angular rate
+        highDashData.addDouble(targetX); // other X
+        highDashData.finalizeCluster();
+        highDashData.addCluster(); // target Info (2 elements)
+        highDashData.addArray();
+		//TODO Limit what we send back - we don't display targets at dash,
+		//  do we really need to send anything at all?
+        for (int i = 0; i < targets.length; i++) {
+            highDashData.addCluster(); // targets
+
+            double targetScore = 0;
+            double m_xPos = 0;
+            double m_xMax = 1; //this becomes a divisor
+            double m_yPos = 0;
+            if (targets != null & targets[i] != null) {
+                targetScore = targets[i].m_score;
+                m_xPos = targets[i].m_xPos;
+                m_xMax = targets[i].m_xMax;
+                m_yPos = targets[i].m_yPos;
+            }
+            highDashData.addDouble(targetScore); // target score
+            highDashData.addCluster(); // Circle Description (5 elements)
+            highDashData.addCluster(); // Position (2 elements)
+            highDashData.addFloat((float) (m_xPos / m_xMax)); // X
+            highDashData.addFloat((float) m_yPos); // Y
+            highDashData.finalizeCluster();
+            if (targets == null || targets[i] == null) {
+                highDashData.addDouble(0d); // Angle
+                highDashData.addDouble(0d); // Major Radius
+                highDashData.addDouble(0d); // Minor Radius
+                highDashData.addDouble(0d); // Raw score
+            } else {
+                highDashData.addDouble(targets[i].m_rotation); // Angle
+                highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
+                highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
+                highDashData.addDouble(targets[i].m_rawScore); // Raw score
+            }
+            highDashData.finalizeCluster(); // Position
+        }
+        highDashData.finalizeCluster(); // targets
+        highDashData.finalizeArray();
+        highDashData.addInt((int) time.getTime());
+        highDashData.finalizeCluster(); // target Info
+        highDashData.finalizeCluster(); // wire
+        highDashData.commit();
     }
 }
