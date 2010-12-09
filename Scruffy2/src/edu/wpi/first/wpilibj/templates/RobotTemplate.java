@@ -33,7 +33,7 @@ public class RobotTemplate extends IterativeRobot
     private static final int MOTOR_RIGHT = 2;
     private static final int SLOT_1 = 1;
     private static final int SLOT_8 = 8;
-    private static final double ROBOT_SPEED = 0.5;
+    private static final double ROBOT_SPEED = 1;
 
     private int AUTONOMOUS_MODE = 0;
 
@@ -76,7 +76,7 @@ public class RobotTemplate extends IterativeRobot
         };
 
         dsout = DriverStationLCD.getInstance();
-
+/*
         try
         {
             gyro1 = new Gyro(SLOT_1, 1);
@@ -89,6 +89,7 @@ public class RobotTemplate extends IterativeRobot
         {
             dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: Sensor(s) not connected!");
         }
+  */      dsout.updateLCD();
     }
 
     public void autonomousPeriodic()
@@ -120,12 +121,15 @@ public class RobotTemplate extends IterativeRobot
                 robotDrive1.tankDrive(0.0, 0.0);
             }
         }
+        dsout.updateLCD();
     }
 
     public void teleopPeriodic()
     {
-        leftMotor.set(joy1.getY()-joy1.getX());
-        rightMotor.set(joy1.getY()+joy1.getX());
+        leftMotor.set(joy1.getX()-joy1.getY());
+        rightMotor.set(joy1.getX()+joy1.getY());
+
+        dsout.updateLCD();
     }
 
     void updateDashboardLow() {
