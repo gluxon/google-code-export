@@ -140,7 +140,7 @@ public class RobotTemplate extends IterativeRobot
         leftMotor.set(joy1.getX()-joy1.getY());
         rightMotor.set(joy1.getX()+joy1.getY());
 
-        dsout.println(DriverStationLCD.Line.kMain6, limitSwitchRight.getValue(), null);
+        dsout.println(DriverStationLCD.Line.kMain6, limitSwitchRight.getAverageVoltage(), null);
 
         dsout.updateLCD();
     }
