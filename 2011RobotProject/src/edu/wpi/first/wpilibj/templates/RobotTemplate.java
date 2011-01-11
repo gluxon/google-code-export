@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
@@ -19,59 +18,47 @@ public class RobotTemplate extends IterativeRobot
     private static final int SLOT_1 = 1;
     private static final int SLOT_8 = 8;
 
-    private static final int DRIVE_MODE = 0;
-
-    private Joystick joystick1;
-    private Joystick joystick2;
+    private Joystick joystickLeft;
+    private Joystick joystickRight;
 
     private Jaguar jaguarLeft;
     private Jaguar jaguarRight;
 
     private DriverStationLCD driverStationLCD;
-    private DriverStation driverStation;
 
-    private Watchdog watchdog1;
+    private Watchdog watchDog;
 
     public void robotInit()
     {
-        joystick1 = new Joystick(1);
-        joystick2 = new Joystick(2);
+        joystickLeft = new Joystick(1);
+        joystickRight = new Joystick(2);
         
         jaguarLeft = new Jaguar(1);
         jaguarRight = new Jaguar(2);
 
         driverStationLCD = DriverStationLCD.getInstance();
-        driverStation = DriverStation.getInstance();
 
-        watchdog1 = Watchdog.getInstance();
+        watchDog = Watchdog.getInstance();
 
-        watchdog1.feed();
+        watchDog.feed();
         driverStationLCD.updateLCD();
     }
 
     public void autonomousPeriodic()
     {
-        watchdog1.feed();
+        watchDog.feed();
         driverStationLCD.updateLCD();
     }
 
     public void teleopPeriodic()
     {
-        if(DRIVE_MODE == 0)
-        {
-            jaguarLeft.set(joystick1.getY());
-            jaguarRight.set(joystick2.getY());
-        }
-        else if(DRIVE_MODE == 1)
-        {
-            jaguarLeft.set(joystick1.getY() - joystick1.getX());
-            jaguarRight.set(joystick1.getY() + joystick1.getX());
-        }
+        jaguarLeft.set(joystickLeft.getY());
+        jaguarRight.set(joystickRight.getY());
         
-        driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Joystick1(X): " + joystick1.getX() + " (Y): " + joystick1.getY());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Joystick2(X): " + joystick2.getX() + " (Y): " + joystick2.getY());
+        driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Joystick1(X): " + joystickLeft.getX() + " (Y): " + joystickLeft.getY());
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Joystick2(X): " + joystickRight.getX() + " (Y): " + joystickRight.getY());
         
-        watchdog1.feed();
+        watchDog.feed();
         driverStationLCD.updateLCD();
     }
     
