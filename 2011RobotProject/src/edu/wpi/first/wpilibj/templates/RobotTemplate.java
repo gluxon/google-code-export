@@ -17,7 +17,6 @@ public class RobotTemplate extends IterativeRobot
 {
     private static final int SLOT_1 = 1;
     private static final int SLOT_8 = 8;
-
     private Joystick joystickLeft;
     private Joystick joystickRight;
 
@@ -52,14 +51,52 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        jaguarLeft.set(joystickLeft.getY());
-        jaguarRight.set(joystickRight.getY());
-        
+        arcadeDrive();
+
         driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Joystick1(X): " + joystickLeft.getX() + " (Y): " + joystickLeft.getY());
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Joystick2(X): " + joystickRight.getX() + " (Y): " + joystickRight.getY());
         
         watchDog.feed();
         driverStationLCD.updateLCD();
+    }
+
+    public void arcadeDrive()
+    {
+        double leftMotorSpeed;
+        double rightMotorSpeed;
+
+        double leftInputY = joystickLeft.getY();
+        double leftInputX = joystickLeft.getX();
+
+        if (leftInputY > 0.0)
+        {
+            if (leftInputX > 0.0)
+            {
+                leftMotorSpeed = leftInputY - leftInputX;
+                rightMotorSpeed = Math.max(leftInputY, leftInputX);
+            }
+            else
+            {
+                leftMotorSpeed = Math.max(leftInputY, -leftInputX);
+                rightMotorSpeed = leftInputY + leftInputX;
+            }
+        }
+        else
+        {
+            if (leftInputX > 0.0)
+            {
+                leftMotorSpeed = -Math.max(-leftInputY, leftInputX);
+                rightMotorSpeed = leftInputY + leftInputX;
+            }
+            else
+            {
+                leftMotorSpeed = leftInputY - leftInputX;
+                rightMotorSpeed = -Math.max(-leftInputY, -leftInputX);
+            }
+        }
+
+        jaguarLeft.set(leftMotorSpeed);
+        jaguarRight.set(rightMotorSpeed);
     }
     
 }
