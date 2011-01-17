@@ -15,10 +15,7 @@ import edu.wpi.first.wpilibj.Watchdog;
 
 public class RobotTemplate extends IterativeRobot
 {
-    private static final int SLOT_1 = 1;
-    private static final int SLOT_8 = 8;
-    private Joystick joystickLeft;
-    private Joystick joystickRight;
+    private Joystick xboxController;
 
     private Jaguar jaguarLeft;
     private Jaguar jaguarRight;
@@ -29,8 +26,7 @@ public class RobotTemplate extends IterativeRobot
 
     public void robotInit()
     {
-        joystickLeft = new Joystick(1);
-        joystickRight = new Joystick(2);
+        xboxController = new Joystick(1);
         
         jaguarLeft = new Jaguar(1);
         jaguarRight = new Jaguar(2);
@@ -51,52 +47,14 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        arcadeDrive();
-
-        driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Joystick1(X): " + joystickLeft.getX() + " (Y): " + joystickLeft.getY());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Joystick2(X): " + joystickRight.getX() + " (Y): " + joystickRight.getY());
+        if(xboxController.getThrottle() > 0.1 || xboxController.getThrottle() < -0.1 || xboxController.getY() > 0.1 || xboxController.getY() < -0.1)
+        {
+            jaguarLeft.set(-xboxController.getThrottle()+xboxController.getY());
+            jaguarRight.set(-xboxController.getThrottle()-xboxController.getY());
+        }
         
         watchDog.feed();
         driverStationLCD.updateLCD();
     }
 
-    public void arcadeDrive()
-    {
-        double leftMotorSpeed;
-        double rightMotorSpeed;
-
-        double leftInputY = joystickLeft.getY();
-        double leftInputX = joystickLeft.getX();
-
-        if (leftInputY > 0.0)
-        {
-            if (leftInputX > 0.0)
-            {
-                leftMotorSpeed = leftInputY - leftInputX;
-                rightMotorSpeed = Math.max(leftInputY, leftInputX);
-            }
-            else
-            {
-                leftMotorSpeed = Math.max(leftInputY, -leftInputX);
-                rightMotorSpeed = leftInputY + leftInputX;
-            }
-        }
-        else
-        {
-            if (leftInputX > 0.0)
-            {
-                leftMotorSpeed = -Math.max(-leftInputY, leftInputX);
-                rightMotorSpeed = leftInputY + leftInputX;
-            }
-            else
-            {
-                leftMotorSpeed = leftInputY - leftInputX;
-                rightMotorSpeed = -Math.max(-leftInputY, -leftInputX);
-            }
-        }
-
-        jaguarLeft.set(leftMotorSpeed);
-        jaguarRight.set(rightMotorSpeed);
-    }
-    
 }
