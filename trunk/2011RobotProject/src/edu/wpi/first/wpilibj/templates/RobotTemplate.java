@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
@@ -24,12 +25,20 @@ public class RobotTemplate extends IterativeRobot
 
     private Watchdog watchDog;
 
+    private DigitalInput leftLineSensor;
+    private DigitalInput centerLineSensor;
+    private DigitalInput rightLineSensor;
+
     public void robotInit()
     {
         xboxController = new Joystick(1);
         
         jaguarLeft = new Jaguar(1);
         jaguarRight = new Jaguar(2);
+
+        leftLineSensor = new DigitalInput(1);
+        centerLineSensor = new DigitalInput(2);
+        rightLineSensor = new DigitalInput(3);
 
         driverStationLCD = DriverStationLCD.getInstance();
 
@@ -41,6 +50,40 @@ public class RobotTemplate extends IterativeRobot
 
     public void autonomousPeriodic()
     {
+        int leftLineValue = leftLineSensor.get()? 1: 0;
+        int centerLineValue = centerLineSensor.get()? 1: 0;
+        int rightLineValue = rightLineSensor.get()? 1: 0;
+
+        int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
+        
+        double jaguarLeftSpeed = jaguarLeft.get();
+        double jaguarRightSpeed = jaguarRight.get();
+
+
+        switch(statusValue)
+        {
+            case 0 | 111 | 110 | 11:
+                jaguarLeft.set(0.0);
+                jaguarRight.set(0.0);
+            break;
+
+            case 1:
+                jaguarLeft.set(jaguarLeftSpeed -= 0.1);
+                jaguarRight.set(jaguarRightSpeed += 0.1);
+            break;
+
+            case 10:
+                jaguarLeft.set(jaguarLeftSpeed);
+                jaguarRight.set(jaguarRightSpeed);
+            break;
+
+            case 100:
+                jaguarLeft.set(jaguarLeftSpeed += 0.1);
+                jaguarRight.set(jaguarRightSpeed -= 0.1);
+            break;
+            
+        }
+
         watchDog.feed();
         driverStationLCD.updateLCD();
     }
