@@ -29,6 +29,8 @@ public class RobotTemplate extends IterativeRobot
     private DigitalInput centerLineSensor;
     private DigitalInput rightLineSensor;
 
+    private boolean firstTimeAutonomous;
+
     public void robotInit()
     {
         xboxController = new Joystick(1);
@@ -44,8 +46,14 @@ public class RobotTemplate extends IterativeRobot
 
         watchDog = Watchdog.getInstance();
 
+        firstTimeAutonomous = true;
         watchDog.feed();
         driverStationLCD.updateLCD();
+    }
+
+    public void disabledInit()
+    {
+        firstTimeAutonomous = true;
     }
 
     public void autonomousPeriodic()
@@ -55,14 +63,23 @@ public class RobotTemplate extends IterativeRobot
         int rightLineValue = rightLineSensor.get()? 1: 0;
 
         int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
-        
+
+        double defaultRobotSpeed = 0.5;
+
+        if(firstTimeAutonomous)
+        {
+            jaguarLeft.set(defaultRobotSpeed);
+            jaguarRight.set(defaultRobotSpeed);
+        }
+
+
         double jaguarLeftSpeed = jaguarLeft.get();
         double jaguarRightSpeed = jaguarRight.get();
 
 
         switch(statusValue)
         {
-            case 0 | 111 | 110 | 11:
+            case 0 | 111 | 110 | 11 | 101:
                 jaguarLeft.set(0.0);
                 jaguarRight.set(0.0);
             break;
@@ -95,7 +112,7 @@ public class RobotTemplate extends IterativeRobot
             jaguarLeft.set(-xboxController.getThrottle()+xboxController.getY());
             jaguarRight.set(-xboxController.getThrottle()-xboxController.getY());
         }
-        
+
         watchDog.feed();
         driverStationLCD.updateLCD();
     }
