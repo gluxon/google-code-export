@@ -9,6 +9,7 @@ package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStationLCD;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.Watchdog;
 
 public class RobotTemplate extends IterativeRobot
 {
+    private static final int SLOT_1 = 1;
+
     private Joystick xboxController;
 
     private Jaguar jaguarLeft;
@@ -29,6 +32,17 @@ public class RobotTemplate extends IterativeRobot
     private DigitalInput centerLineSensor;
     private DigitalInput rightLineSensor;
 
+    private Encoder encoderLeft;
+    private Encoder encoderRight;
+
+    private double distanceRobotLeft;
+    private double distanceRobotRight;
+
+    private boolean robotDirectionLeft;
+    private boolean robotDirectionRight;
+
+    private String defaultDirection = "LEFT";
+
     private boolean firstTimeAutonomous;
 
     public void robotInit()
@@ -41,6 +55,9 @@ public class RobotTemplate extends IterativeRobot
         leftLineSensor = new DigitalInput(1);
         centerLineSensor = new DigitalInput(2);
         rightLineSensor = new DigitalInput(3);
+
+        encoderLeft = new Encoder(SLOT_1,1,SLOT_1,2);
+        encoderRight = new Encoder(SLOT_1,3,SLOT_1,4);
 
         driverStationLCD = DriverStationLCD.getInstance();
 
@@ -58,6 +75,24 @@ public class RobotTemplate extends IterativeRobot
 
     public void autonomousPeriodic()
     {
+        /*******************************Encoder**********************************/
+
+        encoderLeft.start();
+        encoderRight.start();
+
+        distanceRobotRight = encoderRight.getDistance();
+        distanceRobotLeft = encoderLeft.getDistance();
+
+        robotDirectionLeft = encoderLeft.getDirection();
+        robotDirectionRight = encoderRight.getDirection();
+
+        driverStationLCD.println(DriverStationLCD.Line.kMain6, 0, "Left Distance: " + distanceRobotLeft);
+        driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Right Distance: " + distanceRobotRight);
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Left Direction (True = Forward: " + robotDirectionLeft);
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 0, "Right Direction (True = Forward: " + robotDirectionRight);
+
+        /****************************Line Following******************************/
+        
         int leftLineValue = leftLineSensor.get()? 1: 0;
         int centerLineValue = centerLineSensor.get()? 1: 0;
         int rightLineValue = rightLineSensor.get()? 1: 0;
@@ -79,7 +114,7 @@ public class RobotTemplate extends IterativeRobot
 
         switch(statusValue)
         {
-            case 0 | 111 | 110 | 11 | 101:
+            case 0 | 111 | 110 | 11:
                 jaguarLeft.set(0.0);
                 jaguarRight.set(0.0);
             break;
@@ -97,6 +132,19 @@ public class RobotTemplate extends IterativeRobot
             case 100:
                 jaguarLeft.set(jaguarLeftSpeed += 0.1);
                 jaguarRight.set(jaguarRightSpeed -= 0.1);
+            break;
+
+            case 101:
+                if(defaultDirection.equals("LEFT"))
+                {
+                    jaguarLeft.set(-0.5);
+                    jaguarRight.set(0.5);
+                }
+                else
+                {
+                    jaguarLeft.set(0.5);
+                    jaguarRight.set(-0.5);
+                }
             break;
             
         }
