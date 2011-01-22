@@ -20,9 +20,12 @@ public class RobotTemplate extends IterativeRobot
     private static final int SLOT_1 = 1;
 
     private Joystick xboxController;
+    private Joystick auxDriverJoystick;
 
     private Jaguar jaguarLeft;
     private Jaguar jaguarRight;
+
+    private Jaguar jaguarArm;
 
     private DriverStationLCD driverStationLCD;
 
@@ -48,9 +51,12 @@ public class RobotTemplate extends IterativeRobot
     public void robotInit()
     {
         xboxController = new Joystick(1);
+        auxDriverJoystick = new Joystick(2);
         
         jaguarLeft = new Jaguar(1);
         jaguarRight = new Jaguar(2);
+
+        jaguarArm = new Jaguar(3);
 
         leftLineSensor = new DigitalInput(1);
         centerLineSensor = new DigitalInput(2);
@@ -86,10 +92,10 @@ public class RobotTemplate extends IterativeRobot
         robotDirectionLeft = encoderLeft.getDirection();
         robotDirectionRight = encoderRight.getDirection();
 
-        driverStationLCD.println(DriverStationLCD.Line.kMain6, 0, "Left Distance: " + distanceRobotLeft);
-        driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Right Distance: " + distanceRobotRight);
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Left Direction (True = Forward: " + robotDirectionLeft);
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 0, "Right Direction (True = Forward: " + robotDirectionRight);
+        //driverStationLCD.println(DriverStationLCD.Line.kMain6, 0, "Left Distance: " + distanceRobotLeft);
+        //driverStationLCD.println(DriverStationLCD.Line.kUser2, 0, "Right Distance: " + distanceRobotRight);
+        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 0, "Left Direction (True = Forward: " + robotDirectionLeft);
+        //driverStationLCD.println(DriverStationLCD.Line.kUser4, 0, "Right Direction (True = Forward: " + robotDirectionRight);
 
         /****************************Line Following******************************/
         
@@ -155,14 +161,23 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
+        watchDog.feed();
+        driverStationLCD.updateLCD();
+
+        /*******************************Main Driver Code***************************************/
+
         if(xboxController.getThrottle() > 0.1 || xboxController.getThrottle() < -0.1 || xboxController.getY() > 0.1 || xboxController.getY() < -0.1)
         {
             jaguarLeft.set(-xboxController.getThrottle()+xboxController.getY());
             jaguarRight.set(-xboxController.getThrottle()-xboxController.getY());
         }
 
-        watchDog.feed();
-        driverStationLCD.updateLCD();
+        /*******************************Aux Driver Code****************************************/
+
+        if(auxDriverJoystick.getY() > 0.1 || xboxController.getY() < -0.1)
+        {
+            jaguarArm.set(auxDriverJoystick.getY());
+        }
     }
 
 }
