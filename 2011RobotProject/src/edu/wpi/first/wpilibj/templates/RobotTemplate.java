@@ -16,9 +16,15 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.Watchdog;
+import com.sun.squawk.util.MathUtils;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.camera.AxisCamera;
+
 
 public class RobotTemplate extends IterativeRobot
 {
+    private static final double PI = Math.PI;
+
     private static final int SLOT_1 = 1;
 
     //slot on the digital sidecar that is for digital IO - confirm slot?
@@ -39,49 +45,72 @@ public class RobotTemplate extends IterativeRobot
     //minimum xbox input value needed to respond - this corrects for xbox oversensitivity
     private static final double XBOX_SENSITIVITY = 0.2;
 
-    //distance for arm to travel to put up uber piece during autonomous (mm)
-    private static final double VERTICAL_DISTANCE = 5;
+    //height of arm - ground to pivot point
+    private static final double ARM_HEIGHT = 54.5;
+
+    //length of arm - pivot point to mid-way of gripper
+    private static final double ARM_LENGTH = 83;
+
+    //distance from wall to stop(inches)
+    private static double WALL_DISTANCE;
+
+    //three predetermined heights (inches) for arm during auto
+    private static final double TOP_HEIGHT_HIGH = 112;
+    private static final double MID_HEIGHT_HIGH = 76;
+    private static final double BOTTOM_HEIGHT_HIGH = 39;
+
+    //heights of spokes on outer lane (low spokes)inches
+    private static final double TOP_HEIGHT_LOW = 104.5;
+    private static final double MID_HEIGHT_LOW = 68;
+    private static final double BOTTOM_HEIGHT_LOW = 30.5;
+    
+    //Lengths of the spokes(inches)
+    private static final double SPOKE_LENGTH = 17.5;
+
+    //Pulses of encoderArm per revolution of arm
+    private static final double PULSES_PER_REV = 1440;
 
     //xbox is for arm, joystick is for driving main bot
-    private Joystick xboxController;
-    private Joystick driverJoystick;
+    private Joystick xboxController, driverJoystick;
 
-    //wheel jags
-    private Jaguar jaguarLeft;
-    private Jaguar jaguarRight;
-
-    //claw jags
-    private Jaguar jaguarArm;
+    //drive, arm and claw speed controllers
+    private Jaguar jaguarLeft, jaguarRight, jaguarArm;
     private Victor clawVictor;
 
     //claw limit switches
-    private DigitalInput outerClawLimit;
-    private DigitalInput innerClawLimit;
+    private DigitalInput outerClawLimit, innerClawLimit;
 
     private DriverStationLCD driverStationLCD;
 
     private Watchdog watchDog;
 
     //line sensors
-    private DigitalInput leftLineSensor;
-    private DigitalInput centerLineSensor;
-    private DigitalInput rightLineSensor;
+    private DigitalInput leftLineSensor, centerLineSensor, rightLineSensor;
+
+    //two slots for arm height switch
+    private DigitalInput heightSwitch1, heightSwitch2;
+
+    //two slots for chosing lanes
+    private DigitalInput laneSwitch1, laneSwitch2;
+
+    private Ultrasonic rangeSensor;
 
     //encoders
-    private Encoder encoderLeft;
-    private Encoder encoderRight;
-    private Encoder encoderArm;
+    private Encoder encoderLeft, encoderRight, encoderArm;
 
-    private double distanceRobotLeft;
-    private double distanceRobotRight;
+    private double distanceRobotLeft, distanceRobotRight;
 
     //solenoid
     private Solenoid miniBotSolenoid;
+
+    //camera
+    private AxisCamera robotCamera;
 
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
 
     private boolean split = false;
+    private int pulses = 0;
 
     private String defaultDirection = "LEFT";
 
@@ -89,6 +118,8 @@ public class RobotTemplate extends IterativeRobot
 
     public void robotInit()
     {
+        try //everything
+        {
         xboxController = new Joystick(2);
         driverJoystick = new Joystick(1);
 
@@ -109,8 +140,13 @@ public class RobotTemplate extends IterativeRobot
         centerLineSensor = new DigitalInput(2);
         rightLineSensor = new DigitalInput(3);
 
-        try
-        {
+        //two arm height and lane switch inputs
+        heightSwitch1 = new DigitalInput(6);
+        heightSwitch2 = new DigitalInput(7);
+        laneSwitch1 = new DigitalInput(8);
+        laneSwitch2 = new DigitalInput(9);
+
+        //declare encoders
         encoderLeft = new Encoder(SLOT_1,1,SLOT_1,2);
         encoderRight = new Encoder(SLOT_1,3,SLOT_1,4);
         encoderArm = new Encoder(SLOT_1, 5,SLOT_1, 6);
@@ -118,6 +154,10 @@ public class RobotTemplate extends IterativeRobot
         //Apparently this year's encoders gives 1440 pulses per revolution, or .25 degrees per pulse
         encoderRight.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
         encoderLeft.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+        encoderArm.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+
+        //ultrasonic sensor
+        rangeSensor = new Ultrasonic (SLOT_1, 7, SLOT_1, 9);
         }
         catch(NullPointerException ex)
         {
@@ -186,7 +226,6 @@ public class RobotTemplate extends IterativeRobot
         {
             jaguarLeft.set(0.0);
             jaguarRight.set(0.0);
-          //  putGamePiece();
         }
 */
         if(firstTimeAutonomous)
@@ -194,11 +233,125 @@ public class RobotTemplate extends IterativeRobot
             encoderArm.start();
             jaguarLeft.set(-defaultRobotSpeed);
             jaguarRight.set(defaultRobotSpeed);
-            //raiseArm();
             firstTimeAutonomous = false;
+            pulses = calculatePulses(heightRaised(), ARM_HEIGHT, ARM_LENGTH);
+            distanceFromWall(heightRaised());
+        }
+        raiseArm(pulses);
+        if(rangeSensor.getRangeInches() > WALL_DISTANCE)
+            followLine();
+        else
+        {
+            jaguarLeft.set(0);
+            jaguarRight.set(0);
+            moveClaw(-.2);
+        }
+        watchDog.feed();
+        driverStationLCD.updateLCD();
+
+    }
+
+    public void teleopPeriodic()
+    {
+        /************************line sensor data********************/
+        int leftLineValue = (leftLineSensor.get() ? 1 : 0);
+        int centerLineValue = (centerLineSensor.get() ? 1 : 0);
+        int rightLineValue = (rightLineSensor.get() ? 1 : 0);
+
+        //double jaguarLeftSpeed = jaguarLeft.get();
+        //double jaguarRightSpeed = jaguarRight.get();
+
+        int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
+
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Status: " + statusValue);
+
+        /*******************************Main Driver Code**************************************/
+
+            jaguarLeft.set(-driverJoystick.getX()+ driverJoystick.getY());
+            jaguarRight.set(-driverJoystick.getX()- driverJoystick.getY());
+
+
+
+        /*******************************Aux Driver Code****************************************/
+
+        if(xboxController.getY() > XBOX_SENSITIVITY || xboxController.getY() < -XBOX_SENSITIVITY)
+        {
+            jaguarArm.set(xboxController.getY());
+            moveClaw(xboxController.getThrottle());
         }
 
-        /****************************Line Following******************************/
+         
+        watchDog.feed();
+        driverStationLCD.updateLCD();
+    }
+    //if arm encoder pulses is less than what is needed, raise arm
+    public void raiseArm(double pulses)
+    {
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm pulses: " + pulses);
+        if(encoderArm.get()< pulses)
+        {
+            jaguarArm.set(.2);
+        }
+        if (encoderArm.get() > pulses)
+        {
+            jaguarArm.set(0);
+        }
+    }
+    //moves the claw during teleop
+    public void moveClaw(double speed)
+    {
+        if (speed > XBOX_SENSITIVITY)
+        {
+            if (!outerClawLimit.get())
+            {
+                clawVictor.set(speed);
+            }
+            else
+            {
+              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Outer limit is pressed, can't move claw outwards!");
+              clawVictor.set(0.0);
+            }
+
+
+        }
+        if (speed < -XBOX_SENSITIVITY)
+        {
+            if (!innerClawLimit.get())
+            {
+                clawVictor.set(speed);
+            }
+            else
+            {
+              //overwrites outer limit pressed output
+              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner limit is pressed, can't move claw inwards! ");
+              clawVictor.set(0.0);
+            }
+        }
+        driverStationLCD.updateLCD();
+    }
+    //returns the number of pulses that the arm encoder must see before stopping
+    public int calculatePulses(double spokeHeight, double ARM_HEIGHT, double ARM_LENGTH)
+    {
+        //starting angle(Radians), assuming pivot point of arm is 21in from front
+        //and arm is 54.5in off of ground
+        double startingAngle = 0.368877462;
+
+        //calculates the angle
+        double endingAngle;
+        if ((ARM_HEIGHT - spokeHeight) != 0)
+        {
+            endingAngle = MathUtils.acos((ARM_HEIGHT - spokeHeight)/ARM_LENGTH);
+        }
+        else
+            endingAngle = PI / 2.0;
+        double deltaAngle = endingAngle - startingAngle;
+        return (int)((deltaAngle / (2*PI)) * PULSES_PER_REV);
+
+
+    }
+    //line following code
+    private void followLine()
+    {
         //0 is on the line, 1 is off (note: sensor returns true when off the line)
         int leftLineValue = (leftLineSensor.get() ? 1 : 0);
         int centerLineValue = (centerLineSensor.get() ? 1 : 0);
@@ -252,17 +405,12 @@ public class RobotTemplate extends IterativeRobot
                 split = true;
             break;
 
+            default:
             case 0:
-                //not sure if robot will be able to get on end of line after Y split
                 jaguarLeft.set(0.0);
                 jaguarRight.set(0.0);
-                putGamePiece();
             break;
 
-            default:
-                jaguarLeft.set(0.0);
-                jaguarRight.set(0.0);
-            break;
         }
         }
         else
@@ -273,83 +421,50 @@ public class RobotTemplate extends IterativeRobot
                 split = false;
             }
         }
-     
-        
-        watchDog.feed();
-        driverStationLCD.updateLCD();
 
     }
 
-    public void teleopPeriodic()
+    //find what spoke to use through the switches' input
+    private double heightRaised()
     {
-        /************************line sensor data********************/
-        int leftLineValue = (leftLineSensor.get() ? 1 : 0);
-        int centerLineValue = (centerLineSensor.get() ? 1 : 0);
-        int rightLineValue = (rightLineSensor.get() ? 1 : 0);
-
-        //double jaguarLeftSpeed = jaguarLeft.get();
-        //double jaguarRightSpeed = jaguarRight.get();
-
-        int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
-
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Status: " + statusValue);
-
-        /*******************************Main Driver Code**************************************/
-
-            jaguarLeft.set(-driverJoystick.getX()+ driverJoystick.getY());
-            jaguarRight.set(-driverJoystick.getX()- driverJoystick.getY());
-
-
-
-        /*******************************Aux Driver Code****************************************/
-
-        if(xboxController.getY() > XBOX_SENSITIVITY || xboxController.getY() < -XBOX_SENSITIVITY)
+        if (!laneSwitch1.get() && !laneSwitch2.get())
         {
-            jaguarArm.set(xboxController.getY());
-            moveClaw(xboxController.getThrottle());
-        }
-
-         
-        watchDog.feed();
-        driverStationLCD.updateLCD();
-    }
-    public void raiseArm()
-    {
-       while(encoderArm.getDistance()< VERTICAL_DISTANCE)
-        {
-            jaguarArm.set(.2);
-        }
-        jaguarArm.set(0.0);
-    }
-    public void putGamePiece ()
-    {
-            //Note: may have to move forward
-            encoderArm.stop();
-            moveClaw(.2);
-    }
-    public void moveClaw(double speed)
-    {
-        if (speed > XBOX_SENSITIVITY)
-        {
-            if (!outerClawLimit.get())
+            if (!heightSwitch1.get() && !heightSwitch2.get())
             {
-                clawVictor.set(speed);
+                return BOTTOM_HEIGHT_LOW;
             }
-            else
-              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Outer limit is pressed, can't move claw outwards!");
-        }
-        if (speed < -XBOX_SENSITIVITY)
-        {
-            if (!innerClawLimit.get())
+            if (!heightSwitch1.get() && heightSwitch2.get())
             {
-                clawVictor.set(speed);
+                return MID_HEIGHT_LOW;
             }
-            else
+            if (heightSwitch1.get() && !heightSwitch2.get())
             {
-              //overwrites outer limit pressed output
-              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner limit is pressed, can't move claw inwards! ");
+                return TOP_HEIGHT_LOW;
             }
         }
-        driverStationLCD.updateLCD();
+        if (laneSwitch1.get() || laneSwitch2.get())
+        {
+            if (!heightSwitch1.get() && !heightSwitch2.get())
+            {
+                return BOTTOM_HEIGHT_HIGH;
+            }
+            if (!heightSwitch1.get() && heightSwitch2.get())
+            {
+                return MID_HEIGHT_HIGH;
+            }
+            if (heightSwitch1.get() && !heightSwitch2.get())
+            {
+                return TOP_HEIGHT_HIGH;
+            }
+            //third option, makes bot go right (well, not left)
+            if (!laneSwitch1.get()) defaultDirection = "RIGHT";
+        }
+        //if none of that works...
+        return BOTTOM_HEIGHT_HIGH;
+    }
+    //sets the distance the robot has to be away from the wall
+    private void distanceFromWall(double height)
+    {
+       WALL_DISTANCE = Math.sqrt(MathUtils.pow(ARM_LENGTH, 2)-MathUtils.pow(height-ARM_HEIGHT, 2)) + .5 * SPOKE_LENGTH -16;
     }
 }
