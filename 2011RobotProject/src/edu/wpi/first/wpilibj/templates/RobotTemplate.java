@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+                 /*----------------------------------------------------------------------------*/
 /* Copyright (c) FIRST 2008. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Watchdog;
 import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.Timer;
 
 
 public class RobotTemplate extends IterativeRobot
@@ -50,6 +51,9 @@ public class RobotTemplate extends IterativeRobot
 
     //length of arm - pivot point to mid-way of gripper
     private static final double ARM_LENGTH = 83;
+
+    //distance from middle of base of arm to the front
+    private static final double FRONT_LENGTH = 16;
 
     //distance from wall to stop(inches)
     private static double WALL_DISTANCE;
@@ -106,10 +110,13 @@ public class RobotTemplate extends IterativeRobot
     //camera
     private AxisCamera robotCamera;
 
+    private Timer timer;
+
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
 
     private boolean split = false;
+    private boolean endYTurn = false;
     private int pulses = 0;
 
     private String defaultDirection = "LEFT";
@@ -124,12 +131,12 @@ public class RobotTemplate extends IterativeRobot
         driverJoystick = new Joystick(1);
 
         //drive jaguars
-        jaguarLeft = new Jaguar(1);
-        jaguarRight = new Jaguar(2);
+        jaguarLeft = new Jaguar(10);
+        jaguarRight = new Jaguar(9);
 
         //arm jags
-        jaguarArm = new Jaguar(3);
-        clawVictor = new Victor(4);
+        jaguarArm = new Jaguar(8);
+        clawVictor = new Victor(7);
         
         //claw limit switches
         outerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 4);
@@ -158,13 +165,16 @@ public class RobotTemplate extends IterativeRobot
 
         //ultrasonic sensor
         rangeSensor = new Ultrasonic (SLOT_1, 7, SLOT_1, 9);
+        timer = new Timer();
+
+        //minibot deployment solenoid
+        miniBotSolenoid = new Solenoid(8, 1);
         }
         catch(NullPointerException ex)
         {
 
         }
-        //minibot solenoid
-        //miniBotSolenoid = new Solenoid(8, 1);
+        
 
         driverStationLCD = DriverStationLCD.getInstance();
 
@@ -236,16 +246,54 @@ public class RobotTemplate extends IterativeRobot
             firstTimeAutonomous = false;
             pulses = calculatePulses(heightRaised(), ARM_HEIGHT, ARM_LENGTH);
             distanceFromWall(heightRaised());
+            timer.start();
         }
+        raiseArm(pulses/4);
+        if(timer.get()>5000000)
+        {
         raiseArm(pulses);
+        timer.stop();
+        }
         if(rangeSensor.getRangeInches() > WALL_DISTANCE)
             followLine();
         else
         {
+            if (!laneSwitch1.get() && !laneSwitch2.get())
+            {
             jaguarLeft.set(0);
             jaguarRight.set(0);
             moveClaw(-.2);
+            }
+            //turn right and move back after left turn at y split, then move forward and put piece
+            if (laneSwitch1.get()&& !endYTurn)
+            {
+                endYTurn = true;
+                jaguarLeft.set(.10);
+                jaguarRight.set(-.20);
+                Timer.delay(.5);
+                jaguarLeft.set(-.1);
+                jaguarRight.set(.1);
+                Timer.delay(.2);
+                jaguarLeft.set(0);
+                jaguarRight.set(0);
+                moveClaw(-.2);
+            } 
+            //turn left and move back after right turn at y split, then move forward and put piece
+            if (laneSwitch2.get()&& !endYTurn)
+            {
+                endYTurn = true;
+                jaguarLeft.set(.20);
+                jaguarRight.set(-.10);
+                Timer.delay(.5);
+                jaguarLeft.set(-.1);
+                jaguarRight.set(.1);
+                Timer.delay(.2);
+                jaguarLeft.set(0);
+                jaguarRight.set(0);
+                moveClaw(-.2);
+            }
         }
+       
         watchDog.feed();
         driverStationLCD.updateLCD();
 
@@ -270,7 +318,9 @@ public class RobotTemplate extends IterativeRobot
             jaguarLeft.set(-driverJoystick.getX()+ driverJoystick.getY());
             jaguarRight.set(-driverJoystick.getX()- driverJoystick.getY());
 
-
+            //deploys minibot
+            if(driverJoystick.getTrigger())
+            miniBotSolenoid.set(true);
 
         /*******************************Aux Driver Code****************************************/
 
@@ -284,6 +334,7 @@ public class RobotTemplate extends IterativeRobot
         watchDog.feed();
         driverStationLCD.updateLCD();
     }
+    
     //if arm encoder pulses is less than what is needed, raise arm
     public void raiseArm(double pulses)
     {
@@ -297,6 +348,7 @@ public class RobotTemplate extends IterativeRobot
             jaguarArm.set(0);
         }
     }
+
     //moves the claw during teleop
     public void moveClaw(double speed)
     {
@@ -329,6 +381,7 @@ public class RobotTemplate extends IterativeRobot
         }
         driverStationLCD.updateLCD();
     }
+
     //returns the number of pulses that the arm encoder must see before stopping
     public int calculatePulses(double spokeHeight, double ARM_HEIGHT, double ARM_LENGTH)
     {
@@ -349,6 +402,7 @@ public class RobotTemplate extends IterativeRobot
 
 
     }
+
     //line following code
     private void followLine()
     {
@@ -462,9 +516,13 @@ public class RobotTemplate extends IterativeRobot
         //if none of that works...
         return BOTTOM_HEIGHT_HIGH;
     }
+
     //sets the distance the robot has to be away from the wall
     private void distanceFromWall(double height)
     {
-       WALL_DISTANCE = Math.sqrt(MathUtils.pow(ARM_LENGTH, 2)-MathUtils.pow(height-ARM_HEIGHT, 2)) + .5 * SPOKE_LENGTH -16;
+       WALL_DISTANCE = Math.sqrt(MathUtils.pow(ARM_LENGTH, 2)-MathUtils.pow(height-ARM_HEIGHT, 2)) + .5 * SPOKE_LENGTH - FRONT_LENGTH;
     }
+
+
+
 }
