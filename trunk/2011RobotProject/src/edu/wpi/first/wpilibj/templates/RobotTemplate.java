@@ -20,6 +20,7 @@ import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.image.ColorImage;
 
 
 public class RobotTemplate extends IterativeRobot
@@ -75,7 +76,7 @@ public class RobotTemplate extends IterativeRobot
     private static final double PULSES_PER_REV = 1440;
 
     //xbox is for arm, joystick is for driving main bot
-    private Joystick xboxController, driverJoystick;
+    private Joystick xboxController, xboxDriveController;
 
     //drive, arm and claw speed controllers
     private Jaguar jaguarLeft, jaguarRight, jaguarArm;
@@ -112,6 +113,8 @@ public class RobotTemplate extends IterativeRobot
 
     private Timer timer;
 
+    ColorImage image;
+
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
 
@@ -128,19 +131,19 @@ public class RobotTemplate extends IterativeRobot
         try //everything
         {
         xboxController = new Joystick(2);
-        driverJoystick = new Joystick(1);
+        xboxDriveController = new Joystick(1);
 
         //drive jaguars
-        jaguarLeft = new Jaguar(10);
-        jaguarRight = new Jaguar(9);
+        jaguarLeft = new Jaguar(9);
+        jaguarRight = new Jaguar(8);
 
         //arm jags
         jaguarArm = new Jaguar(8);
         clawVictor = new Victor(7);
         
         //claw limit switches
-        outerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 4);
-        innerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 5);
+        //outerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 4);
+        //innerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 5);
 
         //line sensors
         leftLineSensor = new DigitalInput(1);
@@ -148,20 +151,20 @@ public class RobotTemplate extends IterativeRobot
         rightLineSensor = new DigitalInput(3);
 
         //two arm height and lane switch inputs
-        heightSwitch1 = new DigitalInput(6);
-        heightSwitch2 = new DigitalInput(7);
-        laneSwitch1 = new DigitalInput(8);
-        laneSwitch2 = new DigitalInput(9);
+        //heightSwitch1 = new DigitalInput(6);
+        //heightSwitch2 = new DigitalInput(7);
+        //laneSwitch1 = new DigitalInput(8);
+        //laneSwitch2 = new DigitalInput(9);
 
         //declare encoders
         encoderLeft = new Encoder(SLOT_1,1,SLOT_1,2);
         encoderRight = new Encoder(SLOT_1,3,SLOT_1,4);
-        encoderArm = new Encoder(SLOT_1, 5,SLOT_1, 6);
+        //encoderArm = new Encoder(SLOT_1, 5,SLOT_1, 6);
         
         //Apparently this year's encoders gives 1440 pulses per revolution, or .25 degrees per pulse
-        encoderRight.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
-        encoderLeft.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
-        encoderArm.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+        //encoderRight.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+        //encoderLeft.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+        //encoderArm.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
 
         //ultrasonic sensor
         rangeSensor = new Ultrasonic (SLOT_1, 7, SLOT_1, 9);
@@ -195,7 +198,7 @@ public class RobotTemplate extends IterativeRobot
     {
       /*******************************Encoder**********************************/
        
-      /*  encoderLeft.start();
+        encoderLeft.start();
         encoderRight.start();
 
         
@@ -204,7 +207,7 @@ public class RobotTemplate extends IterativeRobot
 
         robotDirectionLeft = encoderLeft.getDirection();
         robotDirectionRight = encoderRight.getDirection();
-        */
+        
         //starts robot
         /*
 
@@ -299,9 +302,15 @@ public class RobotTemplate extends IterativeRobot
 
     }
 
+    public void teleopContinuous()
+    {
+            jaguarLeft.set(-xboxDriveController.getThrottle()+ xboxDriveController.getY());
+            jaguarRight.set(-xboxDriveController.getThrottle()- xboxDriveController.getY());
+    }
+
     public void teleopPeriodic()
     {
-        /************************line sensor data********************/
+        /************************sensor data********************/
         int leftLineValue = (leftLineSensor.get() ? 1 : 0);
         int centerLineValue = (centerLineSensor.get() ? 1 : 0);
         int rightLineValue = (rightLineSensor.get() ? 1 : 0);
@@ -311,15 +320,24 @@ public class RobotTemplate extends IterativeRobot
 
         int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
 
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Status: " + statusValue);
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + statusValue);
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inches from wall: " + rangeSensor.getRangeInches());
+
+        //camera video output
+        try
+        {
+            image = robotCamera.getImage();
+        }
+        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e){}
+        catch(edu.wpi.first.wpilibj.image.NIVisionException e){}
 
         /*******************************Main Driver Code**************************************/
 
-            jaguarLeft.set(-driverJoystick.getX()+ driverJoystick.getY());
-            jaguarRight.set(-driverJoystick.getX()- driverJoystick.getY());
+            jaguarLeft.set(-(xboxDriveController.getThrottle()/2)+ (xboxDriveController.getY()/2));
+            jaguarRight.set(-(xboxDriveController.getThrottle()/2) - (xboxDriveController.getY()/2));
 
             //deploys minibot
-            if(driverJoystick.getTrigger())
+            if(xboxDriveController.getTrigger())
             miniBotSolenoid.set(true);
 
         /*******************************Aux Driver Code****************************************/
