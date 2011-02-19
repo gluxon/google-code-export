@@ -20,7 +20,9 @@ import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ColorImage;
+import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 
 public class RobotTemplate extends IterativeRobot
@@ -29,7 +31,7 @@ public class RobotTemplate extends IterativeRobot
 
     private static final int SLOT_1 = 1;
 
-    //slot on the digital sidecar that is for digital IO - confirm slot?
+    //slot on the digital sidecar that is for digital IO
     private static final int SIDECAR_IO_SLOT = 4;
 
     //initial robot speed to be used during autonomous
@@ -45,7 +47,7 @@ public class RobotTemplate extends IterativeRobot
     private static final double DISTANCE_TRAVELED = 20;
 
     //minimum xbox input value needed to respond - this corrects for xbox oversensitivity
-    private static final double XBOX_SENSITIVITY = 0.2;
+    private static final double XBOX_SENSITIVITY = 0.1;
 
     //height of arm - ground to pivot point
     private static final double ARM_HEIGHT = 54.5;
@@ -79,8 +81,7 @@ public class RobotTemplate extends IterativeRobot
     private Joystick xboxController, xboxDriveController;
 
     //drive, arm and claw speed controllers
-    private Jaguar jaguarLeft, jaguarRight, jaguarArm;
-    private Victor clawVictor;
+    private Jaguar jaguarLeft, jaguarRight, jaguarArm, clawJaguar;
 
     //claw limit switches
     private DigitalInput outerClawLimit, innerClawLimit;
@@ -114,6 +115,8 @@ public class RobotTemplate extends IterativeRobot
     private Timer timer;
 
     ColorImage image;
+    BinaryImage firstImage;
+    ParticleAnalysisReport[] analysis;
 
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
@@ -138,12 +141,12 @@ public class RobotTemplate extends IterativeRobot
         jaguarRight = new Jaguar(8);
 
         //arm jags
-        jaguarArm = new Jaguar(8);
-        clawVictor = new Victor(7);
-        
+        jaguarArm = new Jaguar(7);
+        clawJaguar = new Jaguar(6);
+      
         //claw limit switches
-        //outerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 4);
-        //innerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 5);
+        outerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 4);
+        innerClawLimit = new DigitalInput(SIDECAR_IO_SLOT, 5);
 
         //line sensors
         leftLineSensor = new DigitalInput(1);
@@ -157,25 +160,33 @@ public class RobotTemplate extends IterativeRobot
         //laneSwitch2 = new DigitalInput(9);
 
         //declare encoders
-        encoderLeft = new Encoder(SLOT_1,1,SLOT_1,2);
-        encoderRight = new Encoder(SLOT_1,3,SLOT_1,4);
-        //encoderArm = new Encoder(SLOT_1, 5,SLOT_1, 6);
+        //encoderLeft = new Encoder(SIDECAR_IO_SLOT, 12);
+        //encoderRight = new Encoder(SIDECAR_IO_SLOT, 13);
+        //encoderArm = new Encoder(SIDECAR_IO_SLOT, 6);
         
         //Apparently this year's encoders gives 1440 pulses per revolution, or .25 degrees per pulse
-        //encoderRight.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
-        //encoderLeft.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
-        //encoderArm.setDistancePerPulse(DRIVE_SHAFT_CIRC * (.25/360));
+        //encoderRight.setDistancePerPulse(DRIVE_SHAFT_CIRC);
+        //encoderLeft.setDistancePerPulse(DRIVE_SHAFT_CIRC);
+        encoderArm.setDistancePerPulse(DRIVE_SHAFT_CIRC);
+
+        encoderArm.start();
 
         //ultrasonic sensor
-        rangeSensor = new Ultrasonic (SLOT_1, 7, SLOT_1, 9);
+        //rangeSensor = new Ultrasonic (SLOT_1, 4);
         timer = new Timer();
+
+        //camera stuff
+        robotCamera = AxisCamera.getInstance();
+        robotCamera.writeBrightness(5);
+        robotCamera.writeColorLevel(10);
+        robotCamera.writeResolution(AxisCamera.ResolutionT.k160x120);
 
         //minibot deployment solenoid
         miniBotSolenoid = new Solenoid(8, 1);
         }
         catch(NullPointerException ex)
         {
-
+            //no clue what to do; just DON'T PANIC!!!
         }
         
 
@@ -188,6 +199,7 @@ public class RobotTemplate extends IterativeRobot
        
         driverStationLCD.updateLCD();
     }
+
 
     public void disabledInit()
     {
@@ -241,6 +253,8 @@ public class RobotTemplate extends IterativeRobot
             jaguarRight.set(0.0);
         }
 */
+        /***********************LINE FOLLOWING******************/
+        
         if(firstTimeAutonomous)
         {
             encoderArm.start();
@@ -251,14 +265,23 @@ public class RobotTemplate extends IterativeRobot
             distanceFromWall(heightRaised());
             timer.start();
         }
-        raiseArm(pulses/4);
+        //raise arm 1/4 of the way that it needs to go, then stop for 5 seconds
+        //so extension can drop out and lock into place
+        raiseArm(pulses/4.0);
         if(timer.get()>5000000)
         {
         raiseArm(pulses);
         timer.stop();
         }
         if(rangeSensor.getRangeInches() > WALL_DISTANCE)
+        {
             followLine();
+            /*To use camera: use this method instead of followLine and delete
+             * the next else block
+             */
+            //followCamera();
+
+        }
         else
         {
             if (!laneSwitch1.get() && !laneSwitch2.get())
@@ -296,16 +319,10 @@ public class RobotTemplate extends IterativeRobot
                 moveClaw(-.2);
             }
         }
-       
+
         watchDog.feed();
         driverStationLCD.updateLCD();
 
-    }
-
-    public void teleopContinuous()
-    {
-            jaguarLeft.set(-xboxDriveController.getThrottle()+ xboxDriveController.getY());
-            jaguarRight.set(-xboxDriveController.getThrottle()- xboxDriveController.getY());
     }
 
     public void teleopPeriodic()
@@ -320,35 +337,56 @@ public class RobotTemplate extends IterativeRobot
 
         int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
 
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + statusValue);
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inches from wall: " + rangeSensor.getRangeInches());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + statusValue);
+        //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inches from wall: " + rangeSensor.getRangeInches());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Arm Encoder Pulses: " + encoderArm.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Outer: " + outerClawLimit.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner: " + innerClawLimit.get());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser5, 2, "right line sensor: " + rightLineSensor.get());
 
         //camera video output
-        try
+        /*try
         {
-            image = robotCamera.getImage();
+            if (robotCamera.freshImage())
+                {
+                //image.free();
+                 image = robotCamera.getImage();
+                }
         }
-        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e){}
-        catch(edu.wpi.first.wpilibj.image.NIVisionException e){}
+        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e){
+            e.printStackTrace();
+        }
+        catch(edu.wpi.first.wpilibj.image.NIVisionException e){
+            e.printStackTrace();
+        }
 
         /*******************************Main Driver Code**************************************/
 
-            jaguarLeft.set(-(xboxDriveController.getThrottle()/2)+ (xboxDriveController.getY()/2));
-            jaguarRight.set(-(xboxDriveController.getThrottle()/2) - (xboxDriveController.getY()/2));
+            jaguarLeft.set(-(xboxDriveController.getThrottle()*0.65) + xboxDriveController.getY());
+            jaguarRight.set(-(xboxDriveController.getThrottle()*0.65) - xboxDriveController.getY());
 
             //deploys minibot
-            if(xboxDriveController.getTrigger())
-            miniBotSolenoid.set(true);
+            //if(xboxDriveController.getTrigger())
+                //miniBotSolenoid.set(true);
+            //else
+                //miniBotSolenoid.set(false);
 
         /*******************************Aux Driver Code****************************************/
 
-        if(xboxController.getY() > XBOX_SENSITIVITY || xboxController.getY() < -XBOX_SENSITIVITY)
-        {
-            jaguarArm.set(xboxController.getY());
-            moveClaw(xboxController.getThrottle());
-        }
+        //if(xboxController.getY() > XBOX_SENSITIVITY || xboxController.getY() < -XBOX_SENSITIVITY)
+        //{
+            jaguarArm.set(xboxController.getThrottle());
+            
+            if(outerClawLimit.get() && xboxController.getY() < 0)
+            {
+                clawJaguar.set(xboxController.getY());
+            }
+            else if(innerClawLimit.get() && xboxController.getY() > 0)
+            {
+                clawJaguar.set(xboxController.getY());
+            }
+        //}
 
-         
         watchDog.feed();
         driverStationLCD.updateLCD();
     }
@@ -356,10 +394,9 @@ public class RobotTemplate extends IterativeRobot
     //if arm encoder pulses is less than what is needed, raise arm
     public void raiseArm(double pulses)
     {
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm pulses: " + pulses);
-        if(encoderArm.get()< pulses)
+        while(encoderArm.get()< pulses)
         {
-            jaguarArm.set(.2);
+            jaguarArm.set(0.8);
         }
         if (encoderArm.get() > pulses)
         {
@@ -370,31 +407,31 @@ public class RobotTemplate extends IterativeRobot
     //moves the claw during teleop
     public void moveClaw(double speed)
     {
-        if (speed > XBOX_SENSITIVITY)
+        if (speed < XBOX_SENSITIVITY)
         {
             if (!outerClawLimit.get())
             {
-                clawVictor.set(speed);
+                clawJaguar.set(speed);
             }
             else
             {
-              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Outer limit is pressed, can't move claw outwards!");
-              clawVictor.set(0.0);
+              driverStationLCD.println(DriverStationLCD.Line.kUser6, 2, "Outer limit is pressed, can't move claw outwards!");
+              clawJaguar.set(0.0);
             }
 
 
         }
-        if (speed < -XBOX_SENSITIVITY)
+        if (speed > (-1*XBOX_SENSITIVITY))
         {
             if (!innerClawLimit.get())
             {
-                clawVictor.set(speed);
+                clawJaguar.set(speed);
             }
             else
             {
               //overwrites outer limit pressed output
-              driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner limit is pressed, can't move claw inwards! ");
-              clawVictor.set(0.0);
+              driverStationLCD.println(DriverStationLCD.Line.kUser6, 2, "Inner limit is pressed, can't move claw inwards! ");
+              clawJaguar.set(0.0);
             }
         }
         driverStationLCD.updateLCD();
@@ -529,7 +566,10 @@ public class RobotTemplate extends IterativeRobot
                 return TOP_HEIGHT_HIGH;
             }
             //third option, makes bot go right (well, not left)
-            if (!laneSwitch1.get()) defaultDirection = "RIGHT";
+            if (!laneSwitch1.get())
+            {
+                defaultDirection.equals("RIGHT");
+            }
         }
         //if none of that works...
         return BOTTOM_HEIGHT_HIGH;
@@ -541,6 +581,30 @@ public class RobotTemplate extends IterativeRobot
        WALL_DISTANCE = Math.sqrt(MathUtils.pow(ARM_LENGTH, 2)-MathUtils.pow(height-ARM_HEIGHT, 2)) + .5 * SPOKE_LENGTH - FRONT_LENGTH;
     }
 
+    //code for following vision targets in x plane only (drive motors, not arm)
+    private void followCamera()
+    {
+        try
+        {
+            image = robotCamera.getImage();
+            firstImage = image.thresholdHSL(140, 155, 100, 255, 40, 255);
+            analysis = firstImage.getOrderedParticleAnalysisReports(3);
+        }
+        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e){}
+        catch(edu.wpi.first.wpilibj.image.NIVisionException e){}
 
+        if (image != null)
+        {
+            for (int i = 0; i < analysis.length; i++)
+            {
+                ParticleAnalysisReport imageAnalysis = analysis[i];
+                if (imageAnalysis.particleToImagePercent > .001)
+                {
+                    jaguarLeft.set(defaultRobotSpeed + imageAnalysis.center_mass_x_normalized);
+                    jaguarRight.set(defaultRobotSpeed + imageAnalysis.center_mass_x_normalized);
+                }
+            }
+        }
+    }
 
 }
