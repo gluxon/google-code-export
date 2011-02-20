@@ -89,7 +89,7 @@ private Target[] targets = new Target[1];
         armExtention = new Solenoid(7);
 //		airCannon = new Solenoid(8);
 
-        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag, 1);
+        drive = new RobotDrive(leftFrontJag, leftRearJag, rightFrontJag, rightRearJag);
        dsout = DriverStationLCD.getInstance();
         try
         {
@@ -233,7 +233,7 @@ private Target[] targets = new Target[1];
          
         if(joy1.getRawButton(7))
         {
-            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.mecanumDrive_Polar(joy1.getMagnitude(), joy1.getDirectionDegrees(), joy1.getThrottle());
             setDoubleSpeed(leftFrontJag);
             setDoubleSpeed(leftRearJag);
             setDoubleSpeed(rightFrontJag);
@@ -241,7 +241,7 @@ private Target[] targets = new Target[1];
         }
         else
         {
-            drive.holonomicDrive(joy1.getMagnitude(), joy1.getDirectionDegrees(),joy1.getThrottle());
+            drive.mecanumDrive_Polar(joy1.getMagnitude(), joy1.getDirectionDegrees(), joy1.getThrottle());
         }
 
         psi = pressure.getAverageVoltage()*37.76-32.89;
@@ -393,7 +393,7 @@ private Target[] targets = new Target[1];
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
         lowDashData.finalizeCluster();
-        lowDashData.addByte(Solenoid.getAll());
+        lowDashData.addByte(Solenoid.getAllFromDefaultModule());
         lowDashData.addDouble(psi);
         lowDashData.finalizeCluster();
         lowDashData.commit();
