@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.Watchdog;
 import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -30,7 +29,7 @@ public class RobotTemplate extends IterativeRobot
     private static final double PI = Math.PI;
 
     private static final int SLOT_1 = 1;
-
+    
     //slot on the digital sidecar that is for digital IO
     private static final int SIDECAR_IO_SLOT = 4;
 
@@ -108,6 +107,7 @@ public class RobotTemplate extends IterativeRobot
 
     //solenoid
     private Solenoid miniBotSolenoid;
+    private Solenoid miniBotSolenoidRelease;
 
     //camera
     private AxisCamera robotCamera;
@@ -124,6 +124,7 @@ public class RobotTemplate extends IterativeRobot
     private boolean split = false;
     private boolean endYTurn = false;
     private int pulses = 0;
+    private boolean miniIsDeployed;
 
     private String defaultDirection = "LEFT";
 
@@ -182,11 +183,20 @@ public class RobotTemplate extends IterativeRobot
         robotCamera.writeResolution(AxisCamera.ResolutionT.k160x120);
 
         //minibot deployment solenoid
-        miniBotSolenoid = new Solenoid(8, 1);
+        
         }
         catch(NullPointerException ex)
         {
             //no clue what to do; just DON'T PANIC!!!
+        }
+        try
+        {
+            miniBotSolenoid = new Solenoid(8, 2);
+            miniBotSolenoidRelease = new Solenoid(8, 1);
+        }
+        catch(NullPointerException e)
+        {
+            driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "zomg solenoid no work");
         }
         
 
@@ -210,7 +220,7 @@ public class RobotTemplate extends IterativeRobot
     {
       /*******************************Encoder**********************************/
        
-        encoderLeft.start();
+        /*encoderLeft.start();
         encoderRight.start();
 
         
@@ -254,7 +264,7 @@ public class RobotTemplate extends IterativeRobot
         }
 */
         /***********************LINE FOLLOWING******************/
-        
+        /*
         if(firstTimeAutonomous)
         {
             encoderArm.start();
@@ -280,7 +290,7 @@ public class RobotTemplate extends IterativeRobot
              * the next else block
              */
             //followCamera();
-
+/*
         }
         else
         {
@@ -322,11 +332,39 @@ public class RobotTemplate extends IterativeRobot
 
         watchDog.feed();
         driverStationLCD.updateLCD();
-
+*/
     }
 
     public void teleopPeriodic()
-    {
+    {//3
+        try{
+        if (!miniIsDeployed && xboxController.getRawButton(3))
+        {
+            miniBotSolenoid.set(true);
+            miniIsDeployed = true;
+        }
+        if (xboxController.getRawButton(2))
+        {
+            miniBotSolenoid.set(false);
+            miniBotSolenoidRelease.set(true);
+            miniIsDeployed = false;
+        }
+        }
+        catch(NullPointerException e)
+        {
+            driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Yo, dat minibot's wacked!  " + xboxController.getRawButton(3));
+        }
+        /*
+        try{
+            if (xboxController.getRawButton(3))
+                miniBotSolenoid.set(xboxController.getRawButton(3));
+            else
+                miniBotSolenoid.set(!xboxController.getRawButton(3));
+        }
+
+        catch(NullPointerException e){}
+         */
+         
         /************************sensor data********************/
         int leftLineValue = (leftLineSensor.get() ? 1 : 0);
         int centerLineValue = (centerLineSensor.get() ? 1 : 0);
@@ -340,8 +378,8 @@ public class RobotTemplate extends IterativeRobot
         //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + statusValue);
         //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inches from wall: " + rangeSensor.getRangeInches());
         //driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Arm Encoder Pulses: " + encoderArm.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Outer: " + outerClawLimit.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner: " + innerClawLimit.get());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Outer: " + outerClawLimit.get());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner: " + innerClawLimit.get());
         //driverStationLCD.println(DriverStationLCD.Line.kUser5, 2, "right line sensor: " + rightLineSensor.get());
 
         //camera video output
@@ -377,14 +415,20 @@ public class RobotTemplate extends IterativeRobot
         //{
             jaguarArm.set(xboxController.getThrottle());
             
-            if(outerClawLimit.get() && xboxController.getY() < 0)
+            if(outerClawLimit.get() && (xboxController.getY() < XBOX_SENSITIVITY))
             {
                 clawJaguar.set(xboxController.getY());
             }
-            else if(innerClawLimit.get() && xboxController.getY() > 0)
-            {
+            else if(innerClawLimit.get() && (xboxController.getY() > XBOX_SENSITIVITY))            {
                 clawJaguar.set(xboxController.getY());
             }
+            else
+            {
+                clawJaguar.set(0.0);
+            }
+
+
+            //driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, ""+ xboxController.getY());
         //}
 
         watchDog.feed();
