@@ -47,7 +47,7 @@ public class VisionDirectedDrive{
         pressure = psi;
         driveTowardsRamp = new PIDController(.5,.2,.8,ultraFrontRight,new PIDOutput(){
             public void pidWrite(double output){
-                VisionDirectedDrive.this.drive.holonomicDrive(output, 0, 0);
+                VisionDirectedDrive.this.drive.mecanumDrive_Polar(output, 0, 0);
             }
         });
     }
@@ -103,9 +103,9 @@ public class VisionDirectedDrive{
                     }break;
             
             case 1: if(ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
-                        drive.holonomicDrive(.5,0,0);
+                        drive.mecanumDrive_Polar(.5,0,0);
                     }else{
-                        drive.holonomicDrive(0,0,0);
+                        drive.mecanumDrive_Polar(0,0,0);
                         mode++;
                     }break;
 
@@ -121,7 +121,7 @@ public class VisionDirectedDrive{
                     }break;
 
             case 3: if (ir.getRangeInches() > KICKING_DISTANCE_THRESHHOLD){
-                        drive.holonomicDrive(.3,90,0);
+                        drive.mecanumDrive_Polar(.3,90,0);
                     }else{
                         mode++;
                     }break;

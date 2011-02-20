@@ -65,7 +65,7 @@ public class CircleFinder {
 		 * @param output
 		 */
 		public void pidWrite(double output) {
-			drive.holonomicDrive(js.getMagnitude(), js.getDirectionDegrees(), output);
+			drive.mecanumDrive_Polar(js.getMagnitude(), js.getDirectionDegrees(), output);
 		}
 	}
 
