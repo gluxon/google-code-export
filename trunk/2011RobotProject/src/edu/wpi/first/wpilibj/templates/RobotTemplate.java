@@ -698,13 +698,13 @@ public class RobotTemplate extends IterativeRobot
                         jaguarRight.set(0.0);
                         if (lastStatus == 100)
                         {
-                            jaguarLeft.set(jaguarLeftSpeed -= 0.015);
-                            jaguarRight.set(jaguarRightSpeed -= 0.015);
+                            jaguarLeft.set(jaguarLeftSpeed = (defaultRobotSpeed - .05));
+                            jaguarRight.set(jaguarRightSpeed = (defaultRobotSpeed - .05));
                         }
                         if (lastStatus == 1)
                         {
-                            jaguarLeft.set(jaguarLeftSpeed += 0.015);
-                            jaguarRight.set(jaguarRightSpeed += 0.015);
+                            jaguarLeft.set(jaguarLeftSpeed = (defaultRobotSpeed + .05));
+                            jaguarRight.set(jaguarRightSpeed = (defaultRobotSpeed + .05));
                         }
                     break;
 
