@@ -35,7 +35,7 @@ public class RobotTemplate extends IterativeRobot
     private static final int SIDECAR_IO_SLOT = 4;
 
     //initial robot speed to be used during autonomous
-    private static final double defaultRobotSpeed = 0.35;
+    private static final double defaultRobotSpeed = 0.3;
 
     //circumference of the drive shaft (mm)
     private static final double DRIVE_SHAFT_CIRC = 10.053;
@@ -475,7 +475,7 @@ public class RobotTemplate extends IterativeRobot
 
         //Aux Driver Code
         moveGripper(-xboxAuxController.getY());
-        moveArm(xboxAuxController.getMagnitude());
+        moveArm(xboxAuxController.getThrottle());
         
         //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
@@ -484,7 +484,7 @@ public class RobotTemplate extends IterativeRobot
 
         //Display Output
         //driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Arm Encoder Pulses: " + encoderArm.getAngle());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
         //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Arm Upper:  " + lowerArmLimit.get());
         //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm Bottom:  " + upperArmLimit.get());
         //Watchdog and driverStationLCD updaters
