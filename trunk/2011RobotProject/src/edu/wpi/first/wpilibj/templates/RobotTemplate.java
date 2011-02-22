@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 import com.sun.squawk.util.MathUtils;
+import edu.fhs.input.UltrasonicFHS;
 
 
 public class RobotTemplate extends IterativeRobot
@@ -101,6 +102,8 @@ public class RobotTemplate extends IterativeRobot
     //line sensors
     private DigitalInput leftLineSensor, centerLineSensor, rightLineSensor;
 
+    private UltrasonicFHS rangeSensor;
+
     //two slots for arm height switch
     private DigitalInput heightSwitch1, heightSwitch2;
 
@@ -139,6 +142,7 @@ public class RobotTemplate extends IterativeRobot
     private double throttle;
     private double y;
     private int lastStatus;
+    private int statusValue;
 
     private String defaultDirection = "LEFT";
 
@@ -248,7 +252,7 @@ public class RobotTemplate extends IterativeRobot
 
         try
         {
-            //rangeSensor = new UltrasonicFHS (8, 1);
+            rangeSensor = new UltrasonicFHS (1, 1);
         }
         catch(Exception e)
         {
@@ -344,11 +348,11 @@ public class RobotTemplate extends IterativeRobot
 */
         /***********************LINE FOLLOWING******************/
 
-        int statusValue = followLine();
+        followLine();
         
         driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Robot Speed Right: " + jaguarRight.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Status Value: " + statusValue);
+        
         if(firstTimeAutonomous)
         {
             //encoderArm.start();
@@ -470,7 +474,7 @@ public class RobotTemplate extends IterativeRobot
         }
 
         //Aux Driver Code
-        moveGripper(xboxAuxController.getY());
+        moveGripper(-xboxAuxController.getY());
         moveArm(xboxAuxController.getMagnitude());
         
         //moveArm(xboxController.getThrottle());
@@ -480,9 +484,9 @@ public class RobotTemplate extends IterativeRobot
 
         //Display Output
         //driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Arm Encoder Pulses: " + encoderArm.getAngle());
-        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Arm Upper:  " + lowerArmLimit.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm Bottom:  " + upperArmLimit.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Arm Upper:  " + lowerArmLimit.get());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm Bottom:  " + upperArmLimit.get());
         //Watchdog and driverStationLCD updaters
         watchDog.feed();
         driverStationLCD.updateLCD();
@@ -506,16 +510,12 @@ public class RobotTemplate extends IterativeRobot
 
     public int robotLineSensorDisplay()
     {
-        int statusValue = -1;
-
         try
         {
             int leftLineValue = (leftLineSensor.get() ? 1 : 0);
             int centerLineValue = (centerLineSensor.get() ? 1 : 0);
             int rightLineValue = (rightLineSensor.get() ? 1 : 0);
             statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
-
-
         }
         catch(NullPointerException e){}
         
@@ -633,7 +633,7 @@ public class RobotTemplate extends IterativeRobot
     }
 
     //line following code
-    private int followLine()
+    private void followLine()
     {
         //0 is on the line, 1 is off (note: sensor returns true when off the line)
         int leftLineValue = (leftLineSensor.get() ? 1 : 0);
@@ -643,79 +643,82 @@ public class RobotTemplate extends IterativeRobot
         double jaguarLeftSpeed = jaguarLeft.get();
         double jaguarRightSpeed = jaguarRight.get();
 
-        int statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
+        statusValue = leftLineValue * 100 + centerLineValue * 10 + rightLineValue;
 
         driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Status: " + statusValue);
-        if(!split)
+
+        if(rangeSensor.getRangeInches() > 18)
         {
-        //0 is on the line, 1 is off
-            switch(statusValue)
+            if(!split)
             {
-                case 11:
-                    //fall through
-                case 1:
-                    //robot turns left
-                    jaguarLeft.set(jaguarLeftSpeed += 0.015);
-                    jaguarRight.set(jaguarRightSpeed += 0.015);
-                    lastStatus = 1;
-                break;
-
-                case 101:
-                    //robot goes straight
-                    jaguarLeft.set(-defaultRobotSpeed);
-                    jaguarRight.set(defaultRobotSpeed);
-                    break;
-
-                case 110:
-                    //fall through
-                case 100:
-                    //robot turns right
-                    jaguarLeft.set(jaguarLeftSpeed -= 0.015);
-                    jaguarRight.set(jaguarRightSpeed -= 0.015);
-                    lastStatus = 100;
-                    break;
-
-                case 10:
-                    //Y split, turns left by default
-                    if(defaultDirection.equals("LEFT"))
-                    {
-                        jaguarLeft.set(0.6);
-                        jaguarRight.set(0.6);
-                    }
-                    else
-                    {
-                        jaguarLeft.set(-0.6);
-                        jaguarRight.set(-0.6);
-                    }
-                    split = true;
-                    break;
-
-                default:
-                    jaguarLeft.set(0.0);
-                    jaguarRight.set(0.0);
-                    if (lastStatus == 100)
-                    {
-                        jaguarLeft.set(jaguarLeftSpeed -= 0.015);
-                        jaguarRight.set(jaguarRightSpeed -= 0.015);
-                    }
-                    if (lastStatus == 1)
-                    {
+            //0 is on the line, 1 is off
+                switch(statusValue)
+                {
+                    case 11:
+                        //fall through
+                    case 1:
+                        //robot turns left
                         jaguarLeft.set(jaguarLeftSpeed += 0.015);
                         jaguarRight.set(jaguarRightSpeed += 0.015);
-                    }
-                break;
+                        lastStatus = 1;
+                    break;
 
+                    case 101:
+                        //robot goes straight
+                        jaguarLeft.set(-defaultRobotSpeed);
+                        jaguarRight.set(defaultRobotSpeed);
+                    break;
+
+                    case 110:
+                        //fall through
+                    case 100:
+                        //robot turns right
+                        jaguarLeft.set(jaguarLeftSpeed -= 0.015);
+                        jaguarRight.set(jaguarRightSpeed -= 0.015);
+                        lastStatus = 100;
+                    break;
+
+                    case 10:
+                        //Y split, turns left by default
+                        if(defaultDirection.equals("LEFT"))
+                        {
+                            jaguarLeft.set(0.6);
+                            jaguarRight.set(0.6);
+                        }
+                        else
+                        {
+                            jaguarLeft.set(-0.6);
+                            jaguarRight.set(-0.6);
+                        }
+                        split = true;
+                    break;
+
+                    default:
+                        jaguarLeft.set(0.0);
+                        jaguarRight.set(0.0);
+                        if (lastStatus == 100)
+                        {
+                            jaguarLeft.set(jaguarLeftSpeed -= 0.015);
+                            jaguarRight.set(jaguarRightSpeed -= 0.015);
+                        }
+                        if (lastStatus == 1)
+                        {
+                            jaguarLeft.set(jaguarLeftSpeed += 0.015);
+                            jaguarRight.set(jaguarRightSpeed += 0.015);
+                        }
+                    break;
+
+                }
             }
-        }
-        else
-        {
-            centerLineValue = (centerLineSensor.get() ? 1 : 0);
-            if(centerLineValue == 0)
+            else
             {
-                split = false;
+                centerLineValue = (centerLineSensor.get() ? 1 : 0);
+                if(centerLineValue == 0)
+                {
+                    split = false;
+                }
             }
         }
-        return statusValue;
 
     }
 
