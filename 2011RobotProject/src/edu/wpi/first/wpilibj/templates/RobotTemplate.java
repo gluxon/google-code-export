@@ -138,6 +138,7 @@ public class RobotTemplate extends IterativeRobot
     private Relay relay;
     private double throttle;
     private double y;
+    private int lastStatus;
 
     private String defaultDirection = "LEFT";
 
@@ -462,19 +463,7 @@ public class RobotTemplate extends IterativeRobot
 
         //Aux Driver Code
         moveGripper(xboxAuxController.getY());
-
-        if(lowerArmLimit.get() && xboxAuxController.getThrottle() > 0)
-        {
-            jaguarArm.set(xboxAuxController.getThrottle());
-        }
-        else if(upperArmLimit.get() && xboxAuxController.getThrottle() < 0)
-        {
-            jaguarArm.set(xboxAuxController.getThrottle());
-        }
-        else
-        {
-            jaguarArm.set(0.0);
-        }
+        moveArm(xboxAuxController.getThrottle());
         
         //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
@@ -561,19 +550,19 @@ public class RobotTemplate extends IterativeRobot
     }
         public void moveArm(double speed)
     {
+        if(lowerArmLimit.get() && speed > 0)
+        {
+            jaguarArm.set(speed);
+        }
+        else if(upperArmLimit.get() && speed < 0)
+        {
+            jaguarArm.set(speed);
+        }
+        else
+        {
+            jaguarArm.set(0.0);
+        }
 
-            if(armLimit.get() && (speed > (-1 * XBOX_SENSITIVITY)))
-            {
-                jaguarArm.set(0);
-            }
-            else if(speed < XBOX_SENSITIVITY)
-            {
-                jaguarArm.set(speed);
-            }
-            else
-            {
-                jaguarArm.set(0.0);
-            }
     }
     
     public void deployMinibot(int input_activate, int input_release)
@@ -660,6 +649,7 @@ public class RobotTemplate extends IterativeRobot
                     //robot turns left
                     jaguarLeft.set(jaguarLeftSpeed += 0.015);
                     jaguarRight.set(jaguarRightSpeed += 0.015);
+                    lastStatus = 1;
                 break;
 
                 case 101:
@@ -674,6 +664,7 @@ public class RobotTemplate extends IterativeRobot
                     //robot turns right
                     jaguarLeft.set(jaguarLeftSpeed -= 0.015);
                     jaguarRight.set(jaguarRightSpeed -= 0.015);
+                    lastStatus = 100;
                     break;
 
                 case 10:
@@ -694,6 +685,16 @@ public class RobotTemplate extends IterativeRobot
                 default:
                     jaguarLeft.set(0.0);
                     jaguarRight.set(0.0);
+                    if (lastStatus == 100)
+                    {
+                        jaguarLeft.set(jaguarLeftSpeed -= 0.015);
+                        jaguarRight.set(jaguarRightSpeed -= 0.015);
+                    }
+                    if (lastStatus == 1)
+                    {
+                        jaguarLeft.set(jaguarLeftSpeed += 0.015);
+                        jaguarRight.set(jaguarRightSpeed += 0.015);
+                    }
                 break;
 
             }
