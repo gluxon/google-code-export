@@ -229,19 +229,6 @@ public class RobotTemplate extends IterativeRobot
         {
             driverStationLCD.println(DriverStationLCD.Line.kMain6, 2,"Encoder(s) not initialized." );
         }
-
-        try
-        {
-            //camera stuff
-            robotCamera = AxisCamera.getInstance();
-            //robotCamera.writeBrightness(2);
-            //robotCamera.writeColorLevel(0);
-            //robotCamera.writeResolution(AxisCamera.ResolutionT.k160x120);
-        }
-        catch(Exception e)
-        {
-            driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Camera not initialized.");
-        }
         
         try
         {
@@ -425,6 +412,19 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
+        if(robotCamera == null)
+        {
+            try
+            {
+                robotCamera = AxisCamera.getInstance();
+            }
+            catch(NullPointerException e)
+            {
+                
+            }
+
+        }
+        
         //SensorData
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + robotLineSensorDisplay());
 
