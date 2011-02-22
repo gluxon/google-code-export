@@ -23,8 +23,6 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 import com.sun.squawk.util.MathUtils;
 
-import edu.fhs.input.EncoderFHS;
-import edu.fhs.input.UltrasonicFHS;
 
 public class RobotTemplate extends IterativeRobot
 {
@@ -36,7 +34,7 @@ public class RobotTemplate extends IterativeRobot
     private static final int SIDECAR_IO_SLOT = 4;
 
     //initial robot speed to be used during autonomous
-    private static final double defaultRobotSpeed = 0.25;
+    private static final double defaultRobotSpeed = 0.35;
 
     //circumference of the drive shaft (mm)
     private static final double DRIVE_SHAFT_CIRC = 10.053;
@@ -112,11 +110,6 @@ public class RobotTemplate extends IterativeRobot
     //Pressure cuttoff
     private DigitalInput pressureCuttoff;
 
-    private UltrasonicFHS rangeSensor;
-
-    //encoders
-    private EncoderFHS encoderArm;
-
     //solenoid
     private Solenoid miniBotSolenoid;
     private Solenoid miniBotSolenoidRelease;
@@ -124,6 +117,9 @@ public class RobotTemplate extends IterativeRobot
     //Compressor Spike
     private Relay compressorSpike;
 
+
+    private DigitalInput lowerArmLimit, upperArmLimit;
+    
     //camera
     private AxisCamera robotCamera;
     private Timer timer;
@@ -223,7 +219,7 @@ public class RobotTemplate extends IterativeRobot
         try
         {
             //declare encoders
-            encoderArm = new EncoderFHS(1,2,3);
+            //encoderArm = new EncoderFHS(1,2,3);
         }
         catch(Exception e)
         {
@@ -242,7 +238,17 @@ public class RobotTemplate extends IterativeRobot
 
         try
         {
-            rangeSensor = new UltrasonicFHS (8, 1);
+            lowerArmLimit = new DigitalInput(4, 12);
+            upperArmLimit = new DigitalInput(4, 13);
+        }
+        catch(NullPointerException e)
+        {
+
+        }
+
+        try
+        {
+            //rangeSensor = new UltrasonicFHS (8, 1);
         }
         catch(Exception e)
         {
@@ -337,17 +343,25 @@ public class RobotTemplate extends IterativeRobot
         }
 */
         /***********************LINE FOLLOWING******************/
-        /*
+
+        int statusValue = followLine();
+        
+        driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Robot Speed Right: " + jaguarRight.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Status Value: " + statusValue);
         if(firstTimeAutonomous)
         {
-            encoderArm.start();
+            //encoderArm.start();
             jaguarLeft.set(-defaultRobotSpeed);
             jaguarRight.set(defaultRobotSpeed);
             firstTimeAutonomous = false;
-            pulses = (int) calculatePulses((int)whichPeg());
-            WALL_DISTANCE = distanceFromWall(whichPeg());
-            timer.start();
+            //pulses = (int) calculatePulses((int)whichPeg());
+            //WALL_DISTANCE = distanceFromWall(whichPeg());
+            //timer.start();
         }
+        
+         /*
+
         //raise arm 1/4 of the way that it needs to go, then stop for 5 seconds
         //so extension can drop out and lock into place
         raiseArm(pulses/4.0);
@@ -358,7 +372,7 @@ public class RobotTemplate extends IterativeRobot
         }
         if(rangeSensor.getRangeInches() > WALL_DISTANCE)
         {
-            followLine();
+            
             /*To use camera: use this method instead of followLine and delete
              * the next else block
              */
@@ -448,7 +462,20 @@ public class RobotTemplate extends IterativeRobot
 
         //Aux Driver Code
         moveGripper(xboxAuxController.getY());
-        jaguarArm.set(xboxAuxController.getThrottle());
+
+        if(lowerArmLimit.get() && xboxAuxController.getThrottle() > 0)
+        {
+            jaguarArm.set(xboxAuxController.getThrottle());
+        }
+        else if(upperArmLimit.get() && xboxAuxController.getThrottle() < 0)
+        {
+            jaguarArm.set(xboxAuxController.getThrottle());
+        }
+        else
+        {
+            jaguarArm.set(0.0);
+        }
+        
         //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
         //Compressor
@@ -457,8 +484,8 @@ public class RobotTemplate extends IterativeRobot
         //Display Output
         //driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Arm Encoder Pulses: " + encoderArm.getAngle());
         //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Outer limit:  " + outerClawLimit.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Inner limit:  " + innerClawLimit.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Arm Upper:  " + lowerArmLimit.get());
+        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm Bottom:  " + upperArmLimit.get());
         //Watchdog and driverStationLCD updaters
         watchDog.feed();
         driverStationLCD.updateLCD();
@@ -573,7 +600,7 @@ public class RobotTemplate extends IterativeRobot
     }
     
     //if arm encoder pulses is less than what is needed, raise arm
-    public void raiseArm(double pulses)
+    /*public void raiseArm(double pulses)
     {
         if (encoderArm.getAngle()< pulses)
         {
@@ -583,7 +610,7 @@ public class RobotTemplate extends IterativeRobot
         {
             jaguarArm.set(0);
         }
-    }
+    }*/
 
     //returns the number of pulses that the arm encoder must see before stopping
     //NEEDS ACTUAL PULSE VALUES - EXPERIMENT!
@@ -609,7 +636,7 @@ public class RobotTemplate extends IterativeRobot
     }
 
     //line following code
-    private void followLine()
+    private int followLine()
     {
         //0 is on the line, 1 is off (note: sensor returns true when off the line)
         int leftLineValue = (leftLineSensor.get() ? 1 : 0);
@@ -679,6 +706,7 @@ public class RobotTemplate extends IterativeRobot
                 split = false;
             }
         }
+        return statusValue;
 
     }
 
