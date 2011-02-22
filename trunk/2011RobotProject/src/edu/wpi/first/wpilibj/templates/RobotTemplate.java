@@ -185,7 +185,6 @@ public class RobotTemplate extends IterativeRobot
             //claw limit switches
             outerClawLimit = new DigitalInput(4);
             innerClawLimit = new DigitalInput(5);
-            //armLimit = new DigitalInput(11);
         }
         catch(Exception e)
         {
@@ -360,8 +359,17 @@ public class RobotTemplate extends IterativeRobot
             //WALL_DISTANCE = distanceFromWall(whichPeg());
             //timer.start();
         }
-        
-         /*
+        if (!upperArmLimit.get())
+        {
+            moveArm(-0.8);
+        }
+        /*
+        if (rangeSensor.getRangeInches() < 20) //to be changed
+        {
+            timer.delay(.5);
+            //moveArm(.8);
+            moveGripper(.8);
+        }
 
         //raise arm 1/4 of the way that it needs to go, then stop for 5 seconds
         //so extension can drop out and lock into place
@@ -463,7 +471,7 @@ public class RobotTemplate extends IterativeRobot
 
         //Aux Driver Code
         moveGripper(xboxAuxController.getY());
-        moveArm(xboxAuxController.getThrottle());
+        moveArm(xboxAuxController.getMagnitude());
         
         //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
@@ -785,4 +793,5 @@ public class RobotTemplate extends IterativeRobot
             }
         }
     }
+    //raises the arm for a set amount of time
 }
