@@ -247,7 +247,7 @@ public class RobotTemplate extends IterativeRobot
         }
         catch(NullPointerException e)
         {
-
+            driverStationLCD.println(DriverStationLCD.Line.kMain6, 2,"Arm limit(s) not initialized." );
         }
 
         try
@@ -261,6 +261,8 @@ public class RobotTemplate extends IterativeRobot
 
         try
         {
+            //CHECK THIS AT COMPETITION - IO 12 IS ALREADY USED BY AN ARM LIMIT!!
+            //THIS IS NOT BEING INITIALIZED!!!
             pressureCuttoff = new DigitalInput(12);
         }
         catch(Exception e)
@@ -366,6 +368,15 @@ public class RobotTemplate extends IterativeRobot
         if (!upperArmLimit.get())
         {
             moveArm(-0.8);
+        }
+        //2 seconds?
+        if (timer.get() > 2000000)
+        {
+            jaguarLeft.set(0);
+            jaguarRight.set(0);
+            moveArm(.8);
+            moveGripper(-1);
+            Timer.delay(2);
         }
         /*
         if (rangeSensor.getRangeInches() < 20) //to be changed
@@ -475,8 +486,8 @@ public class RobotTemplate extends IterativeRobot
 
         //Aux Driver Code
         moveGripper(-xboxAuxController.getY());
-        moveArm(xboxAuxController.getThrottle());
-        
+        moveArm(xboxAuxController.getRawAxis(5));
+
         //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
         //Compressor
@@ -684,11 +695,15 @@ public class RobotTemplate extends IterativeRobot
                         {
                             jaguarLeft.set(0.6);
                             jaguarRight.set(0.6);
+                            timer.reset();
+                            timer.start();
                         }
                         else
                         {
                             jaguarLeft.set(-0.6);
                             jaguarRight.set(-0.6);
+                            timer.reset();
+                            timer.start();
                         }
                         split = true;
                     break;
