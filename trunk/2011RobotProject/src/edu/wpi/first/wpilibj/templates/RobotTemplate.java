@@ -138,7 +138,6 @@ public class RobotTemplate extends IterativeRobot
     private boolean endYTurn = false;
     private int pulses = 0;
     private boolean miniIsDeployed = false;
-    private Relay relay;
     private double throttle;
     private double y;
     private int lastStatus;
@@ -263,7 +262,7 @@ public class RobotTemplate extends IterativeRobot
         {
             //CHECK THIS AT COMPETITION - IO 12 IS ALREADY USED BY AN ARM LIMIT!!
             //THIS IS NOT BEING INITIALIZED!!!
-            pressureCuttoff = new DigitalInput(12);
+            pressureCuttoff = new DigitalInput(11);
         }
         catch(Exception e)
         {
@@ -349,7 +348,7 @@ public class RobotTemplate extends IterativeRobot
         }
 */
         /***********************LINE FOLLOWING******************/
-
+/*
         followLine();
         
         driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
@@ -556,18 +555,19 @@ public class RobotTemplate extends IterativeRobot
     {         
             if(outerClawLimit.get() && (speed > XBOX_SENSITIVITY))
             {
-                clawJaguar.set(speed);
+                clawJaguar.set(speed*0.2);
             }
             else if(innerClawLimit.get() && (speed < -XBOX_SENSITIVITY))
             {
-                clawJaguar.set(speed);
+                clawJaguar.set(speed*0.2);
             }
             else
             {
                 clawJaguar.set(0.0);
             }
     }
-        public void moveArm(double speed)
+
+    public void moveArm(double speed)
     {
         if(lowerArmLimit.get() && speed > 0)
         {
