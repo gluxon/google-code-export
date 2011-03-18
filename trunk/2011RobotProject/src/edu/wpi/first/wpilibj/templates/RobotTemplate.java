@@ -449,19 +449,15 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        if(robotCamera == null)
+        try
         {
-            try
-            {
-                robotCamera = AxisCamera.getInstance();
-            }
-            catch(NullPointerException e)
-            {
-                
-            }
-
+            robotCamera = AxisCamera.getInstance();
         }
-        
+        catch(NullPointerException e)
+        {
+            
+        }
+
         //SensorData
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + robotLineSensorDisplay());
 
@@ -484,40 +480,28 @@ public class RobotTemplate extends IterativeRobot
         }
 
         //Aux Driver Code
-        moveGripper(-xboxAuxController.getY());
-        moveArm(xboxAuxController.getRawAxis(5));
+        moveGripper(-xboxAuxController.getRawAxis(5));
+        moveArm(xboxAuxController.getY());
 
-        //moveArm(xboxController.getThrottle());
         deployMinibot(3,2);
+
         //Compressor
-        //compressor();
-
-        //Display Output
-        //driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Arm Encoder Pulses: " + encoderArm.getAngle());
-        driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Ultrasonic(Inches): " + rangeSensor.getRangeInches());
-        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Arm Upper:  " + lowerArmLimit.get());
-        //driverStationLCD.println(DriverStationLCD.Line.kUser4, 2, "Arm Bottom:  " + upperArmLimit.get());
-        //Watchdog and driverStationLCD updaters
-        watchDog.feed();
-        driverStationLCD.updateLCD();
-    }
-
-    public void compressor()
-    {
+        
         if(!pressureCuttoff.get() && xboxAuxController.getRawButton(1))
         {
-            compressorSpike.set(Relay.Value.kOn);
-        }
-        else if(pressureCuttoff.get() || !xboxAuxController.getRawButton(1))
-        {
-            compressorSpike.set(Relay.Value.kOff);
+            compressorSpike.set(Relay.Value.kForward);
         }
         else
         {
             compressorSpike.set(Relay.Value.kOff);
         }
+
+        //Watchdog and driverStationLCD updaters
+        watchDog.feed();
+        driverStationLCD.updateLCD();
     }
 
+ 
     public int robotLineSensorDisplay()
     {
         try
