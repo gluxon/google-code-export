@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package edu.wpi.first.wpilibj.templates;
+package edu.wpi.first.wpilibj.templates; 
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStationLCD;
@@ -134,6 +134,8 @@ public class RobotTemplate extends IterativeRobot
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
 
+
+    private boolean armTimerStarted = false;
     private boolean split = false;
     private boolean endYTurn = false;
     private int pulses = 0;
@@ -141,6 +143,7 @@ public class RobotTemplate extends IterativeRobot
     private double throttle;
     private double y;
     private int lastStatus;
+    private Timer t;
     private int statusValue;
 
     private String defaultDirection = "LEFT";
@@ -151,6 +154,8 @@ public class RobotTemplate extends IterativeRobot
     {
         driverStationLCD = DriverStationLCD.getInstance();
 
+        t = new Timer();
+        
         try //everything
         {
             xboxAuxController = new Joystick(1);
@@ -282,6 +287,17 @@ public class RobotTemplate extends IterativeRobot
             driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Compressor Spike Invalid Value Exception.");
         }
 
+        try
+        {
+            robotCamera = AxisCamera.getInstance();
+            robotCamera.getInstance().getImage();
+        }
+        catch(Exception e)
+        {
+
+        }
+
+
         timer = new Timer();
         
         watchDog = Watchdog.getInstance();
@@ -348,12 +364,12 @@ public class RobotTemplate extends IterativeRobot
         }
 */
         /***********************LINE FOLLOWING******************/
-/*
+
         followLine();
         
-        driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
-        driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Robot Speed Right: " + jaguarRight.get());
-        
+        //driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
+        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Robot Speed Right: " + jaguarRight.get());
+   
         if(firstTimeAutonomous)
         {
             //encoderArm.start();
@@ -364,6 +380,7 @@ public class RobotTemplate extends IterativeRobot
             //WALL_DISTANCE = distanceFromWall(whichPeg());
             //timer.start();
         }
+ /*
         if (!upperArmLimit.get())
         {
             moveArm(-0.8);
@@ -445,24 +462,34 @@ public class RobotTemplate extends IterativeRobot
         driverStationLCD.updateLCD();
 
   */
+
+        if(!this.armTimerStarted)
+        {
+            t.delay(1.0);
+            t.start();
+            armTimerStarted = true;
+        }
+        
+
+        if(t.get() < 3.0)
+        {
+            this.moveArm(-0.5);
+        }
+        else
+        {
+            this.moveArm(0.0);
+        }
     }
 
     public void teleopPeriodic()
     {
-        try
-        {
-            robotCamera = AxisCamera.getInstance();
-        }
-        catch(NullPointerException e)
-        {
-            
-        }
+        
 
         //SensorData
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + robotLineSensorDisplay());
 
         //Camera Video Output
-        //robotCamera();
+        robotCamera();
 
         //Main Driver Code
         throttle = xboxDriveController.getThrottle();
@@ -482,9 +509,10 @@ public class RobotTemplate extends IterativeRobot
         //Aux Driver Code
         moveGripper(-xboxAuxController.getRawAxis(5));
         moveArm(xboxAuxController.getY());
+        driverStationLCD.println(DriverStationLCD.Line.kUser6,1,upperArmLimit.get()+" | ");
 
         deployMinibot(3,2);
-
+        driverStationLCD.println(DriverStationLCD.Line.kUser2,1,""+this.rangeSensor.getRangeInches());
         //Compressor
         
         if(!pressureCuttoff.get() && xboxAuxController.getRawButton(1))
@@ -642,7 +670,7 @@ public class RobotTemplate extends IterativeRobot
 
         driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Status: " + statusValue);
 
-        if(rangeSensor.getRangeInches() > 18)
+        if(rangeSensor.getRangeInches() > 20)
         {
             if(!split)
             {
