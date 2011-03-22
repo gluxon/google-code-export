@@ -120,20 +120,12 @@ public class RobotTemplate extends IterativeRobot
     //Compressor Spike
     private Relay compressorSpike;
 
-
     private DigitalInput lowerArmLimit, upperArmLimit;
     
-    //camera
-    private AxisCamera robotCamera;
     private Timer timer;
-    
-    ColorImage image;
-    BinaryImage firstImage;
-    ParticleAnalysisReport[] analysis;
 
     private boolean robotDirectionLeft;
     private boolean robotDirectionRight;
-
 
     private boolean armTimerStarted = false;
     private boolean split = false;
@@ -149,14 +141,11 @@ public class RobotTemplate extends IterativeRobot
     private String defaultDirection = "LEFT";
 
     private boolean firstTimeAutonomous = false;
+    private boolean armIsLowered;
 
     public void robotInit()
     {
-        driverStationLCD = DriverStationLCD.getInstance();
-
-        t = new Timer();
-        
-        try //everything
+        try
         {
             xboxAuxController = new Joystick(1);
             xboxDriveController = new Joystick(2);
@@ -287,26 +276,17 @@ public class RobotTemplate extends IterativeRobot
             driverStationLCD.println(DriverStationLCD.Line.kMain6, 2, "Compressor Spike Invalid Value Exception.");
         }
 
-        try
-        {
-            robotCamera = AxisCamera.getInstance();
-            robotCamera.getInstance().getImage();
-        }
-        catch(Exception e)
-        {
+        driverStationLCD = DriverStationLCD.getInstance();
 
-        }
-
-
+        t = new Timer();
         timer = new Timer();
         
         watchDog = Watchdog.getInstance();
-        
-        firstTimeAutonomous = true;
-        
+
         watchDog.feed();
-        
         driverStationLCD.updateLCD();
+
+        firstTimeAutonomous = true;
     }
 
 
@@ -317,151 +297,17 @@ public class RobotTemplate extends IterativeRobot
 
     public void autonomousPeriodic()
     {
-      /*******************************Encoder**********************************/
-       
-        /*encoderLeft.start();
-        encoderRight.start();
-
-        
-        distanceRobotRight = encoderRight.getDistance();
-        distanceRobotLeft = encoderLeft.getDistance();
-
-        robotDirectionLeft = encoderLeft.getDirection();
-        robotDirectionRight = encoderRight.getDirection();
-        */
-        
-        //starts robot
-        /*
-
-        //if left encoder goes further than right encoder, make left go slower and
-        //right go faster
-        if(distanceRobotLeft > (distanceRobotRight + ENCODER_DIST_ERROR))
-        {
-            jaguarLeft.set(jaguarLeftSpeed -= 0.05);
-            jaguarRight.set(jaguarLeftSpeed += 0.05);
-        }
-        //if right encoder goes further than left encoder, make right go slower and
-        //left go faster
-        if(distanceRobotRight > (distanceRobotLeft + ENCODER_DIST_ERROR))
-        {
-            jaguarLeft.set(jaguarLeftSpeed += 0.05);
-            jaguarRight.set(jaguarLeftSpeed -= 0.05);
-        }
-
-        //if both encoders go same distance, set jaguars to the same speed
-        if(Math.abs(distanceRobotRight - distanceRobotLeft) <= ENCODER_DIST_ERROR)
-        {
-            jaguarLeft.set(defaultRobotSpeed);
-            jaguarRight.set(defaultRobotSpeed);
-        }
-
-        //if either of the encoders go the right distance, the game piece will be
-        //put up
-        if(distanceRobotLeft == DISTANCE_TRAVELED || distanceRobotRight == DISTANCE_TRAVELED)
-        {
-            jaguarLeft.set(0.0);
-            jaguarRight.set(0.0);
-        }
-*/
         /***********************LINE FOLLOWING******************/
 
         followLine();
-        
-        //driverStationLCD.println(DriverStationLCD.Line.kUser2, 2, "Robot Speed Left: " + jaguarLeft.get());
-        //driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Robot Speed Right: " + jaguarRight.get());
    
         if(firstTimeAutonomous)
         {
-            //encoderArm.start();
             jaguarLeft.set(-defaultRobotSpeed);
             jaguarRight.set(defaultRobotSpeed);
             firstTimeAutonomous = false;
-            //pulses = (int) calculatePulses((int)whichPeg());
-            //WALL_DISTANCE = distanceFromWall(whichPeg());
-            //timer.start();
+            timer.start();
         }
- /*
-        if (!upperArmLimit.get())
-        {
-            moveArm(-0.8);
-        }
-        //2 seconds?
-        if (timer.get() > 2000000)
-        {
-            jaguarLeft.set(0);
-            jaguarRight.set(0);
-            moveArm(.8);
-            moveGripper(-1);
-            Timer.delay(2);
-        }
-        /*
-        if (rangeSensor.getRangeInches() < 20) //to be changed
-        {
-            timer.delay(.5);
-            //moveArm(.8);
-            moveGripper(.8);
-        }
-
-        //raise arm 1/4 of the way that it needs to go, then stop for 5 seconds
-        //so extension can drop out and lock into place
-        raiseArm(pulses/4.0);
-        if(timer.get()>5000000)
-        {
-        raiseArm(pulses);
-        timer.stop();
-        }
-        if(rangeSensor.getRangeInches() > WALL_DISTANCE)
-        {
-            
-            /*To use camera: use this method instead of followLine and delete
-             * the next else block
-             */
-            //followCamera();
-/*
-        }
-    
-        else
-        {
-            if (!laneSwitch1.get() && !laneSwitch2.get())
-            {
-            jaguarLeft.set(0);
-            jaguarRight.set(0);
-            moveClaw(-.2);
-            }
-            //turn right and move back after left turn at y split, then move forward and put piece
-            if (laneSwitch1.get()&& !endYTurn)
-            {
-                endYTurn = true;
-                jaguarLeft.set(.10);
-                jaguarRight.set(-.20);
-                Timer.delay(.5);
-                jaguarLeft.set(-.1);
-                jaguarRight.set(.1);
-                Timer.delay(.2);
-                jaguarLeft.set(0);
-                jaguarRight.set(0);
-                moveClaw(-.2);
-            } 
-            //turn left and move back after right turn at y split, then move forward and put piece
-            if (laneSwitch2.get()&& !endYTurn)
-            {
-                endYTurn = true;
-                jaguarLeft.set(.20);
-                jaguarRight.set(-.10);
-                Timer.delay(.5);
-                jaguarLeft.set(-.1);
-                jaguarRight.set(.1);
-                Timer.delay(.2);
-                jaguarLeft.set(0);
-                jaguarRight.set(0);
-                moveClaw(-.2);
-            }
-        }
-
-        watchDog.feed();
-        driverStationLCD.updateLCD();
-
-  */
 
         if(!this.armTimerStarted)
         {
@@ -469,16 +315,25 @@ public class RobotTemplate extends IterativeRobot
             t.start();
             armTimerStarted = true;
         }
-        
-
-        if(t.get() < 3.0)
+        if(!upperArmLimit.get())
         {
-            this.moveArm(-0.5);
+            this.moveArm(-0.6);
         }
         else
         {
             this.moveArm(0.0);
         }
+        if(rangeSensor.getRangeInches() < 20 && !armIsLowered)
+        {
+            moveArm(0.6);
+            moveGripper(0.2);
+            Timer.delay(2);
+            armIsLowered = true;
+        }
+
+        watchDog.feed();
+        driverStationLCD.updateLCD();
+        
     }
 
     public void teleopPeriodic()
@@ -487,9 +342,6 @@ public class RobotTemplate extends IterativeRobot
 
         //SensorData
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + robotLineSensorDisplay());
-
-        //Camera Video Output
-        robotCamera();
 
         //Main Driver Code
         throttle = xboxDriveController.getThrottle();
@@ -542,25 +394,6 @@ public class RobotTemplate extends IterativeRobot
         catch(NullPointerException e){}
         
         return statusValue;
-    }
-
-    public void robotCamera()
-    {
-        try
-        {
-            if (robotCamera.freshImage())
-            {
-                image = robotCamera.getImage();
-            }
-        }
-        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e)
-        {
-            e.printStackTrace();
-        }
-        catch(edu.wpi.first.wpilibj.image.NIVisionException e)
-        {
-            e.printStackTrace();
-        }
     }
     
     public void moveGripper(double speed)
@@ -619,19 +452,6 @@ public class RobotTemplate extends IterativeRobot
         }
     }
     
-    //if arm encoder pulses is less than what is needed, raise arm
-    /*public void raiseArm(double pulses)
-    {
-        if (encoderArm.getAngle()< pulses)
-        {
-            jaguarArm.set(0.8);
-        }
-        if (encoderArm.getAngle() > pulses)
-        {
-            jaguarArm.set(0);
-        }
-    }*/
-
     //returns the number of pulses that the arm encoder must see before stopping
     //NEEDS ACTUAL PULSE VALUES - EXPERIMENT!
     public double calculatePulses(int pegHeight)
@@ -797,31 +617,4 @@ public class RobotTemplate extends IterativeRobot
        double x = Math.sqrt(MathUtils.pow(ARM_LENGTH, 2)-MathUtils.pow(ARM_HEIGHT - height, 2)) + SPOKE_LENGTH;
        return x - FRONT_LENGTH;
     }
-
-    //code for following vision targets in x plane only (drive motors, not arm)
-    private void followCamera()
-    {
-        try
-        {
-            image = robotCamera.getImage();
-            firstImage = image.thresholdHSL(140, 155, 100, 255, 40, 255);
-            analysis = firstImage.getOrderedParticleAnalysisReports(3);
-        }
-        catch(edu.wpi.first.wpilibj.camera.AxisCameraException e){}
-        catch(edu.wpi.first.wpilibj.image.NIVisionException e){}
-
-        if (image != null)
-        {
-            for (int i = 0; i < analysis.length; i++)
-            {
-                ParticleAnalysisReport imageAnalysis = analysis[i];
-                if (imageAnalysis.particleToImagePercent > .001)
-                {
-                    jaguarLeft.set(defaultRobotSpeed + imageAnalysis.center_mass_x_normalized);
-                    jaguarRight.set(defaultRobotSpeed + imageAnalysis.center_mass_x_normalized);
-                }
-            }
-        }
-    }
-    //raises the arm for a set amount of time
 }
