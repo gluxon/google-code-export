@@ -17,9 +17,6 @@ import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.image.BinaryImage;
-import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 import com.sun.squawk.util.MathUtils;
 import edu.fhs.input.UltrasonicFHS;
@@ -124,13 +121,9 @@ public class RobotTemplate extends IterativeRobot
     
     private Timer timer;
 
-    private boolean robotDirectionLeft;
-    private boolean robotDirectionRight;
-
     private boolean armTimerStarted = false;
     private boolean split = false;
     private boolean endYTurn = false;
-    private int pulses = 0;
     private boolean miniIsDeployed = false;
     private double throttle;
     private double y;
@@ -254,8 +247,6 @@ public class RobotTemplate extends IterativeRobot
 
         try
         {
-            //CHECK THIS AT COMPETITION - IO 12 IS ALREADY USED BY AN ARM LIMIT!!
-            //THIS IS NOT BEING INITIALIZED!!!
             pressureCuttoff = new DigitalInput(11);
         }
         catch(Exception e)
@@ -298,7 +289,7 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousPeriodic()
     {
         /***********************LINE FOLLOWING******************/
-
+        
         followLine();
    
         if(firstTimeAutonomous)
@@ -311,7 +302,7 @@ public class RobotTemplate extends IterativeRobot
 
         if(!this.armTimerStarted)
         {
-            t.delay(1.0);
+            Timer.delay(1.0);
             t.start();
             armTimerStarted = true;
         }
@@ -338,12 +329,9 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        
-
-        //SensorData
         driverStationLCD.println(DriverStationLCD.Line.kUser3, 2, "Line status: " + robotLineSensorDisplay());
 
-        //Main Driver Code
+        //Main drive code
         throttle = xboxDriveController.getThrottle();
         y = xboxDriveController.getY();
 
@@ -365,8 +353,8 @@ public class RobotTemplate extends IterativeRobot
 
         deployMinibot(3,2);
         driverStationLCD.println(DriverStationLCD.Line.kUser2,1,""+this.rangeSensor.getRangeInches());
+
         //Compressor
-        
         if(!pressureCuttoff.get() && xboxAuxController.getRawButton(1))
         {
             compressorSpike.set(Relay.Value.kForward);
