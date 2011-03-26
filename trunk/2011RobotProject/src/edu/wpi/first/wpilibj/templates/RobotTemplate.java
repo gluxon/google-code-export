@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.Timer;
 
 import com.sun.squawk.util.MathUtils;
 import edu.fhs.input.UltrasonicFHS;
+import edu.wpi.first.wpilibj.Compressor;
 
 
 public class RobotTemplate extends IterativeRobot
@@ -85,6 +85,7 @@ public class RobotTemplate extends IterativeRobot
 
     //xboxController is for arm, xboxDriveController is for driving main bot
     private Joystick xboxAuxController, xboxDriveController;
+    Compressor asdfadsfasdfasdf;
 
     //drive, arm and claw speed controllers
     private Jaguar jaguarLeft, jaguarRight, jaguarArm, clawJaguar;
