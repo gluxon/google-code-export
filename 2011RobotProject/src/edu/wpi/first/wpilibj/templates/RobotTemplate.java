@@ -20,12 +20,13 @@ import edu.wpi.first.wpilibj.Timer;
 import com.sun.squawk.util.MathUtils;
 import edu.fhs.input.UltrasonicFHS;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.RobotDrive;
 
 
 public class RobotTemplate extends IterativeRobot
 {
     private static final double PI = Math.PI;
-
+    RobotDrive asdf;
     private static final int SLOT_1 = 1;
     
     //slot on the digital sidecar that is for digital IO
@@ -85,7 +86,6 @@ public class RobotTemplate extends IterativeRobot
 
     //xboxController is for arm, xboxDriveController is for driving main bot
     private Joystick xboxAuxController, xboxDriveController;
-    Compressor asdfadsfasdfasdf;
 
     //drive, arm and claw speed controllers
     private Jaguar jaguarLeft, jaguarRight, jaguarArm, clawJaguar;
@@ -99,7 +99,7 @@ public class RobotTemplate extends IterativeRobot
 
     //line sensors
     private DigitalInput leftLineSensor, centerLineSensor, rightLineSensor;
-
+    private Compressor s;
     private UltrasonicFHS rangeSensor;
 
     //two slots for arm height switch
