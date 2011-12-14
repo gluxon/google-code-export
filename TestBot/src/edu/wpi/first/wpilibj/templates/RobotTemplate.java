@@ -7,8 +7,10 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
@@ -23,9 +25,11 @@ public class RobotTemplate extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    private double robotMove2, robotMove, XBOX_SENSITIVITY = 0.15, speed = 0.5;
+    private double robotMove2, robotMove, robotSpeed = 0.5;
     private Joystick xboxController, xboxAuxController;
     private Victor victorLeft, victorRight, victorLeft2, victorRight2;
+    private DigitalInput leftLine,centerLine,rightLine;
+    private Ultrasonic ultrasonic;
 
     public void robotInit() 
     {
@@ -36,6 +40,12 @@ public class RobotTemplate extends IterativeRobot {
             victorLeft2 = new Victor(2);
             victorRight = new Victor(3);
             victorRight2 = new Victor(4);
+            
+            leftLine = new DigitalInput(1);
+            centerLine = new DigitalInput(2);
+            rightLine = new DigitalInput(3);
+            
+            ultrasonic = new Ultrasonic(1,1);
     }
 
     /**
@@ -43,7 +53,7 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void autonomousPeriodic()
     {
-
+        
     }
 
     /**
@@ -59,6 +69,7 @@ public class RobotTemplate extends IterativeRobot {
         victorLeft2.set(robotMove2);
         victorRight.set(-robotMove);
         victorRight2.set(-robotMove);
+        System.out.println(leftLine.get()+":"+centerLine.get()+":" + rightLine.get() + ":" + ultrasonic.getRangeInches());
 
     }
     
