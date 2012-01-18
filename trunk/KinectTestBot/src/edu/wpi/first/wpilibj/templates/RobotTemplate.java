@@ -7,17 +7,9 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-import com.sun.squawk.Unsafe;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Kinect;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.Kinect.Point4;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Skeleton.Joint;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.BinaryImage;
@@ -41,13 +33,13 @@ public class RobotTemplate extends IterativeRobot {
      */
     //private double robotMove2, robotMove, robotSpeed = 0.5;
     private Kinect kinect;
-    private Joystick xboxController, xboxAuxController;
+    private Joystick xboxController;
     private float rightHandZ, leftHandZ;
     private Victor victorLeftFront, victorRightFront, victorLeftRear, victorRightRear;
-    private DigitalInput leftLine,centerLine,rightLine;
-    private Ultrasonic ultrasonic;
+    private UltrasonicFHS ultrasonic;
     private Watchdog watchdog;
     private RobotDrive robotDrive;
+    
     private AxisCamera axisCamera;
    
 
@@ -55,7 +47,7 @@ public class RobotTemplate extends IterativeRobot {
     {
             axisCamera = AxisCamera.getInstance("10.1.78.11");
             xboxController = new Joystick(1);
-            xboxAuxController = new Joystick(2);
+            
             
             watchdog = Watchdog.getInstance();
             kinect = Kinect.getInstance();
@@ -65,12 +57,7 @@ public class RobotTemplate extends IterativeRobot {
             victorRightFront = new Victor(2);
             victorRightRear = new Victor(4);
             
-            leftLine = new DigitalInput(1);
-            centerLine = new DigitalInput(2);
-            rightLine = new DigitalInput(3);
-            
-            
-            //ultrasonic = new Ultrasonic(1,1);
+            ultrasonic = new UltrasonicFHS(1,7);
             
             robotDrive = new RobotDrive(victorLeftFront, victorLeftRear, victorRightFront, victorRightRear);
             
@@ -90,7 +77,6 @@ public class RobotTemplate extends IterativeRobot {
         victorLeftRear.set(leftHandZ);
         victorRightFront.set(-rightHandZ);
         victorRightRear.set(-rightHandZ);
-        System.out.println(leftLine.get()+":"+centerLine.get()+":" + rightLine.get() + ":" + ultrasonic.getRangeInches());
         }
         else
         {
@@ -99,7 +85,7 @@ public class RobotTemplate extends IterativeRobot {
         victorLeftRear.set(0.0);
         victorRightFront.set(0.0);
         victorRightRear.set(0.0);
-        System.out.println(leftLine.get()+":"+centerLine.get()+":" + rightLine.get() + ":" + ultrasonic.getRangeInches());
+     
         }
         
         watchdog.feed();
@@ -111,47 +97,18 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void teleopPeriodic() 
     {
-       /* try 
-        {
-            axisCamera.writeResolution(AxisCamera.ResolutionT.k320x240);
-            
-            if(axisCamera.freshImage())
-            {
-            ColorImage a = axisCamera.getImage();
-            BinaryImage b = a.thresholdRGB(200, 255, 200, 255, 200, 255);
-            ParticleAnalysisReport c[] = b.getOrderedParticleAnalysisReports();
-            
-            for(int i = 0; i < c.length; i++)
-            {
-                System.out.println(i+" |X:"+ c[i].center_mass_x_normalized+" |Y:"+c[i].center_mass_y_normalized+" |A:"+c[i].particleArea);
-            }
-            
-            //System.out.println(b.getNumberParticles());
-            
-            }
-            
-        } 
-        catch (Exception ex) 
-        {
-            ex.printStackTrace();
-        }*/
-        
-        //robotDrive.mecanumDrive_Polar(xboxController.getY(), xboxController.getX(), xboxController.getTwist());
-        
         double robotSpin = -xboxController.getTwist();
         double robotMove = -xboxController.getY();
         double speed = 1.0;
         
-        
-        
-        if(xboxController.getRawButton(3))
+        if(xboxController.getRawButton(4))
         {
             victorLeftFront.set(1.0);
             victorLeftRear.set(-1.0);
             victorRightFront.set(1.0);
             victorRightRear.set(-1.0);
         }
-        else if(xboxController.getRawButton(4))
+        else if(xboxController.getRawButton(3))
         {
             victorLeftFront.set(-1.0);
             victorLeftRear.set(1.0);
@@ -166,7 +123,10 @@ public class RobotTemplate extends IterativeRobot {
             victorRightRear.set(-(robotSpin * speed) - (robotMove * speed));
         }
         
+        System.out.println((int)ultrasonic.getRangeInches()+" Inches");
+        
         watchdog.feed();
     }
     
 }
+  
