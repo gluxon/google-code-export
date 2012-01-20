@@ -8,6 +8,9 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.communication.Semaphore;
+import edu.wpi.first.wpilibj.communication.Semaphore.Options;
+import edu.wpi.first.wpilibj.Dashboard;
 import edu.wpi.first.wpilibj.Kinect.Point4;
 import edu.wpi.first.wpilibj.Skeleton.Joint;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
@@ -36,12 +39,22 @@ public class RobotTemplate extends IterativeRobot {
     private Joystick xboxController;
     private float rightHandZ, leftHandZ;
     private Victor victorLeftFront, victorRightFront, victorLeftRear, victorRightRear;
+    private Encoder encoderLeftFront, encoderRightFront, encoderLeftRear, encoderRightRear;
     private UltrasonicFHS ultrasonic;
+    private Accelerometer accelerometer;
     private Watchdog watchdog;
+    private TractionControl TC;
     private RobotDrive robotDrive;
     
     private AxisCamera axisCamera;
+    
+    private Dashboard dashboard;
+    private Semaphore semaphore;
+    private Semaphore.Options semaphoreOptions;
    
+    
+    
+    private AnalogChannel m_analogChannel; //
 
     public void robotInit() 
     {
@@ -57,10 +70,17 @@ public class RobotTemplate extends IterativeRobot {
             victorRightFront = new Victor(2);
             victorRightRear = new Victor(4);
             
-            ultrasonic = new UltrasonicFHS(1,7);
+            //ultrasonic = new UltrasonicFHS(1,7);
+            //accelerometer = new Accelerometer(1,6);
             
             robotDrive = new RobotDrive(victorLeftFront, victorLeftRear, victorRightFront, victorRightRear);
             
+            semaphoreOptions = new Semaphore.Options();
+
+            semaphoreOptions = new Semaphore.Options();
+            semaphore = new Semaphore(semaphoreOptions.setDeleteSafe(true));
+            dashboard = Dashboard(semaphore);
+            m_analogChannel = new AnalogChannel(7); //
     }
 
     /**
@@ -123,8 +143,9 @@ public class RobotTemplate extends IterativeRobot {
             victorRightRear.set(-(robotSpin * speed) - (robotMove * speed));
         }
         
-        System.out.println((int)ultrasonic.getRangeInches()+" Inches");
-        
+        //System.out.println((int)ultrasonic.getRangeInches()+" Inches");
+        //System.out.println(accelerometer.pidGet()+" Gs");
+        System.out.println(m_analogChannel.getAverageVoltage());
         watchdog.feed();
     }
     
