@@ -84,7 +84,7 @@
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="boot">${sunspot.bootclasspath}</classpath>
-                <classpath mode="compile">C:/Documents and Settings/Programming/sunspotfrcsdk/lib/WPILibJ/classes.jar;C:\Users\Enforcers\sunspotfrcsdk\lib\WPILibJ\classes.jar</classpath>
+                <classpath mode="compile">C:/Documents and Settings/Programming/sunspotfrcsdk/lib/WPILibJ/classes.jar;C:\Users\Enforcers\sunspotfrcsdk\lib\WPILibJ\classes.jar;C:\Documents and Settings\programming.FRC178\sunspotfrcsdk\lib\WPILibJ\classes.jar</classpath>
                 <built-to>build</built-to>
                 <source-level>1.4</source-level>
             </compilation-unit>

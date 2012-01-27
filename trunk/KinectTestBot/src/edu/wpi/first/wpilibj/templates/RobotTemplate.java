@@ -8,8 +8,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.communication.Semaphore;
-import edu.wpi.first.wpilibj.communication.Semaphore.Options;
 import edu.wpi.first.wpilibj.Dashboard;
 import edu.wpi.first.wpilibj.Kinect.Point4;
 import edu.wpi.first.wpilibj.Skeleton.Joint;
@@ -39,9 +37,10 @@ public class RobotTemplate extends IterativeRobot {
     private Joystick xboxController;
     private float rightHandZ, leftHandZ;
     private Victor victorLeftFront, victorRightFront, victorLeftRear, victorRightRear;
-    private Encoder encoderLeftFront, encoderRightFront, encoderLeftRear, encoderRightRear;
+    private Encoder encoderLeftFront, encoderRightFront, encoderLeftRear, encoderRightRear, encoder;
     private UltrasonicFHS ultrasonic;
     private Accelerometer accelerometer;
+    private Gyro gyro;
     private Watchdog watchdog;
     private TractionControl TC;
     private RobotDrive robotDrive;
@@ -49,9 +48,9 @@ public class RobotTemplate extends IterativeRobot {
     private AxisCamera axisCamera;
     
     private Dashboard dashboard;
-    private Semaphore semaphore;
-    private Semaphore.Options semaphoreOptions;
-   
+    
+    //in meters
+    private final double DISTANCE_PER_PULSE = .196*Math.PI/1440; //1440 according to guy on Delphi stie
     
     
     private AnalogChannel m_analogChannel; //
@@ -61,6 +60,8 @@ public class RobotTemplate extends IterativeRobot {
             axisCamera = AxisCamera.getInstance("10.1.78.11");
             xboxController = new Joystick(1);
             
+            gyro = new Gyro(1,1);
+            //accelerometer = new Accelerometer(1);
             
             watchdog = Watchdog.getInstance();
             kinect = Kinect.getInstance();
@@ -70,16 +71,14 @@ public class RobotTemplate extends IterativeRobot {
             victorRightFront = new Victor(2);
             victorRightRear = new Victor(4);
             
+            encoder = new Encoder(6,7);
+            encoder.start();
+            encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
             //ultrasonic = new UltrasonicFHS(1,7);
             //accelerometer = new Accelerometer(1,6);
             
             robotDrive = new RobotDrive(victorLeftFront, victorLeftRear, victorRightFront, victorRightRear);
-            
-            semaphoreOptions = new Semaphore.Options();
-
-            semaphoreOptions = new Semaphore.Options();
-            semaphore = new Semaphore(semaphoreOptions.setDeleteSafe(true));
-            dashboard = Dashboard(semaphore);
+        
             m_analogChannel = new AnalogChannel(7); //
     }
 
@@ -88,28 +87,24 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void autonomousPeriodic()
     {
-        if(kinect.getNumberOfPlayers() == 1)
-        {
-        rightHandZ = kinect.getSkeleton().GetHandRight().getZ();
-        leftHandZ = kinect.getSkeleton().GetHandLeft().getZ();
+        if (kinect.getNumberOfPlayers() == 1) {
+            rightHandZ = kinect.getSkeleton().GetHandRight().getZ();
+            leftHandZ = kinect.getSkeleton().GetHandLeft().getZ();
 
-        victorLeftFront.set(leftHandZ);
-        victorLeftRear.set(leftHandZ);
-        victorRightFront.set(-rightHandZ);
-        victorRightRear.set(-rightHandZ);
+            victorLeftFront.set(leftHandZ);
+            victorLeftRear.set(leftHandZ);
+            victorRightFront.set(-rightHandZ);
+            victorRightRear.set(-rightHandZ);
         }
-        else
-        {
-        
-        victorLeftFront.set(0.0);
-        victorLeftRear.set(0.0);
-        victorRightFront.set(0.0);
-        victorRightRear.set(0.0);
-     
+        else {
+            victorLeftFront.set(0.0);
+            victorLeftRear.set(0.0);
+            victorRightFront.set(0.0);
+            victorRightRear.set(0.0);
         }
-        
+
         watchdog.feed();
-        
+
     }
 
     /**
@@ -145,9 +140,66 @@ public class RobotTemplate extends IterativeRobot {
         
         //System.out.println((int)ultrasonic.getRangeInches()+" Inches");
         //System.out.println(accelerometer.pidGet()+" Gs");
-        System.out.println(m_analogChannel.getAverageVoltage());
+        //System.out.println(m_analogChannel.getAverageVoltage());
+         System.out.println(encoder.getDistance());
+        
+        //System.out.println(gyro.getAngle());
         watchdog.feed();
     }
+    
+    /*public void updateDashboardHigh(double joyStickX, double gyroAngle, double gyroRate, double targetX, Target[] targets) {
+        Dashboard highDashData = DriverStation.getInstance().getDashboardPackerHigh();
+        highDashData.addCluster(); // wire (2 elements)
+        highDashData.addCluster(); // tracking data
+        highDashData.addDouble(joyStickX); // Joystick X
+        highDashData.addDouble(((gyroAngle + 360.0 + 180.0) % 360.0) - 180.0); // angle
+        highDashData.addDouble(gyroRate); // angular rate
+        highDashData.addDouble(targetX); // other X
+        highDashData.finalizeCluster();
+        highDashData.addCluster(); // target Info (2 elements)
+        highDashData.addArray();
+                //TODO Limit what we send back - we don't display targets at dash,
+                //  do we really need to send anything at all?
+        for (int i = 0; i < targets.length; i++) {
+            highDashData.addCluster(); // targets
+
+            double targetScore = 0;
+            double m_xPos = 0;
+            double m_xMax = 1; //this becomes a divisor
+            double m_yPos = 0;
+            if (targets != null & targets[i] != null) {
+                targetScore = targets[i].m_score;
+                m_xPos = targets[i].m_xPos;
+                m_xMax = targets[i].m_xMax;
+                m_yPos = targets[i].m_yPos;
+            }
+            highDashData.addDouble(targetScore); // target score
+            highDashData.addCluster(); // Circle Description (5 elements)
+            highDashData.addCluster(); // Position (2 elements)
+            highDashData.addFloat((float) (m_xPos / m_xMax)); // X
+            highDashData.addFloat((float) m_yPos); // Y
+            highDashData.finalizeCluster();
+            if (targets == null || targets[i] == null) {
+                highDashData.addDouble(0d); // Angle
+                highDashData.addDouble(0d); // Major Radius
+                highDashData.addDouble(0d); // Minor Radius
+                highDashData.addDouble(0d); // Raw score
+            } else {
+                highDashData.addDouble(targets[i].m_rotation); // Angle
+                highDashData.addDouble(targets[i].m_majorRadius); // Major Radius
+                highDashData.addDouble(targets[i].m_minorRadius); // Minor Radius
+                highDashData.addDouble(targets[i].m_rawScore); // Raw score
+            }
+            highDashData.finalizeCluster(); // Position
+        }
+        highDashData.finalizeCluster(); // targets
+        highDashData.finalizeArray();
+        //highDashData.addInt((int) time.getTime());
+        highDashData.finalizeCluster(); // target Info
+        highDashData.finalizeCluster(); // wire
+        highDashData.commit();
+    }*/
+
     
 }
   
