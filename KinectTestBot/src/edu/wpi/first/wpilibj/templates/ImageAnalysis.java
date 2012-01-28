@@ -7,6 +7,7 @@ package edu.wpi.first.wpilibj.templates;
 import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
+import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
@@ -14,15 +15,16 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  *
  * @author Programming
  */
-public class ImageAnalysis {
-    AxisCamera axis;
-    ParticleAnalysisReport[] report;   
-    ParticleAnalysisReport[] rectangle;
-    final double CAMERA_HEIGHT = 3; //height of camera in feet
-    final double HEIGHT = 3/2; // height of backboard rectangle tape in feet
-    final double WIDTH = 2; // width of backboard rectangle tape in feet
+public class ImageAnalysis 
+{
+    private AxisCamera axis;
+    private ParticleAnalysisReport[] report;   
+    private ParticleAnalysisReport[] rectangle;
+    private final double CAMERA_HEIGHT = 2; //height of camera in feet
+    private final double HEIGHT = 3/2; // height of backboard rectangle tape in feet
+    private final double WIDTH = 2; // width of backboard rectangle tape in feet
     //view angle for the axis camera M1011-w
-    final double ANGLE = 43.5;//actual angle is 47
+    private final double ANGLE = 43.5;//actual angle is 47
     
     public ImageAnalysis(AxisCamera a)
     {
@@ -31,11 +33,13 @@ public class ImageAnalysis {
     public void updateImage() throws AxisCameraException, NIVisionException
     {
 	try {
-	    report = axis.getImage().thresholdHSL(136, 182, 45, 255, 116, 255).getOrderedParticleAnalysisReports();
+	    ColorImage image = axis.getImage();
+	    report = image.thresholdHSL(0, 255, 0, 8, 200, 255).getOrderedParticleAnalysisReports();
+	    image.free();
 	} catch (AxisCameraException ex) {
 	    ex.printStackTrace();
 	}
-	rectangle = getValidTargets();
+	getValidTargets();
     }
     public double getRectangleScore(int particle)
     {
@@ -48,8 +52,8 @@ public class ImageAnalysis {
         return report[particle].boundingRectWidth / report[particle].boundingRectHeight;
     }
     
-    //returns particles that are close to the rectangles that we are looking for
-    public ParticleAnalysisReport[] getValidTargets()
+    //finds particles that are close to the rectangles that we are looking for
+    public void findRectangles()
     {
         
         boolean[] a = new boolean[report.length];
@@ -66,13 +70,22 @@ public class ImageAnalysis {
                 a[i] = false;
             }
         }
-        ParticleAnalysisReport[] output = new ParticleAnalysisReport[count];
+	if(count > 0)
+	{
         for(int i = 0; i < report.length; i++)
         {
             if(a[i])
-                output[i] = report[i];
+                rectangle[i] = report[i];
         }
-        return output;
+	}
+	else
+	{
+	    rectangle = null;
+	}
+    }
+    public ParticleAnalysisReport[] getValidTargets()
+    {
+	return rectangle;
     }
     
     public double getDistance(int particle)
@@ -82,5 +95,12 @@ public class ImageAnalysis {
 	double angle = MathUtils.acos(rectangle[particle].boundingRectWidth/axis.getResolution().width);
         double distance = Math.sqrt(MathUtils.pow((Math.sin(90-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2));
         return distance;
+    }
+    public double getHeight(int particle)
+    {
+        //in feet
+        double FieldOfVision = HEIGHT/rectangle[particle].boundingRectHeight*rectangle[particle].imageHeight;
+	double height = FieldOfVision/2*rectangle[particle].center_mass_y_normalized + CAMERA_HEIGHT;
+	return height;
     }
 }

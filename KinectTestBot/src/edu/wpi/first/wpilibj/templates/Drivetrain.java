@@ -8,8 +8,6 @@ public class Drivetrain
     
     private Joystick joystick;
     
-    private static Drivetrain m_instance;
-    
     public Drivetrain(int frontLeftN, int frontRightN, int rearLeftN, int rearRightN, Joystick joystick, final double speed)
     {
 	frontLeft = new Victor(frontLeftN)
@@ -43,16 +41,6 @@ public class Drivetrain
 	
 	this.joystick = joystick;
 	
-	m_instance = this;
-    }
-    
-    public static synchronized Drivetrain getInstance() 
-    {
-        if (m_instance == null) 
-	{
-            System.out.println("No Drivetrain Initalized!");
-        }
-        return m_instance;
     }
     
     public void drive()
