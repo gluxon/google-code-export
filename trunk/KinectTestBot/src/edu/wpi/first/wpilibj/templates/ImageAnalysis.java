@@ -24,16 +24,19 @@ public class ImageAnalysis {
     //view angle for the axis camera M1011-w
     final double ANGLE = 43.5;//actual angle is 47
     
-    public ImageAnalysis(AxisCamera a) throws AxisCameraException, NIVisionException
+    public ImageAnalysis(AxisCamera a)
     {
-        try {
-            axis = a;
-            report = a.getImage().thresholdHSL(136, 182, 45, 255, 116, 255).getOrderedParticleAnalysisReports();
-        } catch (AxisCameraException ex) {
-            ex.printStackTrace();
-        }
-        rectangle = getValidTargets();
-    } 
+        axis = a;
+    }
+    public void updateImage() throws AxisCameraException, NIVisionException
+    {
+	try {
+	    report = axis.getImage().thresholdHSL(136, 182, 45, 255, 116, 255).getOrderedParticleAnalysisReports();
+	} catch (AxisCameraException ex) {
+	    ex.printStackTrace();
+	}
+	rectangle = getValidTargets();
+    }
     public double getRectangleScore(int particle)
     {
         //gives a score as to how close a particle is to a rectangle. Perfect rectangle gives 1
