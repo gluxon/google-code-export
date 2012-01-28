@@ -24,8 +24,9 @@ public class CameraFHS
 	ParticleAnalysisReport[] report = analysis.getValidTargets();
 	
 	double xNormal;
-	
-	if(report != null)
+	try
+        {
+	if(report.length > 0)
 	{
 	    xNormal = report[0].center_mass_x_normalized;
 	
@@ -40,6 +41,11 @@ public class CameraFHS
 	{
 	    System.out.println("No Valid Targets Found!");
 	}
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 	
     }
     

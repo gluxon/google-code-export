@@ -33,13 +33,24 @@ public class ImageAnalysis
     public void updateImage() throws AxisCameraException, NIVisionException
     {
 	try {
-	    ColorImage image = axis.getImage();
-	    report = image.thresholdHSL(0, 255, 0, 8, 200, 255).getOrderedParticleAnalysisReports();
-	    image.free();
+            if(axis.freshImage())
+            {
+                ColorImage image = axis.getImage();
+                report = image.thresholdHSL(0, 255, 0, 45, 200, 255).getOrderedParticleAnalysisReports();
+                image.free();
+            }
 	} catch (AxisCameraException ex) {
 	    ex.printStackTrace();
 	}
-	getValidTargets();
+        try
+        {
+        if(report.length > 0)
+            findRectangles();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     public double getRectangleScore(int particle)
     {
@@ -58,6 +69,7 @@ public class ImageAnalysis
         
         boolean[] a = new boolean[report.length];
         int count = 0;
+        
         for(int i = 0; i < report.length; i++)
         {
             if(report[i].particleArea > 100)
@@ -70,18 +82,14 @@ public class ImageAnalysis
                 a[i] = false;
             }
         }
-	if(count > 0)
-	{
+	ParticleAnalysisReport[] output = new ParticleAnalysisReport[count];
         for(int i = 0; i < report.length; i++)
         {
             if(a[i])
-                rectangle[i] = report[i];
+                output[i] = report[i];
         }
-	}
-	else
-	{
-	    rectangle = null;
-	}
+        rectangle = output;
+	
     }
     public ParticleAnalysisReport[] getValidTargets()
     {
