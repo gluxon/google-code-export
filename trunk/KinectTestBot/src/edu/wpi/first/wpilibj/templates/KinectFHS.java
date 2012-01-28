@@ -8,10 +8,10 @@ public class KinectFHS
     private Drivetrain drivetrain;
     private float rightHandZ, leftHandZ;
     
-    public KinectFHS()
+    public KinectFHS(Drivetrain drivetrain)
     {
 	kinect = Kinect.getInstance();
-	drivetrain = Drivetrain.getInstance();
+	this.drivetrain = drivetrain;
     }
 	    
     public void autonomousKinect()

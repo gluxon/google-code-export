@@ -10,10 +10,10 @@ public class CameraFHS
     private AxisCamera axis;
     private Drivetrain drivetrain;
     
-    public CameraFHS()
+    public CameraFHS(Drivetrain drivetrain)
     {
 	axis = AxisCamera.getInstance();
-	drivetrain = Drivetrain.getInstance();
+	this.drivetrain = drivetrain;
 	analysis = new ImageAnalysis(axis);
     }
     
@@ -25,19 +25,22 @@ public class CameraFHS
 	
 	double xNormal;
 	
-	if(report[0] != null)
+	if(report != null)
 	{
 	    xNormal = report[0].center_mass_x_normalized;
 	
-	    drivetrain.frontLeftSet(xNormal*0.5);
-	    drivetrain.frontRightSet(xNormal*0.5);
-	    drivetrain.rearLeftSet(xNormal*0.5);
-	    drivetrain.rearRightSet(xNormal*0.5);
+	    System.out.println(xNormal);
+	    
+	    drivetrain.frontLeftSet(xNormal*0.3);
+	    drivetrain.frontRightSet(xNormal*0.3);
+	    drivetrain.rearLeftSet(xNormal*0.3);
+	    drivetrain.rearRightSet(xNormal*0.3);
 	}
 	else
 	{
 	    System.out.println("No Valid Targets Found!");
 	}
+	
     }
     
 }

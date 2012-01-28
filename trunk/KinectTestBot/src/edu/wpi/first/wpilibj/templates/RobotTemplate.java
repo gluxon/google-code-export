@@ -20,15 +20,15 @@ public class RobotTemplate extends IterativeRobot
     {
 	joystick = new Joystick(1);
 	auxJoystick = new Joystick(2);
-	kinect = new KinectFHS();
+	kinect = new KinectFHS(drivetrain);
 	    
 	drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);   
 	sensors = new Sensors();
-	camera = new CameraFHS();
+	camera = new CameraFHS(drivetrain);
 	    
         watchdog = Watchdog.getInstance();
     }
-
+    
     public void autonomousPeriodic()
     {
 	//kinect.autonomousKinect();
@@ -53,9 +53,10 @@ public class RobotTemplate extends IterativeRobot
     {
         drivetrain.drive();
         
-        System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
-        System.out.println(sensors.getEncoder().getDistance());
-        System.out.println(sensors.getGyro().getAngle());
+        //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
+        //System.out.println(sensors.getEncoder().getDistance());
+	System.out.println(sensors.getEncoder().getRate());
+        //System.out.println(sensors.getGyro().getAngle());
         
 	watchdog.feed();
     }
