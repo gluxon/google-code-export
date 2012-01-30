@@ -21,12 +21,11 @@ public class CameraFHS
     {
 	analysis.updateImage();
 	
-	ParticleAnalysisReport[] report = analysis.getValidTargets();
+	ParticleAnalysisReport[] report = analysis.findRectangles();
 	
 	double xNormal;
-	try
-        {
-	if(report.length > 0)
+
+	if(report.length >= 1)
 	{
 	    xNormal = report[0].center_mass_x_normalized;
 	
@@ -40,12 +39,11 @@ public class CameraFHS
 	else
 	{
 	    System.out.println("No Valid Targets Found!");
+	    drivetrain.frontLeftSet(0.0);
+	    drivetrain.frontRightSet(0.0);
+	    drivetrain.rearLeftSet(0.0);
+	    drivetrain.rearRightSet(0.0);
 	}
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
 	
     }
     
