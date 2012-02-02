@@ -8,6 +8,7 @@ import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.ColorImage;
+import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 public class ImageAnalysis 
 {
 	private AxisCamera axis;
-	private ParticleAnalysisReport[] report;   
+	private ParticleAnalysisReport[] report;
 	private ParticleAnalysisReport[] rectangle;
 	private final double CAMERA_HEIGHT = 2; //height of camera in feet
 	private final double HEIGHT = 3/2; // height of backboard rectangle tape in feet
@@ -32,19 +33,20 @@ public class ImageAnalysis
 	}
 	public void updateImage() throws AxisCameraException, NIVisionException
 	{
-	try 
-	{
-			if(axis.freshImage())
+
+		try 
+		{
+			if (axis.freshImage())
 			{
 				ColorImage image = axis.getImage();
-				report = image.thresholdHSL(0,255,0,255,0,255).getOrderedParticleAnalysisReports();
+				report = image.thresholdHSL(0,255,0,54,171,255).convexHull(true).getOrderedParticleAnalysisReports();
 				image.free();
 			}
-	}   
-	catch (AxisCameraException ex) 
-	{
-		ex.printStackTrace();
-	}
+		}
+		catch (AxisCameraException ex) 
+		{
+			ex.printStackTrace();
+		}
 	
 	}
 	public double getRectangleScore(int particle)
@@ -67,7 +69,7 @@ public class ImageAnalysis
 		
 		for(int i = 0; i < report.length; i++)
 		{
-			if(report[i].particleArea > 100)
+			if(getRectangleScore(i) > .8)
 			{
 				a[i] = true;
 				count++;
@@ -77,28 +79,30 @@ public class ImageAnalysis
 				a[i] = false;
 			}
 		}
-	ParticleAnalysisReport[] output = new ParticleAnalysisReport[count];
+		ParticleAnalysisReport[] output = new ParticleAnalysisReport[count];
+		count = 0;
 		for(int i = 0; i < report.length; i++)
 		{
 			if(a[i])
-				output[i] = report[i];
+			{
+				output[count] = report[i];
+				count++;
+			}
 		}
 		return output;
-	
+
 	}
 
-	
-	public double getDistance(int particle)
-	{
+	public double getDistance(int particle) {
 		//in feet
-		double FieldOfVision = HEIGHT/rectangle[particle].boundingRectHeight*rectangle[particle].imageWidth;
-		double angle = MathUtils.acos(rectangle[particle].boundingRectWidth/axis.getResolution().width);
-		double distance = Math.sqrt(MathUtils.pow((Math.sin(90-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2));
+		double FieldOfVision = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].imageWidth;
+		double angle = MathUtils.acos(rectangle[particle].boundingRectWidth / axis.getResolution().width);
+		double distance = Math.sqrt(MathUtils.pow((Math.sin(Math.PI/2-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2)); // Distance Formula
 		return distance;
 	}
-	public double getHeight(int particle)
-	{
-		//in feet
+
+	public double getHeight(int particle) {
+		//in feet assuming camera points straight ahead at all times
 		double FieldOfVision = HEIGHT/rectangle[particle].boundingRectHeight*rectangle[particle].imageHeight;
 		double height = FieldOfVision/2*rectangle[particle].center_mass_y_normalized + CAMERA_HEIGHT;
 		return height;
