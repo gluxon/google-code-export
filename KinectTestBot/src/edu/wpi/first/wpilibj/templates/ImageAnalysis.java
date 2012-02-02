@@ -95,9 +95,18 @@ public class ImageAnalysis
 
 	public double getDistance(int particle) {
 		//in feet
+		double thisvalue = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].boundingRectWidth;
+		
+		
 		double FieldOfVision = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].imageWidth;
 		double angle = MathUtils.acos(rectangle[particle].boundingRectWidth / axis.getResolution().width);
-		double distance = Math.sqrt(MathUtils.pow((Math.sin(Math.PI/2-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2)); // Distance Formula
+		//double distance = Math.sqrt(MathUtils.pow((Math.sin(Math.PI/2-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2)); // Pythagorean Theorem/Distance Formula
+
+		double a=(Math.sin(Math.PI/2-angle) / Math.sin(angle)*FieldOfVision);
+		double b=FieldOfVision / 2;
+		double angle_c = 911;
+		double distance = Math.sqrt( MathUtils.pow(a,2) + MathUtils.pow(b,2) - 2 * a * b * Math.cos(angle_c) ); // Law of Cosines ^^ *better than above*
+
 		return distance;
 	}
 
