@@ -15,10 +15,10 @@ public class ImageAnalysis
     private AxisCamera axis;
     private ParticleAnalysisReport[] report;
     private ParticleAnalysisReport[] rectangle;
-    private final double CAMERA_HEIGHT = 2; //height of camera in feet
-    private final double BOTTOM_HEIGHT = 28.0/12; //height of bottom hoop in feet
-    private final double MIDDLE_HEIGHT = 61.0/12; //height of middle hoop in feet
-    private final double TOP_HEIGHT = 98.0/12; //height of top hoop in feet
+    private final double CAMERA_HEIGHT = 56.0 /12; // height of camera in feet
+    private final double BOTTOM_HEIGHT = (28.0 + 15.75) /12; // 3.645833333333333 height of bottom hoop in feet
+    private final double MIDDLE_HEIGHT = (61.0 + 15.75) /12; // 6.395833333333333 height of middle hoop in feet
+    private final double TOP_HEIGHT = (98.0 + 15.75) /12; // 9.479166666666667 height of top hoop in feet
     private final double HEIGHT = 3.0/2; // height of backboard rectangle tape in feet
     private final double WIDTH = 2; // width of backboard rectangle tape in feet
     //view angle for the axis camera M1011-w
@@ -36,18 +36,21 @@ public class ImageAnalysis
             if (axis.freshImage())
             {
                 ColorImage image = axis.getImage();
-                BinaryImage binaryImage = image.thresholdHSL(0,255,0,100,165,255).convexHull(true);
-                if(binaryImage.getNumberParticles() > 15)
-                    binaryImage = binaryImage.removeSmallObjects(true, binaryImage.getNumberParticles()-15);
-                report = binaryImage.getOrderedParticleAnalysisReports();
-                binaryImage.free();
+                BinaryImage image2 = image.thresholdHSL(0,255,0,100,165,255);
+                
+                BinaryImage image3 = image2.convexHull(true);
+                
+                report = image3.getOrderedParticleAnalysisReports();
                 image.free();
+                image2.free();
+                image3.free();
+                
                 rectangle = findRectangles();
             }
-			else
-			{
-				rectangle = new ParticleAnalysisReport[0];
-			}
+            else
+            {
+		rectangle = new ParticleAnalysisReport[0];
+            }
         }
         catch (AxisCameraException ex)
         {
@@ -75,7 +78,7 @@ public class ImageAnalysis
        
         for(int i = 0; i < report.length; i++)
         {
-            if(getRectangleScore(i) > .8)
+            if(getRectangleScore(i) > .8 && report[i].particleArea > 100)
             {
                 a[i] = true;
                 count++;
@@ -97,6 +100,10 @@ public class ImageAnalysis
         }
         return output;
 
+    }
+    public ParticleAnalysisReport[] getParticles()
+    {
+        return report;
     }
     public ParticleAnalysisReport[] getRectangles()
     {
