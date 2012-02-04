@@ -21,11 +21,11 @@ public class CameraFHS
     {
 	analysis.updateImage();
 	
-	ParticleAnalysisReport[] report = analysis.findRectangles();
+	ParticleAnalysisReport[] report = analysis.getRectangles();
 	
 	double xNormal;
 
-	if(report.length >= 1)
+	if(report.length > 0)
 	{
 	    xNormal = report[0].center_mass_x_normalized;
 	

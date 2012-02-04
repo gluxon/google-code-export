@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.wpi.first.wpilibj.templates;
 
 import com.sun.squawk.util.MathUtils;
@@ -12,10 +9,7 @@ import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
-/**
- *
- * @author Programming
- */
+
 public class ImageAnalysis
 {
     private AxisCamera axis;
@@ -28,7 +22,7 @@ public class ImageAnalysis
     private final double HEIGHT = 3.0/2; // height of backboard rectangle tape in feet
     private final double WIDTH = 2; // width of backboard rectangle tape in feet
     //view angle for the axis camera M1011-w
-    private final double ANGLE = 43.5;//actual angle is 47
+    private final double ANGLE = .7592;//actual angle is .8203 radians
    
     public ImageAnalysis(AxisCamera a)
     {
@@ -50,6 +44,10 @@ public class ImageAnalysis
                 image.free();
                 rectangle = findRectangles();
             }
+			else
+			{
+				rectangle = new ParticleAnalysisReport[0];
+			}
         }
         catch (AxisCameraException ex)
         {
@@ -100,11 +98,9 @@ public class ImageAnalysis
         return output;
 
     }
-    public int getRectangleLength()
+    public ParticleAnalysisReport[] getRectangles()
     {
-        if(rectangle == null)
-            return -1;
-        return rectangle.length;
+        return rectangle;
     }
 
     public double getDistance(int particle) {

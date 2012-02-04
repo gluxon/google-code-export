@@ -12,12 +12,12 @@ public class RobotTemplate extends IterativeRobot
     
     private Drivetrain drivetrain;
     private Sensors sensors;
-    //private CameraFHS camera;
+    private CameraFHS camera;
     
     private Dashboard dashboard;
     private Watchdog watchdog;
     
-    //private ImageAnalysis imageAnalysis;
+    private ImageAnalysis imageAnalysis;
 
     public void robotInit() 
     {
@@ -27,9 +27,9 @@ public class RobotTemplate extends IterativeRobot
 	  
 	drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);   
 	sensors = new Sensors();
-	//camera = new CameraFHS(drivetrain);
+	camera = new CameraFHS(drivetrain);
         
-        //imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+        imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
 	    
         watchdog = Watchdog.getInstance();
     }
@@ -84,19 +84,19 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         drivetrain.drive();
-        /*try {
+        try {
             imageAnalysis.updateImage();
-            if(imageAnalysis.getRectangleLength() > -1)
-                System.out.println(imageAnalysis.getRectangleLength());
+            if(imageAnalysis.getRectangles().length > -1)
+                System.out.println(imageAnalysis.getRectangles().length);
         } catch (AxisCameraException ex) {
             ex.printStackTrace();
         } catch (NIVisionException ex) {
             ex.printStackTrace();
-        }*/
+        }
             
         //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
         //System.out.println(sensors.getEncoder().getDistance());
-	//System.out.println(sensors.getEncoder().getRate());
+		//System.out.println(sensors.getEncoder().getRate());
         //System.out.println(sensors.getGyro().getAngle());
 
         
