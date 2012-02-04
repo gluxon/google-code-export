@@ -43,6 +43,26 @@ public class Drivetrain
 	
     }
     
+    public double getFrontLeft()
+    {
+        return this.frontLeft.get();
+    }
+    
+    public double getFrontRight()
+    {
+        return this.frontRight.get();
+    }
+    
+    public double getRearLeft()
+    {
+        return this.rearLeft.get();
+    }
+    
+    public double getRearRight()
+    {
+        return this.rearRight.get();
+    }
+    
     public void drive()
     {
 	double robotSpin = -joystick.getTwist();
