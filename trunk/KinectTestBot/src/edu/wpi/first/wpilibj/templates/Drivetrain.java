@@ -69,19 +69,24 @@ public class Drivetrain
         double robotMove = -joystick.getY();
         double speed = 1.0;
         
+        if(joystick.getTrigger())
+        {
+            speed = 0.25;
+        }
+        
         if(joystick.getRawButton(4))
         {
-            frontLeft.set(1.0);
-            rearLeft.set(-1.0);
-            frontRight.set(1.0);
-            rearRight.set(-1.0);
+            frontLeft.set(speed);
+            rearLeft.set(-speed);
+            frontRight.set(speed);
+            rearRight.set(-speed);
         }
         else if(joystick.getRawButton(3))
         {
-            frontLeft.set(-1.0);
-            rearLeft.set(1.0);
-            frontRight.set(-1.0);
-            rearRight.set(1.0);
+            frontLeft.set(-speed);
+            rearLeft.set(speed);
+            frontRight.set(-speed);
+            rearRight.set(speed);
         }
         else
         {

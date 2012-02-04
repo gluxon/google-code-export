@@ -54,7 +54,7 @@ public class RobotTemplate extends IterativeRobot
             drivetrain.rearLeftSet(0.0);
             drivetrain.rearRightSet(0.0);
         }
-        
+
         /*
         double gyroAngle = sensors.getGyro().getAngle()/180;
         drivetrain.frontLeftSet(gyroAngle);
@@ -84,16 +84,23 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         drivetrain.drive();
-        try {
-            imageAnalysis.updateImage();
-            if(imageAnalysis.getRectangles().length > -1)
-                System.out.println(imageAnalysis.getRectangles().length);
-        } catch (AxisCameraException ex) {
-            ex.printStackTrace();
-        } catch (NIVisionException ex) {
-            ex.printStackTrace();
+        
+        if(joystick.getRawButton(12))
+        {
+            try {
+                imageAnalysis.updateImage();
+                if(imageAnalysis.getRectangles().length > 0)
+                {
+                    System.out.println("Height:" + imageAnalysis.getHeight(0) + " Distance:" + imageAnalysis.getDistance(0));
+                }
+
+            } catch (AxisCameraException ex) {
+                ex.printStackTrace();
+            } catch (NIVisionException ex) {
+                ex.printStackTrace();
+            }
         }
-            
+
         //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
         //System.out.println(sensors.getEncoder().getDistance());
 		//System.out.println(sensors.getEncoder().getRate());
