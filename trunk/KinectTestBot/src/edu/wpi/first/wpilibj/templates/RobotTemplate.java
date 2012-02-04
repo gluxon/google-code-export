@@ -84,7 +84,13 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         drivetrain.drive();
-        
+
+		// Enable Autobalancing
+		if (joystick.getRawButton(7)) {
+			System.out.println(sensors.getGyro().getAngle());
+		}
+
+		// Enable Image Analysis and Processing
         if(joystick.getRawButton(12))
         {
             try {
@@ -101,6 +107,8 @@ public class RobotTemplate extends IterativeRobot
             }
         }
 
+
+		
         //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
         //System.out.println(sensors.getEncoder().getDistance());
 		//System.out.println(sensors.getEncoder().getRate());
