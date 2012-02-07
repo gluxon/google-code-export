@@ -19,8 +19,8 @@ public class Sensors
     public Sensors()
     {
 		//Analog Sensors
-		gyro = new Gyro(1,1);
-		ultrasonic = new UltrasonicFHS(1,2);
+		gyro = new Gyro(1, 2);
+		ultrasonic = new UltrasonicFHS(1,3);
 
 		//Digital Sensors
 		encoderBottom = new Encoder(5, 6);

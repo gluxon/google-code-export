@@ -63,7 +63,7 @@ public class Drivetrain
 
         if(joystick.getRawButton(2))
         {
-            speed = 0.25;
+            speed = 0.2;
         }
 
         if(joystick.getRawButton(4))
