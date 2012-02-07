@@ -5,41 +5,48 @@ import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 
-public class RobotTemplate extends IterativeRobot 
+
+public class RobotTemplate extends IterativeRobot
 {
     private Joystick joystick, auxJoystick;
     private KinectFHS kinect;
-    
+
     private Drivetrain drivetrain;
     private Sensors sensors;
     private CameraFHS camera;
-    
+
     private Dashboard dashboard;
     private Watchdog watchdog;
-    
+
     private ImageAnalysis imageAnalysis;
 
-    public void robotInit() 
+	private Victor ShooterMotorTop;
+	private Victor ShooterMotorBottom;
+
+    public void robotInit()
     {
-	joystick = new Joystick(1);
-	auxJoystick = new Joystick(2);
-	kinect = new KinectFHS(drivetrain);
-	  
-	drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);   
-	sensors = new Sensors();
-	camera = new CameraFHS(drivetrain);
-        
+		joystick = new Joystick(1);
+		auxJoystick = new Joystick(2);
+		kinect = new KinectFHS(drivetrain);
+
+		drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
+		sensors = new Sensors();
+		camera = new CameraFHS(drivetrain);
+
         imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
-	    
+
+		//Shooter
+		ShooterMotorBottom = new Victor(5);
+
         watchdog = Watchdog.getInstance();
     }
-    
+
     public void autonomousPeriodic()
     {
 	//kinect.autonomousKinect();
-        
+
         double ultrasonicInches = sensors.getUltrasonic().getRangeInches();
-        
+
         if(ultrasonicInches > 36)
         {
             drivetrain.frontLeftSet(0.5);
@@ -62,18 +69,18 @@ public class RobotTemplate extends IterativeRobot
         drivetrain.rearLeftSet(gyroAngle);
         drivetrain.rearRightSet(gyroAngle);
         */
-        
-        
+
+
         /*
-	try 
+	try
 	{
 	    camera.centerOnFirstTarget();
-	} 
-	catch (AxisCameraException ex) 
+	}
+	catch (AxisCameraException ex)
 	{
 	    ex.printStackTrace();
-	} 
-	catch (NIVisionException ex) 
+	}
+	catch (NIVisionException ex)
 	{
 	    ex.printStackTrace();
 	}
@@ -81,14 +88,50 @@ public class RobotTemplate extends IterativeRobot
         watchdog.feed();
     }
 
-    public void teleopPeriodic() 
+    public void teleopPeriodic()
     {
         drivetrain.drive();
 
 		// Enable Autobalancing
-		if (joystick.getRawButton(7)) {
-			System.out.println(sensors.getGyro().getAngle());
-		}
+        if (joystick.getRawButton(7)) {
+
+			// Balanced/Straight is from -0.015 to 0.015
+			//sensors.getGyro().reset();
+            if (sensors.getGyro().getAngle() < 0.015 && sensors.getGyro().getAngle() > -0.015) {
+				System.out.println("Straight: " + sensors.getGyro().getAngle());
+			}
+			else if (sensors.getGyro().getAngle() > 0.015) {
+				System.out.println("UP: " + sensors.getGyro().getAngle());
+			}
+			else if (sensors.getGyro().getAngle() < 0.015) {
+				System.out.println("DOWN: " + sensors.getGyro().getAngle());
+			}
+
+        }
+
+		// Reset Gyroscope
+        if (joystick.getRawButton(8)) {
+			sensors.getGyro().reset();
+        }
+
+		// Optical Encoders
+        if (joystick.getRawButton(9)) {
+
+			//ShooterMotorBottom.set(0.5);
+
+			System.out.println(sensors.getEncoder(2).getRaw());
+
+            /*if (sensors.getEncoder(2).getRate() < 0.015 && sensors.getEncoder(2).getRate() > -0.015) {
+				System.out.println();
+			}
+			else if (sensors.getEncoder(2).getRate() > 0.015) {
+				System.out.println("UP: " + sensors.getGyro().getAngle());
+			}
+			else if (sensors.getEncoder(2).getRate() < 0.015) {
+				System.out.println("DOWN: " + sensors.getGyro().getAngle());
+			}*/
+
+        }
 
 		// Enable Image Analysis and Processing
         if(joystick.getRawButton(12))
@@ -107,16 +150,14 @@ public class RobotTemplate extends IterativeRobot
             }
         }
 
-
-		
         //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
         //System.out.println(sensors.getEncoder().getDistance());
 		//System.out.println(sensors.getEncoder().getRate());
         //System.out.println(sensors.getGyro().getAngle());
 
-        
-        
+
+
 	watchdog.feed();
     }
 }
-    
+
