@@ -23,10 +23,12 @@ public class ImageAnalysis
     private final double WIDTH = 2; // width of backboard rectangle tape in feet
     //view angle for the axis camera M1011-w
     private final double ANGLE = .7592;//actual angle is .8203 radians
-   
+
     public ImageAnalysis(AxisCamera a)
     {
         axis = a;
+		axis.writeResolution(AxisCamera.ResolutionT.k320x240);
+		axis.writeCompression(30);
     }
     public void updateImage() throws AxisCameraException, NIVisionException
     {
@@ -37,14 +39,14 @@ public class ImageAnalysis
             {
                 ColorImage image = axis.getImage();
                 BinaryImage image2 = image.thresholdHSL(0,255,0,100,165,255);
-                
+
                 BinaryImage image3 = image2.convexHull(true);
-                
+
                 report = image3.getOrderedParticleAnalysisReports();
                 image.free();
                 image2.free();
                 image3.free();
-                
+
                 rectangle = findRectangles();
             }
             else
@@ -56,7 +58,7 @@ public class ImageAnalysis
         {
             ex.printStackTrace();
         }
-   
+
     }
     public double getRectangleScore(int particle)
     {
@@ -75,7 +77,7 @@ public class ImageAnalysis
 
         boolean[] a = new boolean[report.length];
         int count = 0;
-       
+
         for(int i = 0; i < report.length; i++)
         {
             if(getRectangleScore(i) > .8 && report[i].particleArea > 100)
@@ -113,7 +115,7 @@ public class ImageAnalysis
     public double getDistance(int particle) {
         //in feet
         //double thisvalue = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].boundingRectWidth;
-       
+
         double FieldOfVision = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].imageWidth;
         double angle = MathUtils.acos(rectangle[particle].boundingRectWidth / axis.getResolution().width);
         double distance = Math.sqrt(MathUtils.pow((Math.sin(Math.PI/2-angle)/Math.sin(angle)*FieldOfVision),2)+MathUtils.pow(FieldOfVision, 2)); // Pythagorean Theorem/Distance Formula
