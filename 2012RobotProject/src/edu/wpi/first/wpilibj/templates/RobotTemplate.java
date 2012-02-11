@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 
-
 public class RobotTemplate extends IterativeRobot
 {
     private Joystick joystick, auxJoystick;
@@ -19,11 +18,14 @@ public class RobotTemplate extends IterativeRobot
     private Watchdog watchdog;
 
     private ImageAnalysis imageAnalysis;
-	
-	private RobotDrive robotDrive;
+
+	//private RobotDrive robotDrive;
 
 	private Victor shooterMotorTop;
 	private Victor shooterMotorBottom;
+
+	double gyroLast;
+
 
     public void robotInit()
     {
@@ -31,18 +33,19 @@ public class RobotTemplate extends IterativeRobot
 		auxJoystick = new Joystick(2);
 		kinect = new KinectFHS(drivetrain);
 
-		//drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
+		drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
 		sensors = new Sensors();
-		camera = new CameraFHS(drivetrain);
+		//camera = new CameraFHS(drivetrain);
 
-        imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
-		robotDrive = new RobotDrive(1,3,2,4);
+        //imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+		//robotDrive = new RobotDrive(1,3,2,4);
 
 		//Shooter
 		shooterMotorBottom = new Victor(5);
 
         watchdog = Watchdog.getInstance();
-		
+
+		gyroLast = 0;
     }
 
     public void autonomousPeriodic()
@@ -94,12 +97,13 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-        //drivetrain.drive();
+        drivetrain.drive();
 		//if(joystick.getX() > 0.15 || joystick.getY() > 0.15 || joystick.getZ() > 0.15)
-			robotDrive.mecanumDrive_Cartesian(-joystick.getX(), -joystick.getZ(), -joystick.getY(), 0.0);
+			//robotDrive.mecanumDrive_Polar(-joystick.getMagnitude(), -joystick.getDirectionDegrees(), -joystick.getZ());
+			//robotDrive.mecanumDrive_Cartesian(-joystick.getX(), -joystick.getZ(), -joystick.getY(), 0.0);
 		//else
 			//robotDrive.mecanumDrive_Cartesian(0.0, 0.0, 0.0, 0.0);
-		
+
 		//shooterMotorBottom.set(joystick.getThrottle());
 		//shooterMotorTop.set(joystick.getThrottle());
 
@@ -108,14 +112,33 @@ public class RobotTemplate extends IterativeRobot
 
 			// Balanced/Straight is from -0.015 to 0.015
 			//sensors.getGyro().reset();
-            if (sensors.getGyro().getAngle() < 0.015 && sensors.getGyro().getAngle() > -0.015) {
-				System.out.println("Straight: " + sensors.getGyro().getAngle());
+
+			double deadZone = 1;
+			double speed = 0.6;
+
+			double gyroAngle = sensors.getGyro().getAngle();
+			// if the gyro's Angle changed by less than 1, then revert to last angle (solves drifting to some extent)
+			if (Math.abs(gyroAngle - gyroLast) < 1) {
+				gyroAngle = gyroLast;
 			}
-			else if (sensors.getGyro().getAngle() > 0.015) {
-				System.out.println("UP: " + sensors.getGyro().getAngle());
+			gyroLast = gyroAngle;
+
+            if (gyroAngle < deadZone && gyroAngle > -deadZone) {
+				System.out.println("Straight: " + gyroAngle);
 			}
-			else if (sensors.getGyro().getAngle() < 0.015) {
-				System.out.println("DOWN: " + sensors.getGyro().getAngle());
+			else if (gyroAngle > deadZone) {
+				System.out.println("UP: " + gyroAngle);
+				/*drivetrain.frontLeftSet(speed);
+				drivetrain.rearLeftSet(speed);
+				drivetrain.frontRightSet(-speed);
+				drivetrain.rearRightSet(-speed);*/
+			}
+			else if (gyroAngle < -deadZone) {
+				System.out.println("DOWN: " + gyroAngle);
+				/*drivetrain.frontLeftSet(-speed);
+				drivetrain.rearLeftSet(-speed);
+				drivetrain.frontRightSet(speed);
+				drivetrain.rearRightSet(speed);*/
 			}
 
         }
@@ -123,6 +146,7 @@ public class RobotTemplate extends IterativeRobot
 		// Reset Gyroscope
         if (joystick.getRawButton(8)) {
 			sensors.getGyro().reset();
+			gyroLast = 0;
         }
 
 		// Optical Encoders
@@ -177,9 +201,10 @@ public class RobotTemplate extends IterativeRobot
 		//System.out.println(sensors.getEncoder().getRate());
         //System.out.println(sensors.getGyro().getAngle());
 
-
+		if (joystick.getRawButton(10)) {
+			System.out.println(sensors.getUltrasonic().getRangeInches());
+		}
 
 	watchdog.feed();
     }
 }
-
