@@ -24,8 +24,9 @@ public class RobotTemplate extends IterativeRobot
 	private Victor shooterMotorTop;
 	private Victor shooterMotorBottom;
 
+	// Variable for storing last gyroscope angle
 	double gyroLast;
-
+	double gyroOffset;
 
     public void robotInit()
     {
@@ -45,7 +46,8 @@ public class RobotTemplate extends IterativeRobot
 
         watchdog = Watchdog.getInstance();
 
-		gyroLast = 0;
+		gyroLast = 0.0;
+		gyroOffset = 0.0;
     }
 
     public void autonomousPeriodic()
@@ -114,31 +116,35 @@ public class RobotTemplate extends IterativeRobot
 			//sensors.getGyro().reset();
 
 			double deadZone = 1;
-			double speed = 0.6;
 
-			double gyroAngle = sensors.getGyro().getAngle();
-			// if the gyro's Angle changed by less than 1, then revert to last angle (solves drifting to some extent)
-			if (Math.abs(gyroAngle - gyroLast) < 1) {
+			double gyroAngle = sensors.getGyro().getAngle() - gyroOffset;
+			// if the gyro's Angle changed by less than 0.7, then revert to last angle (solves drifting to some extent)
+			double gyroCurrentOffset = gyroAngle - gyroLast;
+			if (Math.abs(gyroCurrentOffset) < 0.1) {
 				gyroAngle = gyroLast;
+				gyroOffset = gyroOffset + gyroCurrentOffset;
 			}
 			gyroLast = gyroAngle;
+
+			/*double speed = Math.abs(gyroAngle / 3);
+			System.out.println(speed);*/
 
             if (gyroAngle < deadZone && gyroAngle > -deadZone) {
 				System.out.println("Straight: " + gyroAngle);
 			}
 			else if (gyroAngle > deadZone) {
-				System.out.println("UP: " + gyroAngle);
-				/*drivetrain.frontLeftSet(speed);
-				drivetrain.rearLeftSet(speed);
-				drivetrain.frontRightSet(-speed);
-				drivetrain.rearRightSet(-speed);*/
-			}
-			else if (gyroAngle < -deadZone) {
 				System.out.println("DOWN: " + gyroAngle);
-				/*drivetrain.frontLeftSet(-speed);
+				drivetrain.frontLeftSet(-speed);
 				drivetrain.rearLeftSet(-speed);
 				drivetrain.frontRightSet(speed);
-				drivetrain.rearRightSet(speed);*/
+				drivetrain.rearRightSet(speed);
+			}
+			else if (gyroAngle < -deadZone) {
+				System.out.println("UP: " + gyroAngle);
+				drivetrain.frontLeftSet(speed);
+				drivetrain.rearLeftSet(speed);
+				drivetrain.frontRightSet(-speed);
+				drivetrain.rearRightSet(-speed);
 			}
 
         }
@@ -146,7 +152,6 @@ public class RobotTemplate extends IterativeRobot
 		// Reset Gyroscope
         if (joystick.getRawButton(8)) {
 			sensors.getGyro().reset();
-			gyroLast = 0;
         }
 
 		// Optical Encoders

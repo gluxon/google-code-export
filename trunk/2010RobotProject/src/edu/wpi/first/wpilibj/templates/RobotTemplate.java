@@ -104,7 +104,7 @@ private Target[] targets = new Target[1];
         {
                 compressorRelay.set(Relay.Value.kOn);
         }
-        
+
         dsout.updateLCD();
        try
        {
@@ -134,12 +134,12 @@ private Target[] targets = new Target[1];
          {
              dsout.println(DriverStationLCD.Line.kUser5, 0,"ERROR: compressor/regulator not connected");
          }
-            
+
         if(kickerControl.getSolenoid1() == null || kickerControl.getSolenoid2() == null || kickerControl.getSolenoid3() == null || kickerControl.getSolenoid4() == null)
         {
             dsout.println(DriverStationLCD.Line.kUser6, 1, "solenoids set to null");
         }
-        
+
         dsout.updateLCD();
         vision = new VisionDirectedDrive(gyro, joy1, drive,ultrasonicFront,ultrasonicKicker,kickerControl,pressure);
     }
@@ -196,7 +196,7 @@ private Target[] targets = new Target[1];
         }
         dsout.updateLCD();
 
-     
+
     }
     public void teleopPeriodic()
     {
@@ -230,7 +230,7 @@ private Target[] targets = new Target[1];
         {
             compressorRelay.set(Relay.Value.kOff);
         }
-         
+
         if(joy1.getRawButton(7))
         {
             drive.mecanumDrive_Polar(joy1.getMagnitude(), joy1.getDirectionDegrees(), joy1.getThrottle());
@@ -295,7 +295,7 @@ private Target[] targets = new Target[1];
                 psi = pressure.getAverageVoltage()*37.76-32.89;
                 IRDelay = 0;
             }
-            
+
             IRDelay++;
         }
         dsout.println(DriverStationLCD.Line.kUser4, 1, "lUlt: " + ultrasonicLeft.getRangeInches());

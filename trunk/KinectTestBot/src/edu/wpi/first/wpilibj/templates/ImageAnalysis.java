@@ -29,6 +29,7 @@ public class ImageAnalysis
         axis = a;
 		axis.writeResolution(AxisCamera.ResolutionT.k320x240);
 		axis.writeCompression(30);
+		axis.writeMaxFPS(15);
     }
     public void updateImage() throws AxisCameraException, NIVisionException
     {
@@ -40,7 +41,7 @@ public class ImageAnalysis
                 ColorImage image = axis.getImage();
                 BinaryImage image2 = image.thresholdHSL(0,255,0,100,165,255);
 
-                BinaryImage image3 = image2.convexHull(true);
+                BinaryImage image3 = image2;//.convexHull(true);
 
                 report = image3.getOrderedParticleAnalysisReports();
                 image.free();
