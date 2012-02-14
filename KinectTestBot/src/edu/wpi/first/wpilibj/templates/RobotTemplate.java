@@ -23,8 +23,11 @@ public class RobotTemplate extends IterativeRobot
 	private Victor ShooterMotorTop;
 	private Victor ShooterMotorBottom;
 
+	private Timer timer;
     public void robotInit()
     {
+		timer = new Timer();
+
 		joystick = new Joystick(1);
 		auxJoystick = new Joystick(2);
 		kinect = new KinectFHS(drivetrain);
@@ -91,19 +94,19 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic()
     {
         drivetrain.drive();
-
+		/*
 		// Enable Autobalancing
         if (joystick.getRawButton(7)) {
 
 			// Balanced/Straight is from -0.015 to 0.015
 			//sensors.getGyro().reset();
-            if (sensors.getGyro().getAngle() < 0.015 && sensors.getGyro().getAngle() > -0.015) {
+            if (sensors.getGyro().getAngle() < 2 && sensors.getGyro().getAngle() > 2) {
 				System.out.println("Straight: " + sensors.getGyro().getAngle());
 			}
-			else if (sensors.getGyro().getAngle() > 0.015) {
+			else if (sensors.getGyro().getAngle() > 2) {
 				System.out.println("UP: " + sensors.getGyro().getAngle());
 			}
-			else if (sensors.getGyro().getAngle() < 0.015) {
+			else if (sensors.getGyro().getAngle() < -2) {
 				System.out.println("DOWN: " + sensors.getGyro().getAngle());
 			}
 
@@ -129,13 +132,14 @@ public class RobotTemplate extends IterativeRobot
 			}
 			else if (sensors.getEncoder(2).getRate() < 0.015) {
 				System.out.println("DOWN: " + sensors.getGyro().getAngle());
-			}*/
+			}
 
         }
 
 		// Enable Image Analysis and Processing
         if(joystick.getRawButton(12))
         {
+			timer.start();
             try {
                 imageAnalysis.updateImage();
                 if(imageAnalysis.getRectangles().length > 0)
@@ -148,6 +152,9 @@ public class RobotTemplate extends IterativeRobot
             } catch (NIVisionException ex) {
                 ex.printStackTrace();
             }
+			System.out.println(timer.get());
+			timer.stop();
+			timer.reset();
         }
 
         //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
@@ -156,7 +163,7 @@ public class RobotTemplate extends IterativeRobot
         //System.out.println(sensors.getGyro().getAngle());
 
 
-
+*/
 	watchdog.feed();
     }
 }

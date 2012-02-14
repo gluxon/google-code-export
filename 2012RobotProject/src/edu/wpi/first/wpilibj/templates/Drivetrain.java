@@ -68,17 +68,17 @@ public class Drivetrain
 
         if(joystick.getRawButton(4))
         {
-            frontLeft.set(speed);
-            rearLeft.set(-speed);
-            frontRight.set(speed);
-            rearRight.set(-speed);
-        }
-        else if(joystick.getRawButton(3))
-        {
             frontLeft.set(-speed);
             rearLeft.set(speed);
             frontRight.set(-speed);
             rearRight.set(speed);
+        }
+        else if(joystick.getRawButton(3))
+        {
+            frontLeft.set(speed);
+            rearLeft.set(-speed);
+            frontRight.set(speed);
+            rearRight.set(-speed);
         }
         else
         {
