@@ -85,9 +85,36 @@ public class ImageAnalysis {
 				drive.drive();
                 report = image3.getOrderedParticleAnalysisReports(10);
 				drive.drive();
-                image.free();
-                image2.free();
-                image3.free();
+                
+				image.free(); image2.free(); image3.free();
+                rectangle = findRectangles();
+            }
+            else
+            {
+		rectangle = new ParticleAnalysisReport[0];
+            }
+        }
+        catch (AxisCameraException ex)
+        {
+            ex.printStackTrace();
+        }
+
+    }
+	public void updateImageAuto(Drivetrain drive) throws AxisCameraException, NIVisionException
+    {
+
+        try
+        {
+            if (axis.freshImage())
+            {
+                ColorImage image = axis.getImage();
+                BinaryImage image2 = image.thresholdHSL(0,255,0,50,165,255);
+				drive.setDiminishedSpeed(.5);
+                BinaryImage image3 = image2.convexHull(true);
+				drive.setDiminishedSpeed(.7);
+                report = image3.getOrderedParticleAnalysisReports(10);
+                
+				image.free(); image2.free(); image3.free();
                 rectangle = findRectangles();
             }
             else

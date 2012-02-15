@@ -112,39 +112,44 @@ public class RobotTemplate extends IterativeRobot
 		// Enable Autobalancing
         if (joystick.getRawButton(7)) {
 
-			// Balanced/Straight is from -0.015 to 0.015
-			//sensors.getGyro().reset();
-
-			double deadZone = 1;
+			// Cancel out movements less than 0.1 from 0
+			if (Math.abs(gyroLast) < 0.1) {
+				sensors.getGyro().reset();
+				gyroOffset = 0.0;
+			}
 
 			double gyroAngle = sensors.getGyro().getAngle() - gyroOffset;
-			// if the gyro's Angle changed by less than 0.7, then revert to last angle (solves drifting to some extent)
+
+			// if the gyro's Angle changed by less than 1, then revert to last angle (solves drifting to some extent)
 			double gyroCurrentOffset = gyroAngle - gyroLast;
-			if (Math.abs(gyroCurrentOffset) < 0.1) {
+			if (Math.abs(gyroCurrentOffset) < 1) {
 				gyroAngle = gyroLast;
 				gyroOffset = gyroOffset + gyroCurrentOffset;
 			}
 			gyroLast = gyroAngle;
 
-			/*double speed = Math.abs(gyroAngle / 3);
-			System.out.println(speed);*/
+			// Change speed based on Angle
+			double speed = Math.abs(gyroAngle / 3);
+			System.out.println(speed);
 
-            if (gyroAngle < deadZone && gyroAngle > -deadZone) {
+			double deadZone = 1;
+
+			if (gyroAngle < deadZone && gyroAngle > -deadZone) {
 				System.out.println("Straight: " + gyroAngle);
 			}
 			else if (gyroAngle > deadZone) {
 				System.out.println("DOWN: " + gyroAngle);
-				drivetrain.frontLeftSet(-speed);
+				/*drivetrain.frontLeftSet(-speed);
 				drivetrain.rearLeftSet(-speed);
 				drivetrain.frontRightSet(speed);
-				drivetrain.rearRightSet(speed);
+				drivetrain.rearRightSet(speed);*/
 			}
 			else if (gyroAngle < -deadZone) {
 				System.out.println("UP: " + gyroAngle);
-				drivetrain.frontLeftSet(speed);
+				/*drivetrain.frontLeftSet(speed);
 				drivetrain.rearLeftSet(speed);
 				drivetrain.frontRightSet(-speed);
-				drivetrain.rearRightSet(-speed);
+				drivetrain.rearRightSet(-speed);*/
 			}
 
         }
