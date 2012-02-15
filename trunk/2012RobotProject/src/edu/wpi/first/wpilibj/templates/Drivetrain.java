@@ -104,5 +104,13 @@ public class Drivetrain
     public void rearRightSet(double value) {
 		rearRight.set(value);
     }
+	
+	public void setDiminishedSpeed(double fraction)
+	{
+		frontLeft.set(getFrontLeft() * fraction);
+        rearLeft.set(getRearLeft() * fraction);
+        frontRight.set(getFrontRight() * fraction);
+        rearRight.set(getRearRight() * fraction);
+	}
 
 }
