@@ -34,27 +34,27 @@ public class Tower
         return ballIntakeMotor;
     }
     
-    public void setBottomShooterMotor(int input)
+    public void setBottomShooterMotor(double input)
     {
         bottomShooterMotor.set(input);
     }
     
-    public void setTopShooterMotor(int input)
+    public void setTopShooterMotor(double input)
     {
         topShooterMotor.set(input);
     }
     
-    public void setBallElevator(int input)
+    public void setBallElevator(double input)
     {
         ballElevatorMotor.set(input);
     }
     
-    public void setBallIntakeMotor(int input)
+    public void setBallIntakeMotor(double input)
     {
         ballIntakeMotor.set(input);
     }
     
-    public void setShooterMotors(int input)
+    public void setShooterMotors(double input)
     {
         setBottomShooterMotor(input);
         setTopShooterMotor(-input);

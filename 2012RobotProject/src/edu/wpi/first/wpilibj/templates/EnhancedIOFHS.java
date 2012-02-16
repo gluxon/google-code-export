@@ -1,5 +1,6 @@
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationEnhancedIO;
 import edu.wpi.first.wpilibj.DriverStationEnhancedIO.EnhancedIOException;
 
@@ -7,9 +8,9 @@ public class EnhancedIOFHS
 {
     DriverStationEnhancedIO enhancedIO;
     
-    public EnhancedIOFHS(DriverStationEnhancedIO enhancedION)
+    public EnhancedIOFHS(DriverStation driverStation)
     {
-        enhancedIO = enhancedION;
+        enhancedIO = driverStation.getEnhancedIO();
     }
     
     public DriverStationEnhancedIO getEnhancedIO()
@@ -25,7 +26,6 @@ public class EnhancedIOFHS
         } 
         catch (EnhancedIOException ex) 
         {
-            ex.printStackTrace();
             return -1.0;
         }
     }
@@ -38,7 +38,6 @@ public class EnhancedIOFHS
         }
         catch (EnhancedIOException ex)
         {
-            ex.printStackTrace();
             return false;
         }
     }
@@ -51,7 +50,6 @@ public class EnhancedIOFHS
         }
         catch (EnhancedIOException ex)
         {
-            ex.printStackTrace();
             return false;
         }
     }
@@ -69,7 +67,6 @@ public class EnhancedIOFHS
         }
         catch (EnhancedIOException ex)
         {
-            ex.printStackTrace();
             return null;
         }
     }
@@ -87,7 +84,6 @@ public class EnhancedIOFHS
         }
         catch (EnhancedIOException ex)
         {
-            ex.printStackTrace();
             return null;
         }
     }

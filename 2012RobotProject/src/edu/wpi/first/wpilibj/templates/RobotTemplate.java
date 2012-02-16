@@ -9,11 +9,12 @@ public class RobotTemplate extends IterativeRobot
 {
     private Joystick joystick;
     private KinectFHS kinect;
-    private DriverStationEnhancedIO enhancedIO;
+    private EnhancedIOFHS enhancedIO;
     private DriverStation driverStation;
     
     private Drivetrain drivetrain;
     private Tower tower;
+    private Compressor compressor;
     
     private Sensors sensors;
     private CameraFHS camera;
@@ -30,10 +31,12 @@ public class RobotTemplate extends IterativeRobot
 	joystick = new Joystick(1);
 	kinect = new KinectFHS(drivetrain);
         driverStation = DriverStation.getInstance();
-        enhancedIO = driverStation.getEnhancedIO();
+        enhancedIO = new EnhancedIOFHS(driverStation);
         
         drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
         tower = new Tower(5,6,7,8);
+        compressor = new Compressor(1,1);
+        
 	sensors = new Sensors();
 	camera = new CameraFHS(drivetrain);
 
@@ -95,16 +98,37 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic()
     {
         drivetrain.drive();
-		//if(joystick.getX() > 0.15 || joystick.getY() > 0.15 || joystick.getZ() > 0.15)
-			//robotDrive.mecanumDrive_Polar(-joystick.getMagnitude(), -joystick.getDirectionDegrees(), -joystick.getZ());
-			//robotDrive.mecanumDrive_Cartesian(-joystick.getX(), -joystick.getZ(), -joystick.getY(), 0.0);
-		//else
-			//robotDrive.mecanumDrive_Cartesian(0.0, 0.0, 0.0, 0.0);
-
-		//shooterMotorBottom.set(joystick.getThrottle());
-		//shooterMotorTop.set(joystick.getThrottle());
-
-		// Enable Autobalancing
+        
+        if(enhancedIO.getFireButton())
+        {
+            tower.setShooterMotors(enhancedIO.getSlider());
+        }
+        else
+        {
+            tower.setShooterMotors(0.0);
+        }
+        
+        if(enhancedIO.getBallElevatorSwitch()[0])
+            tower.setBallElevator(1.0);
+        else if(enhancedIO.getBallElevatorSwitch()[1])
+            tower.setBallElevator(-1.0);
+        else
+            tower.setBallElevator(0.0);
+        
+        if(enhancedIO.getBallIntakeSwitch()[0])
+            tower.setBallIntakeMotor(1.0);
+        else if(enhancedIO.getBallIntakeSwitch()[1])
+            tower.setBallIntakeMotor(-1.0);
+        else
+            tower.setBallIntakeMotor(0.0);
+        
+        if(enhancedIO.getCompressorSwitch())
+            compressor.start();
+        else
+            compressor.stop();
+        
+        /*****Debug*****/
+        
         if (joystick.getRawButton(7)) 
         {
             double gyroAngle = sensors.getGyro().getAngle();
@@ -149,11 +173,9 @@ public class RobotTemplate extends IterativeRobot
             }
             catch (AxisCameraException ex) 
             {
-                ex.printStackTrace();
             } 
             catch (NIVisionException ex) 
             {
-                ex.printStackTrace();
             }
 	}
         
@@ -169,11 +191,9 @@ public class RobotTemplate extends IterativeRobot
             } 
             catch (AxisCameraException ex) 
             {
-                ex.printStackTrace();
             } 
             catch (NIVisionException ex) 
             {
-                ex.printStackTrace();
             }
         }
 
