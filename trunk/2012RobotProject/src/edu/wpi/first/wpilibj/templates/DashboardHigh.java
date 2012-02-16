@@ -16,8 +16,9 @@ public class DashboardHigh
     public void updateDashboardHigh(Drivetrain drivetrain, double gyro, double ultrasonic, Joystick joystick)
     {
         // [frontLeftVictor],[frontRightVictor],[rearLeftVictor],[rearRightVictor],[Gyro],[Ultrasonic],[Joystick X],[Joystick Y],[Joystick Z]
-        dashboardHigh = DriverStation.getInstance().getDashboardPackerLow();
+        dashboardHigh = DriverStation.getInstance().getDashboardPackerHigh();
 
+        dashboardHigh.addCluster();
         dashboardHigh.addArray();
         dashboardHigh.addDouble(drivetrain.getFrontLeft());
         dashboardHigh.addDouble(drivetrain.getFrontRight());
@@ -29,8 +30,8 @@ public class DashboardHigh
         dashboardHigh.addDouble(joystick.getY());
         dashboardHigh.addDouble(joystick.getZ());
         dashboardHigh.finalizeArray();
-
         dashboardHigh.finalizeCluster();
+        
         dashboardHigh.commit();
         dashboardHigh.flush();
     }
