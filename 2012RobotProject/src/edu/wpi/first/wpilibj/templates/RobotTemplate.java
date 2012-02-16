@@ -33,8 +33,8 @@ public class RobotTemplate extends IterativeRobot
         driverStation = DriverStation.getInstance();
         enhancedIO = new EnhancedIOFHS(driverStation);
         
-        drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
-        tower = new Tower(5,6,7,8);
+        drivetrain = new Drivetrain(1,3,2,4,joystick,1.0);
+        tower = new Tower(8,7,6,5);
         compressor = new Compressor(1,1);
         
 	sensors = new Sensors();
