@@ -4,19 +4,19 @@ import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
-public class CameraFHS 
+public class CameraFHS
 {
     private ImageAnalysis analysis;
     private AxisCamera axis;
     private Drivetrain drivetrain;
-    
+
     public CameraFHS(Drivetrain drivetrain)
     {
 		axis = AxisCamera.getInstance();
 		this.drivetrain = drivetrain;
 		analysis = new ImageAnalysis(axis);
     }
-    
+
     public void centerOnFirstTarget() throws AxisCameraException, NIVisionException
     {
 		analysis.updateImage();
@@ -48,7 +48,7 @@ public class CameraFHS
     }
 		public void centerOnTarget(int target) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
     {
-		analysis.updateImage();
+		analysis.updateImageAuto(drivetrain);
 
 		ParticleAnalysisReport report = analysis.findTarget(target);
 
@@ -75,5 +75,5 @@ public class CameraFHS
 		}
 
     }
-    
+
 }

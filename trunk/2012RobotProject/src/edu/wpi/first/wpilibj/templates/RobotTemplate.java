@@ -21,9 +21,6 @@ public class RobotTemplate extends IterativeRobot
 
 	//private RobotDrive robotDrive;
 
-	private Victor shooterMotorTop;
-	private Victor shooterMotorBottom;
-
 	// Variable for storing last gyroscope angle
 	double gyroLast;
 	double gyroOffset;
@@ -36,9 +33,9 @@ public class RobotTemplate extends IterativeRobot
 
 		drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
 		sensors = new Sensors();
-		//camera = new CameraFHS(drivetrain);
+		camera = new CameraFHS(drivetrain);
 
-        //imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+        imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
 		//robotDrive = new RobotDrive(1,3,2,4);
 
 		//Shooter
@@ -113,24 +110,25 @@ public class RobotTemplate extends IterativeRobot
         if (joystick.getRawButton(7)) {
 
 			// Cancel out movements less than 0.1 from 0
-			if (Math.abs(gyroLast) < 0.1) {
+			/*if (Math.abs(gyroLast) < 0.015) {
 				sensors.getGyro().reset();
 				gyroOffset = 0.0;
 			}
 
-			double gyroAngle = sensors.getGyro().getAngle() - gyroOffset;
+			double gyroAngle = sensors.getGyro().getAngle();
 
 			// if the gyro's Angle changed by less than 1, then revert to last angle (solves drifting to some extent)
 			double gyroCurrentOffset = gyroAngle - gyroLast;
-			if (Math.abs(gyroCurrentOffset) < 1) {
+			if (Math.abs(gyroCurrentOffset) < 0.015) {
 				gyroAngle = gyroLast;
 				gyroOffset = gyroOffset + gyroCurrentOffset;
 			}
-			gyroLast = gyroAngle;
+			gyroLast = gyroAngle;*/
 
+			double gyroAngle = sensors.getGyro().getAngle();
 			// Change speed based on Angle
-			double speed = Math.abs(gyroAngle / 3);
-			System.out.println(speed);
+			double speed = Math.abs(gyroAngle / 7);
+			System.out.println("Motor Speed: " + speed);
 
 			double deadZone = 1;
 
@@ -139,17 +137,17 @@ public class RobotTemplate extends IterativeRobot
 			}
 			else if (gyroAngle > deadZone) {
 				System.out.println("DOWN: " + gyroAngle);
-				/*drivetrain.frontLeftSet(-speed);
-				drivetrain.rearLeftSet(-speed);
-				drivetrain.frontRightSet(speed);
-				drivetrain.rearRightSet(speed);*/
+				drivetrain.frontLeftSet(speed);
+				drivetrain.rearLeftSet(speed);
+				drivetrain.frontRightSet(-speed);
+				drivetrain.rearRightSet(-speed);
 			}
 			else if (gyroAngle < -deadZone) {
 				System.out.println("UP: " + gyroAngle);
-				/*drivetrain.frontLeftSet(speed);
-				drivetrain.rearLeftSet(speed);
-				drivetrain.frontRightSet(-speed);
-				drivetrain.rearRightSet(-speed);*/
+				drivetrain.frontLeftSet(-speed);
+				drivetrain.rearLeftSet(-speed);
+				drivetrain.frontRightSet(speed);
+				drivetrain.rearRightSet(speed);
 			}
 
         }
