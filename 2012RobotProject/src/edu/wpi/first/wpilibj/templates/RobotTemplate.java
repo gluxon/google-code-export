@@ -28,6 +28,9 @@ public class RobotTemplate extends IterativeRobot
 
     public void robotInit()
     {
+        gyroLast = 0.0;
+	gyroOffset = 0.0;
+        
 	joystick = new Joystick(1);
 	kinect = new KinectFHS(drivetrain);
         driverStation = DriverStation.getInstance();
@@ -39,35 +42,14 @@ public class RobotTemplate extends IterativeRobot
         
 	sensors = new Sensors();
 	camera = new CameraFHS(drivetrain);
-
         imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
 	
         watchdog = Watchdog.getInstance();
-
-	gyroLast = 0.0;
-	gyroOffset = 0.0;
     }
 
     public void autonomousPeriodic()
     {
 	//kinect.autonomousKinect();
-
-        double ultrasonicInches = sensors.getUltrasonic().getRangeInches();
-
-        if(ultrasonicInches > 36)
-        {
-            drivetrain.frontLeftSet(0.5);
-            drivetrain.frontRightSet(0.5);
-            drivetrain.rearLeftSet(0.5);
-            drivetrain.rearRightSet(0.5);
-        }
-        else
-        {
-            drivetrain.frontLeftSet(0.0);
-            drivetrain.frontRightSet(0.0);
-            drivetrain.rearLeftSet(0.0);
-            drivetrain.rearRightSet(0.0);
-        }
 
         /*
         double gyroAngle = sensors.getGyro().getAngle()/180;
