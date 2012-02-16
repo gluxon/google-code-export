@@ -7,44 +7,42 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 
 public class RobotTemplate extends IterativeRobot
 {
-    private Joystick joystick, auxJoystick;
+    private Joystick joystick;
     private KinectFHS kinect;
-
+    private DriverStationEnhancedIO enhancedIO;
+    private DriverStation driverStation;
+    
     private Drivetrain drivetrain;
+    private Tower tower;
+    
     private Sensors sensors;
     private CameraFHS camera;
 
-    private Dashboard dashboard;
     private Watchdog watchdog;
 
     private ImageAnalysis imageAnalysis;
 
-	//private RobotDrive robotDrive;
-
-	// Variable for storing last gyroscope angle
-	double gyroLast;
-	double gyroOffset;
+    double gyroLast;
+    double gyroOffset;
 
     public void robotInit()
     {
-		joystick = new Joystick(1);
-		auxJoystick = new Joystick(2);
-		kinect = new KinectFHS(drivetrain);
-
-		drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
-		sensors = new Sensors();
-		camera = new CameraFHS(drivetrain);
+	joystick = new Joystick(1);
+	kinect = new KinectFHS(drivetrain);
+        driverStation = DriverStation.getInstance();
+        enhancedIO = driverStation.getEnhancedIO();
+        
+        drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
+        tower = new Tower(5,6,7,8);
+	sensors = new Sensors();
+	camera = new CameraFHS(drivetrain);
 
         imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
-		//robotDrive = new RobotDrive(1,3,2,4);
-
-		//Shooter
-		shooterMotorBottom = new Victor(5);
-
+	
         watchdog = Watchdog.getInstance();
 
-		gyroLast = 0.0;
-		gyroOffset = 0.0;
+	gyroLast = 0.0;
+	gyroOffset = 0.0;
     }
 
     public void autonomousPeriodic()
@@ -107,111 +105,82 @@ public class RobotTemplate extends IterativeRobot
 		//shooterMotorTop.set(joystick.getThrottle());
 
 		// Enable Autobalancing
-        if (joystick.getRawButton(7)) {
+        if (joystick.getRawButton(7)) 
+        {
+            double gyroAngle = sensors.getGyro().getAngle();
+            // Change speed based on Angle
+            double speed = Math.abs(gyroAngle / 7);
+            System.out.println("Motor Speed: " + speed);
 
-			// Cancel out movements less than 0.1 from 0
-			/*if (Math.abs(gyroLast) < 0.015) {
-				sensors.getGyro().reset();
-				gyroOffset = 0.0;
-			}
+            double deadZone = 1;
 
-			double gyroAngle = sensors.getGyro().getAngle();
-
-			// if the gyro's Angle changed by less than 1, then revert to last angle (solves drifting to some extent)
-			double gyroCurrentOffset = gyroAngle - gyroLast;
-			if (Math.abs(gyroCurrentOffset) < 0.015) {
-				gyroAngle = gyroLast;
-				gyroOffset = gyroOffset + gyroCurrentOffset;
-			}
-			gyroLast = gyroAngle;*/
-
-			double gyroAngle = sensors.getGyro().getAngle();
-			// Change speed based on Angle
-			double speed = Math.abs(gyroAngle / 7);
-			System.out.println("Motor Speed: " + speed);
-
-			double deadZone = 1;
-
-			if (gyroAngle < deadZone && gyroAngle > -deadZone) {
-				System.out.println("Straight: " + gyroAngle);
-			}
-			else if (gyroAngle > deadZone) {
-				System.out.println("DOWN: " + gyroAngle);
-				drivetrain.frontLeftSet(speed);
-				drivetrain.rearLeftSet(speed);
-				drivetrain.frontRightSet(-speed);
-				drivetrain.rearRightSet(-speed);
-			}
-			else if (gyroAngle < -deadZone) {
-				System.out.println("UP: " + gyroAngle);
-				drivetrain.frontLeftSet(-speed);
-				drivetrain.rearLeftSet(-speed);
-				drivetrain.frontRightSet(speed);
-				drivetrain.rearRightSet(speed);
-			}
-
+            if (gyroAngle < deadZone && gyroAngle > -deadZone) 
+            {
+                System.out.println("Straight: " + gyroAngle);
+            }
+            else if (gyroAngle > deadZone) 
+            {
+                System.out.println("DOWN: " + gyroAngle);
+		drivetrain.frontLeftSet(speed);
+		drivetrain.rearLeftSet(speed);
+		drivetrain.frontRightSet(-speed);
+		drivetrain.rearRightSet(-speed);
+            }
+            else if (gyroAngle < -deadZone) 
+            {
+                System.out.println("UP: " + gyroAngle);
+		drivetrain.frontLeftSet(-speed);
+		drivetrain.rearLeftSet(-speed);
+		drivetrain.frontRightSet(speed);
+                drivetrain.rearRightSet(speed);
+            }
+        }
+        
+        if (joystick.getRawButton(8)) 
+        {
+            sensors.getGyro().reset();
         }
 
-		// Reset Gyroscope
-        if (joystick.getRawButton(8)) {
-			sensors.getGyro().reset();
-        }
-
-		// Optical Encoders
-        if (joystick.getRawButton(9)) {
-
-			//ShooterMotorBottom.set(0.5);
-
-			System.out.println(sensors.getEncoder(2).getRaw());
-
-            /*if (sensors.getEncoder(2).getRate() < 0.015 && sensors.getEncoder(2).getRate() > -0.015) {
-				System.out.println();
-			}
-			else if (sensors.getEncoder(2).getRate() > 0.015) {
-				System.out.println("UP: " + sensors.getGyro().getAngle());
-			}
-			else if (sensors.getEncoder(2).getRate() < 0.015) {
-				System.out.println("DOWN: " + sensors.getGyro().getAngle());
-			}*/
-
-        }
-
-		// Enable Centering
-		if(joystick.getRawButton(11))
-		{
-			try {
-				camera.centerOnTarget(0);
-			} catch (AxisCameraException ex) {
-				ex.printStackTrace();
-			} catch (NIVisionException ex) {
-				ex.printStackTrace();
-			}
-		}
-		// Enable Image Analysis and Processing
+	if(joystick.getRawButton(11))
+	{
+            try 
+            {
+                camera.centerOnTarget(0);
+            }
+            catch (AxisCameraException ex) 
+            {
+                ex.printStackTrace();
+            } 
+            catch (NIVisionException ex) 
+            {
+                ex.printStackTrace();
+            }
+	}
+        
         if(joystick.getRawButton(12))
         {
-            try {
+            try 
+            {
                 imageAnalysis.updateImageTeleop(drivetrain);
                 if(imageAnalysis.getRectangles().length > 1)
                 {
                     System.out.println("Height:" + imageAnalysis.getHeight(0) + " Distance:" + imageAnalysis.getDistance(0));
                 }
-
-            } catch (AxisCameraException ex) {
+            } 
+            catch (AxisCameraException ex) 
+            {
                 ex.printStackTrace();
-            } catch (NIVisionException ex) {
+            } 
+            catch (NIVisionException ex) 
+            {
                 ex.printStackTrace();
             }
         }
 
-        //System.out.println((int)sensors.getUltrasonic().getRangeInches()+" Inches");
-        //System.out.println(sensors.getEncoder().getDistance());
-		//System.out.println(sensors.getEncoder().getRate());
-        //System.out.println(sensors.getGyro().getAngle());
-
-		if (joystick.getRawButton(10)) {
-			System.out.println(sensors.getUltrasonic().getRangeInches());
-		}
+	if (joystick.getRawButton(10)) 
+        {
+            System.out.println(sensors.getUltrasonic().getRangeInches());
+        }
 
 	watchdog.feed();
     }
