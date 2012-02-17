@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 
 public class RobotTemplate extends IterativeRobot
 {
-    private Joystick joystick;
+    private Joystick joystick, joystickAux;
     private KinectFHS kinect;
     private EnhancedIOFHS enhancedIO;
     private DriverStation driverStation;
@@ -29,15 +29,16 @@ public class RobotTemplate extends IterativeRobot
 
     public void robotInit()
     {
-		dashboardHigh = new DashboardHigh();
+	dashboardHigh = new DashboardHigh();
         gyroLast = 0.0;
 	gyroOffset = 0.0;
 
 	joystick = new Joystick(1);
+        joystickAux  = new Joystick(2);
 	kinect = new KinectFHS(drivetrain);
         driverStation = DriverStation.getInstance();
         enhancedIO = new EnhancedIOFHS(driverStation);
-		//1324
+	//1324 <- Motor config for normal robot
         drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
         tower = new Tower(8,7,6,5);
         compressor = new Compressor(1,1);
@@ -75,7 +76,7 @@ public class RobotTemplate extends IterativeRobot
 	{
 	    ex.printStackTrace();
 	}
-*/
+    */
         watchdog.feed();
     }
 
@@ -83,8 +84,40 @@ public class RobotTemplate extends IterativeRobot
     {
         drivetrain.drive();
 
-		dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),0.0,0.0,0.0,0.0,joystick);
-		/*
+	dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),sensors.getUltrasonicLeft().getRangeInches(),sensors.getUltrasonicRight().getRangeInches(),0.0,compressor.enabled(),joystick);
+	
+        boolean fire = joystickAux.getRawButton(0);
+        boolean elevatorUp = joystickAux.getRawButton(1);
+        boolean elevatorDown = joystickAux.getRawButton(2);
+        boolean ballIntakeIn = joystickAux.getRawButton(3);
+        boolean ballIntakeOut = joystickAux.getRawButton(4);
+        boolean compressorToggle = joystickAux.getRawButton(5);
+        
+        if(fire)
+            tower.setShooterMotors(1.0);
+        else
+            tower.setShooterMotors(0.0);
+        
+        if(elevatorUp)
+            tower.setBallElevator(1.0);
+        else if(elevatorDown)
+            tower.setBallElevator(-1.0);
+        else
+            tower.setBallElevator(0.0);
+        
+        if(ballIntakeIn)
+            tower.setBallIntakeMotor(1.0);
+        else if(ballIntakeOut)
+            tower.setBallIntakeMotor(-1.0);
+        else
+            tower.setBallIntakeMotor(0.0);
+        
+        if(compressorToggle)
+            compressor.start();
+        else
+            compressor.stop();
+        
+        /*
         if(enhancedIO.getFireButton())
         {
             tower.setShooterMotors(enhancedIO.getSlider());
@@ -185,7 +218,7 @@ public class RobotTemplate extends IterativeRobot
 
 	if (joystick.getRawButton(10))
         {
-            System.out.println(sensors.getUltrasonic().getRangeInches());
+            System.out.println(sensors.getUltrasonicLeft().getRangeInches() + " : " + sensors.getUltrasonicRight().getRangeInches());
         }
 
 	watchdog.feed();

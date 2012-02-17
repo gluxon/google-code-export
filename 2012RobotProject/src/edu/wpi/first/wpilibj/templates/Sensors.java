@@ -1,4 +1,3 @@
-
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
@@ -7,7 +6,7 @@ public class Sensors
 {
     private final double DISTANCE_PER_PULSE = .196*Math.PI/1440; //1440 according to guy on Delphi stie in meters
 
-    private UltrasonicFHS ultrasonic;
+    private UltrasonicFHS ultrasonicLeft, ultrasonicRight;
     private Gyro gyro;
 
     private Encoder encoderTop;
@@ -16,9 +15,9 @@ public class Sensors
     public Sensors()
     {
 	gyro = new Gyro(1, 2);
-	ultrasonic = new UltrasonicFHS(1,3);
-
-	encoderBottom = new Encoder(5, 6);
+	ultrasonicLeft = new UltrasonicFHS(1,3);
+        ultrasonicRight = new UltrasonicFHS(1,4);
+	encoderBottom = new Encoder(1, 2);
         encoderBottom.start();
         encoderBottom.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
@@ -40,8 +39,13 @@ public class Sensors
 	}
     }
 
-    public UltrasonicFHS getUltrasonic()
+    public UltrasonicFHS getUltrasonicLeft()
     {
-	return ultrasonic;
+	return ultrasonicLeft;
+    }
+    
+    public UltrasonicFHS getUltrasonicRight()
+    {
+	return ultrasonicRight;
     }
 }
