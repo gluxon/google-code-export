@@ -13,26 +13,27 @@ public class DashboardHigh
 
     }
 
-    public void updateDashboardHigh(Drivetrain drivetrain, double gyro, double ultrasonic, Joystick joystick)
+    public void updateDashboardHigh(Drivetrain drivetrain, double gyro, double ultrasonic, double ultrasonic2, double pressure, double numParticles, Joystick joystick)
     {
         // [frontLeftVictor],[frontRightVictor],[rearLeftVictor],[rearRightVictor],[Gyro],[Ultrasonic],[Joystick X],[Joystick Y],[Joystick Z]
         dashboardHigh = DriverStation.getInstance().getDashboardPackerHigh();
 
         dashboardHigh.addCluster();
-        dashboardHigh.addArray();
+        dashboardHigh.addCluster();
         dashboardHigh.addDouble(drivetrain.getFrontLeft());
         dashboardHigh.addDouble(drivetrain.getFrontRight());
         dashboardHigh.addDouble(drivetrain.getRearLeft());
         dashboardHigh.addDouble(drivetrain.getRearRight());
         dashboardHigh.addDouble(gyro);
         dashboardHigh.addDouble(ultrasonic);
+		dashboardHigh.addDouble(ultrasonic2);
         dashboardHigh.addDouble(joystick.getX());
         dashboardHigh.addDouble(joystick.getY());
         dashboardHigh.addDouble(joystick.getZ());
-        dashboardHigh.finalizeArray();
+		dashboardHigh.addDouble(pressure);
+		dashboardHigh.addDouble(numParticles);
         dashboardHigh.finalizeCluster();
-        
-        dashboardHigh.commit();
-        dashboardHigh.flush();
+        dashboardHigh.finalizeCluster();
+		dashboardHigh.commit();
     }
 }
