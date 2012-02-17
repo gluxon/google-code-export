@@ -42,23 +42,33 @@ public class ImageAnalysis {
         {
             if (axis.freshImage())
             {
-				timer.start();
+				//timer.start();
                 ColorImage image = axis.getImage();
-				System.out.println("1:" + timer.get());
-                BinaryImage image2 = image.thresholdHSL(0,255,0,50,165,255);
-				System.out.println("2:" + timer.get());
-                BinaryImage image3 = image2.convexHull(true);
-				System.out.println("3:" + timer.get());
-                report = image3.getOrderedParticleAnalysisReports(10);
-				System.out.println("4:" + timer.get());
-                image.free();
-                image2.free();
-                image3.free();
-				System.out.println("5:" + timer.get());
+				//System.out.println("1:" + timer.get());
+                BinaryImage image2 = image.thresholdHSL(0,255,0,100,160,255);
+				image.free();
+				BinaryImage image3 = image2.removeSmallObjects(true, 2);
+				image2.free();
+				//System.out.println("2:" + timer.get());
+                BinaryImage image4 = image3.convexHull(true);
+				image3.free();
+				//System.out.println("3:" + timer.get());
+                report = image4.getOrderedParticleAnalysisReports();
+				//System.out.println("4:" + timer.get());
+                
+                
+                
+				image4.free();
+				//System.out.println("5:" + timer.get());
                 rectangle = findRectangles();
-				System.out.println("6:" + timer.get());
-				timer.stop();
-				timer.reset();
+				//System.out.println("6:" + timer.get());
+				//timer.stop();
+				//timer.reset();
+				System.out.println("number:" + rectangle.length);
+				for(int i = 0; i < rectangle.length; i++)
+				{
+					System.out.println("x: " + rectangle[i].center_mass_x_normalized + "y: " + rectangle[i].center_mass_y_normalized);
+				}
             }
             else
             {
