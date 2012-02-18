@@ -17,9 +17,9 @@ public class Sensors
 	gyro = new Gyro(1, 2);
 	ultrasonicLeft = new UltrasonicFHS(1,3);
         ultrasonicRight = new UltrasonicFHS(1,4);
-	encoderBottom = new Encoder(1, 2);
-        encoderBottom.start();
-        encoderBottom.setDistancePerPulse(DISTANCE_PER_PULSE);
+	//encoderBottom = new Encoder(1, 2);
+        //encoderBottom.start();
+       // encoderBottom.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 
     public Gyro getGyro()
@@ -29,11 +29,11 @@ public class Sensors
 
     public Encoder getEncoder(int x)
     {
-        if (x == 1) 
+        if (x == 1)
         {
             return encoderTop;
 	}
-        else 
+        else
         {
             return encoderBottom;
 	}
@@ -43,7 +43,7 @@ public class Sensors
     {
 	return ultrasonicLeft;
     }
-    
+
     public UltrasonicFHS getUltrasonicRight()
     {
 	return ultrasonicRight;
