@@ -10,16 +10,16 @@ public class CameraFHS
     private AxisCamera axis;
     private Drivetrain drivetrain;
 
-    public CameraFHS(Drivetrain drivetrain)
+    public CameraFHS(Drivetrain drivetrain, ImageAnalysis image)
     {
 		axis = AxisCamera.getInstance();
 		this.drivetrain = drivetrain;
-		analysis = new ImageAnalysis(axis);
+		analysis = image;
     }
 
     public void centerOnFirstTarget() throws AxisCameraException, NIVisionException
     {
-		analysis.updateImage();
+		analysis.updateImage(130);
 
 		ParticleAnalysisReport[] report = analysis.getRectangles();
 
@@ -46,9 +46,9 @@ public class CameraFHS
 		}
 
     }
-		public void centerOnTarget(int target) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
+		public void centerOnTarget(int target,int lum) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
     {
-		analysis.updateImageAuto(drivetrain);
+		analysis.updateImage(lum);
 
 		ParticleAnalysisReport report = analysis.findTarget(target);
 

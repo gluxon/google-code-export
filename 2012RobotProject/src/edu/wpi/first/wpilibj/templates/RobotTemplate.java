@@ -27,8 +27,19 @@ public class RobotTemplate extends IterativeRobot
     double gyroLast;
     double gyroOffset;
 
+	boolean hasAnalyzed;
+	boolean isPressedLast;
+
+	int luminosityMin;
+	boolean isPressedLastLuminosityMin;
+
+	double numParticles;
+
     public void robotInit()
     {
+		luminosityMin = 130;
+	isPressedLast = false;
+	isPressedLastLuminosityMin = false;
 	dashboardHigh = new DashboardHigh();
         gyroLast = 0.0;
 	gyroOffset = 0.0;
@@ -41,11 +52,12 @@ public class RobotTemplate extends IterativeRobot
 	//1324 <- Motor config for normal robot
         drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
         tower = new Tower(8,7,6,5);
-        compressor = new Compressor(1,1);
+         compressor = new Compressor(1,1);
 
 	sensors = new Sensors();
-	camera = new CameraFHS(drivetrain);
+
         imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+			camera = new CameraFHS(drivetrain, imageAnalysis);
 
         watchdog = Watchdog.getInstance();
     }
@@ -63,8 +75,8 @@ public class RobotTemplate extends IterativeRobot
         */
 
 
-        /*
-	try
+
+	/*try
 	{
 	    camera.centerOnFirstTarget();
 	}
@@ -76,47 +88,55 @@ public class RobotTemplate extends IterativeRobot
 	{
 	    ex.printStackTrace();
 	}
-    */
-        watchdog.feed();
+
+*/
     }
 
     public void teleopPeriodic()
     {
         drivetrain.drive();
+		double compState;
+		if(compressor.enabled())
+			compState = 1;
+		else
+			compState = 0;
 
-	dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),sensors.getUltrasonicLeft().getRangeInches(),sensors.getUltrasonicRight().getRangeInches(),0.0,compressor.enabled(),joystick);
-	
+		double numRec;
+if(imageAnalysis.getRectangles() == null)
+	numRec = -1;
+			else
+	numRec = imageAnalysis.getRectangles().length;
+		dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),sensors.getUltrasonicLeft().getRangeInches(),sensors.getUltrasonicRight().getRangeInches(),numRec, luminosityMin, compState,joystick);
         boolean fire = joystickAux.getRawButton(0);
         boolean elevatorUp = joystickAux.getRawButton(1);
         boolean elevatorDown = joystickAux.getRawButton(2);
         boolean ballIntakeIn = joystickAux.getRawButton(3);
         boolean ballIntakeOut = joystickAux.getRawButton(4);
         boolean compressorToggle = joystickAux.getRawButton(5);
-        
         if(fire)
             tower.setShooterMotors(1.0);
         else
             tower.setShooterMotors(0.0);
-        
+
         if(elevatorUp)
             tower.setBallElevator(1.0);
         else if(elevatorDown)
             tower.setBallElevator(-1.0);
         else
             tower.setBallElevator(0.0);
-        
+
         if(ballIntakeIn)
             tower.setBallIntakeMotor(1.0);
         else if(ballIntakeOut)
             tower.setBallIntakeMotor(-1.0);
         else
             tower.setBallIntakeMotor(0.0);
-        
+
         if(compressorToggle)
             compressor.start();
         else
             compressor.stop();
-        
+
         /*
         if(enhancedIO.getFireButton())
         {
@@ -147,6 +167,22 @@ public class RobotTemplate extends IterativeRobot
             compressor.stop();
 
         /*****Debug*****/
+
+		if (joystick.getRawButton(9) && isPressedLastLuminosityMin == false) {
+			if (luminosityMin > 0)
+				luminosityMin -= 5;
+		}
+
+		if (joystick.getRawButton(10) && isPressedLastLuminosityMin == false) {
+			if (luminosityMin < 255)
+				luminosityMin += 5;
+		}
+
+		if(joystick.getRawButton(9) || joystick.getRawButton(10))
+			isPressedLastLuminosityMin = true;
+		else
+			isPressedLastLuminosityMin = false;
+
 
         if (joystick.getRawButton(7))
         {
@@ -184,11 +220,11 @@ public class RobotTemplate extends IterativeRobot
             sensors.getGyro().reset();
         }
 
-	if(joystick.getRawButton(11))
+	if(joystick.getRawButton(11) && isPressedLast == false)
 	{
             try
             {
-                camera.centerOnTarget(0);
+                camera.centerOnTarget(0,luminosityMin);
             }
             catch (AxisCameraException ex)
             {
@@ -197,6 +233,11 @@ public class RobotTemplate extends IterativeRobot
             {
             }
 	}
+
+	if(joystick.getRawButton(11))
+		isPressedLast = true;
+	else
+		isPressedLast = false;
 
         if(joystick.getRawButton(12))
         {
@@ -216,7 +257,7 @@ public class RobotTemplate extends IterativeRobot
             }
         }
 
-	if (joystick.getRawButton(10))
+	if (joystick.getRawButton(12))
         {
             System.out.println(sensors.getUltrasonicLeft().getRangeInches() + " : " + sensors.getUltrasonicRight().getRangeInches());
         }
