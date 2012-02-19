@@ -17,7 +17,7 @@ public class Drivetrain
         };
 		frontRight = new Victor(frontRightN) {
 			public void set(double d) {
-				super.set(d * speed);
+				super.set(-1*d * speed);
             }
         };
 		rearLeft = new Victor(rearLeftN) {
@@ -27,7 +27,7 @@ public class Drivetrain
         };
 		rearRight = new Victor(rearRightN) {
 			public void set(double d) {
-				super.set(d * speed);
+				super.set(-1*d * speed);
             }
         };
 
@@ -57,6 +57,19 @@ public class Drivetrain
 
     public void drive()
     {
+		double robotX = -joystick.getX();
+        double robotY = -joystick.getY();
+		double robotZ = -joystick.getTwist();
+
+        double speed = 1.0;
+
+        frontLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
+        rearLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
+        frontRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
+        rearRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
+
+
+		/*
 		double robotSpin = -joystick.getTwist();
         double robotMove = -joystick.getY();
         double speed = 1.0;
@@ -87,6 +100,8 @@ public class Drivetrain
             frontRight.set(-(robotSpin * speed) - (robotMove * speed));
             rearRight.set(-(robotSpin * speed) - (robotMove * speed));
         }
+		* */
+
     }
 
     public void frontLeftSet(double value) {
@@ -104,7 +119,7 @@ public class Drivetrain
     public void rearRightSet(double value) {
 		rearRight.set(value);
     }
-	
+
 	public void setDiminishedSpeed(double fraction)
 	{
 		frontLeft.set(getFrontLeft() * fraction);
