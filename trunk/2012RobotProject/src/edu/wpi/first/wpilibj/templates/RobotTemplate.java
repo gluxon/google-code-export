@@ -10,30 +10,32 @@ public class RobotTemplate extends IterativeRobot
     private Joystick joystick, joystickAux;
     //private KinectFHS kinect;
     //private EnhancedIOFHS enhancedIO;
-    //private DriverStation driverStation;
+    private DriverStation driverStation;
 
-    //private Drivetrain drivetrain;
+    private Drivetrain drivetrain;
     private Tower tower;
-	double ShooterSpeed;
-	boolean isPressedShooterSpeed;
-	boolean bridgeDown;
+	/*private double ShooterSpeed;
+	private boolean isPressedShooterSpeed;
+	private boolean bridgeDown;
+	private boolean compressorToggle;
+	private boolean isPressedCompressorToggle;
 
     private Compressor compressor;
 	private Solenoid bridgeSolenoid;
-	private Solenoid intakeSolenoid;
+	private Solenoid intakeSolenoid;*/
 
 		//private RobotDrive robotDrive;
-	private Victor frontLeft, rearLeft, frontRight, rearRight;
+	//private Victor frontLeft, rearLeft, frontRight, rearRight;
 
 	//private RobotDrive robotDrive;
 
     //private Sensors sensors;
-    //private CameraFHS camera;
+    private CameraFHS camera;
 
     private Watchdog watchdog;
 
-    //private ImageAnalysis imageAnalysis;
-	//private DashboardHigh dashboardHigh;
+    private ImageAnalysis imageAnalysis;
+	private DashboardHigh dashboardHigh;
 
     //double gyroLast;
     //double gyroOffset;
@@ -41,50 +43,47 @@ public class RobotTemplate extends IterativeRobot
 	//boolean hasAnalyzed;
 	//boolean isPressedLast;
 
-	//int luminosityMin;
+	int luminosityMin;
 	//boolean isPressedLastLuminosityMin;
 
-	//double numParticles;
+	double numParticles;
 
     public void robotInit()
     {
 		System.out.println("In robotInit");
+
+		joystick = new Joystick(1);
+		joystickAux  = new Joystick(2);
 	//luminosityMin = 130;
 	//isPressedLast = false;
 	//isPressedLastLuminosityMin = false;
-	//dashboardHigh = new DashboardHigh();
+	dashboardHigh = new DashboardHigh();
     //gyroLast = 0.0;
 	//gyroOffset = 0.0;
 
+	/*compressorToggle = true;
+	isPressedCompressorToggle = false;
+	//compressor = new Compressor(5,1);
+	//compressor.start();
 	bridgeSolenoid = new Solenoid(2); //slot 3, channel 2
 	intakeSolenoid = new Solenoid(3);
 	ShooterSpeed = 1.0;
 	isPressedShooterSpeed = false;
 	bridgeDown = false;
-
-	joystick = new Joystick(1);
-    joystickAux  = new Joystick(2);
-
-	frontLeft = new Victor(1);
-	rearLeft = new Victor(2);
-	frontRight = new Victor(3);
-	rearRight = new Victor(4);
+*/
 
 	//kinect = new KinectFHS(drivetrain);
-        //driverStation = DriverStation.getInstance();
+        driverStation = DriverStation.getInstance();
         //enhancedIO = new EnhancedIOFHS(driverStation);
 
 		//robotDrive = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
-	//1324 <- Motor config for normal robot
-    //drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
-    tower = new Tower(8,7,6,5);
-	//intakeSolenoid = new Solenoid(3,3);
-    //compressor = new Compressor(1,1);
+    drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
+    tower = new Tower(8,7,6,5,joystickAux);
 
 	//sensors = new Sensors();
 
-     //   imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
-		//	camera = new CameraFHS(drivetrain, imageAnalysis);
+    imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+	camera = new CameraFHS(drivetrain, imageAnalysis);
 
         watchdog = Watchdog.getInstance();
 		System.out.println("Through robotinit");
@@ -122,60 +121,22 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
+
+		drivetrain.drive();
+		tower.run();
 		//robotDrive.mecanumDrive_Polar(joystick.getMagnitude(), joystick.getDirectionDegrees(), joystick.getTwist());
-        //
-		//drivetrain.drive();
-		double robotX = -joystick.getX();
-        double robotY = -joystick.getY();
-		double robotZ = -joystick.getTwist();
-
-        double speed = 1.0;
-
-		//Dunno what the raw buttons do. backwards maybe???
-		if(joystick.getRawButton(2))
-        {
-            speed = 0.2;
-        }
-
-        if(joystick.getRawButton(4))
-        {
-            frontLeft.set(-speed);
-            rearLeft.set(speed);
-            frontRight.set(-speed);
-            rearRight.set(speed);
-        }
-        else if(joystick.getRawButton(3))
-        {
-            frontLeft.set(speed);
-            rearLeft.set(-speed);
-            frontRight.set(speed);
-            rearRight.set(-speed);
-        }
-		else //mecanum drive WORKS
-        {
-			frontLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
-			rearLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
-			frontRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
-			rearRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
-        }
-
-		/*double compState;
-		if(compressor.enabled())
-			compState = 1;
-		else
-			compState = 0;*/
-/*
+		/*
 		double numRec;
 if(imageAnalysis.getRectangles() == null)
 	numRec = -1;
 			else
-	numRec = imageAnalysis.getRectangles().length;
+	numRec = imageAnalyisif s.getRectangles().length;
 		dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),sensors.getUltrasonicLeft().getRangeInches(),sensors.getUltrasonicRight().getRangeInches(),numRec, luminosityMin, compState,joystick);
 
 		*/
 
 		//To change shooter speed
-		if (joystickAux.getRawButton(11) && ShooterSpeed > 0 && isPressedShooterSpeed == false) {
+	/*	if(joystickAux.getRawButton(11) && ShooterSpeed > 0 && isPressedShooterSpeed == false) {
 			ShooterSpeed -= 0.05;
 		}
 		if (joystickAux.getRawButton(12) && ShooterSpeed < 1 && isPressedShooterSpeed == false) {
@@ -194,7 +155,22 @@ if(imageAnalysis.getRectangles() == null)
         boolean elevatorDown = joystickAux.getRawButton(2);
         boolean ballIntakeIn = joystickAux.getRawButton(3);
         boolean ballIntakeOut = joystickAux.getRawButton(4);
-        boolean compressorToggle = joystickAux.getRawButton(5);
+        compressorToggle = joystickAux.getRawButton(5);
+
+		/*if(joystickAux.getRawButton(5) && isPressedCompressorToggle == false)
+		  {
+			compressorToggle = !compressorToggle;
+	        if(compressorToggle)
+            compressor.start();
+			else
+            compressor.stop();
+			}/*
+
+
+		if(joystickAux.getRawButton(5))
+			isPressedCompressorToggle = true;
+		else
+			isPressedCompressorToggle = false;
 
         if(fire)
             tower.setShooterMotors(ShooterSpeed);
@@ -214,14 +190,12 @@ if(imageAnalysis.getRectangles() == null)
             tower.setBallIntakeMotor(-1.0);
         else
             tower.setBallIntakeMotor(0.0);
-/*
-        if(compressorToggle)
-            compressor.start();
-        else
-            compressor.stop();
-*/
+
+
+
 		bridgeSolenoid.set(joystickAux.getRawButton(10));
 		intakeSolenoid.set(joystickAux.getRawButton(9));
+		*/
 
        /* if(enhancedIO.getFireButton())
         {

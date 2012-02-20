@@ -8,6 +8,8 @@ public class Drivetrain
 
     private Joystick joystick;
 
+	double robotX, robotY, robotZ, speed;
+
     public Drivetrain(int frontLeftN, int frontRightN, int rearLeftN, int rearRightN, Joystick joystick, final double speed) {
 
 		frontLeft = new Victor(frontLeftN) {
@@ -17,7 +19,7 @@ public class Drivetrain
         };
 		frontRight = new Victor(frontRightN) {
 			public void set(double d) {
-				super.set(-1*d * speed);
+				super.set(d * speed);
             }
         };
 		rearLeft = new Victor(rearLeftN) {
@@ -27,7 +29,7 @@ public class Drivetrain
         };
 		rearRight = new Victor(rearRightN) {
 			public void set(double d) {
-				super.set(-1*d * speed);
+				super.set(d * speed);
             }
         };
 
@@ -57,27 +59,78 @@ public class Drivetrain
 
     public void drive()
     {
-		double robotX = -joystick.getX();
-        double robotY = -joystick.getY();
-		double robotZ = -joystick.getTwist();
+		robotX = -joystick.getX();
+        robotY = -joystick.getY();
+		robotZ = -joystick.getTwist();
 
-        double speed = 1.0;
+		System.out.println("Button 7:" + joystick.getRawButton(7));
+        speed = 1.0;
 
-        frontLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
-        rearLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
-        frontRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
-        rearRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
-
-
-		/*
-		double robotSpin = -joystick.getTwist();
-        double robotMove = -joystick.getY();
-        double speed = 1.0;
-
-        if(joystick.getRawButton(2))
+		//Go slower
+		if(joystick.getRawButton(2))
         {
-            speed = 0.2;
+            speed = 0.3;
         }
+		else {
+			speed = 1.0;
+		}
+
+		if(joystick.getRawButton(7)==true) { //forward at 0.2 speed, does not work
+			frontRight.set(-1);
+			frontLeft.set(1);
+			rearRight.set(-1);
+			rearLeft.set(1);
+		}
+
+		if(joystick.getRawButton(8)==true) { //forward at 0.4 speed
+			frontRight.set(-0.4);
+			frontLeft.set(0.4);
+			rearRight.set(-0.4);
+			rearLeft.set(0.4);
+		}
+
+		if(joystick.getRawButton(9)==true) { //back at 0.4 speed
+			frontRight.set(0.4);
+			frontLeft.set(-0.4);
+			rearRight.set(0.4);
+			rearLeft.set(-0.4);
+		}
+
+		if(joystick.getRawButton(11)==true) {//strafe left at 0.2, might be wrong
+			frontRight.set(0.2);
+			frontLeft.set(-0.2);
+			rearRight.set(-0.2);
+			rearLeft.set(0.2);
+		}
+
+		if(joystick.getRawButton(12)==true) {//strafe right at 0.2 speed, might be wrong
+			frontRight.set(-0.2);
+			frontLeft.set(0.2);
+			rearRight.set(0.2);
+			rearLeft.set(-0.2);
+		}
+		else {
+			frontLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
+			rearLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
+			frontRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
+			rearRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
+        }
+		/*if(joystick.getRawButton(3))
+			rearLeft.set(.2);
+		else
+			rearLeft.set(0);
+		if(joystick.getRawButton(5))
+			frontLeft.set(.2);
+		else
+			frontLeft.set(0);
+		if(joystick.getRawButton(4))
+			rearRight.set(.2);
+		else
+			rearRight.set(0);
+		if(joystick.getRawButton(6))
+			frontRight.set(.2);
+		else
+			frontRight.set(0);
 
         if(joystick.getRawButton(4))
         {
@@ -92,18 +145,9 @@ public class Drivetrain
             rearLeft.set(-speed);
             frontRight.set(speed);
             rearRight.set(-speed);
-        }
-        else
-        {
-            frontLeft.set(-(robotSpin * speed) + (robotMove * speed));
-            rearLeft.set(-(robotSpin * speed) + (robotMove * speed));
-            frontRight.set(-(robotSpin * speed) - (robotMove * speed));
-            rearRight.set(-(robotSpin * speed) - (robotMove * speed));
-        }
-		* */
+        }*/
 
-    }
-
+	}
     public void frontLeftSet(double value) {
 		frontLeft.set(value);
     }
