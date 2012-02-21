@@ -64,7 +64,7 @@ public class ImageAnalysis {
 				//System.out.println("6:" + timer.get());
 				//timer.stop();
 				//timer.reset();
-				System.out.println("number:" + numParticles);
+				//System.out.println("number:" + numParticles);
 				for(int i = 0; i < rectangle.length; i++)
 				{
 					System.out.println("x: " + rectangle[i].center_mass_x + "y: " + rectangle[i].center_mass_y);

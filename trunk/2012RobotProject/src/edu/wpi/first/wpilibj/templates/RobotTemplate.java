@@ -7,24 +7,20 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 
 public class RobotTemplate extends IterativeRobot
 {
-    private Joystick joystick, joystickAux;
+    private Joystick joystick;//, joystickAux;
     //private KinectFHS kinect;
-    //private EnhancedIOFHS enhancedIO;
+    private EnhancedIOFHS enhancedIO;
     private DriverStation driverStation;
 
     private Drivetrain drivetrain;
     private Tower tower;
-	/*private double ShooterSpeed;
-	private boolean isPressedShooterSpeed;
-	private boolean bridgeDown;
-	private boolean compressorToggle;
-	private boolean isPressedCompressorToggle;
 
-    private Compressor compressor;
-	private Solenoid bridgeSolenoid;
-	private Solenoid intakeSolenoid;*/
+	private Sensors sensors;
+	//private double ShooterSpeed;
+	//private boolean isPressedShooterSpeed;
+	//private boolean bridgeDown;
 
-		//private RobotDrive robotDrive;
+	//private RobotDrive robotDrive;
 	//private Victor frontLeft, rearLeft, frontRight, rearRight;
 
 	//private RobotDrive robotDrive;
@@ -53,32 +49,33 @@ public class RobotTemplate extends IterativeRobot
 		System.out.println("In robotInit");
 
 		joystick = new Joystick(1);
-		joystickAux  = new Joystick(2);
+		//joystickAux  = new Joystick(2);
 	//luminosityMin = 130;
 	//isPressedLast = false;
 	//isPressedLastLuminosityMin = false;
 	dashboardHigh = new DashboardHigh();
+	sensors = new Sensors();
     //gyroLast = 0.0;
 	//gyroOffset = 0.0;
 
-	/*compressorToggle = true;
-	isPressedCompressorToggle = false;
+	//compressorToggle = true;
+	//isPressedCompressorToggle = false;
 	//compressor = new Compressor(5,1);
 	//compressor.start();
-	bridgeSolenoid = new Solenoid(2); //slot 3, channel 2
-	intakeSolenoid = new Solenoid(3);
-	ShooterSpeed = 1.0;
-	isPressedShooterSpeed = false;
-	bridgeDown = false;
-*/
+	//bridgeSolenoid = new Solenoid(2); //slot 3, channel 2
+	//intakeSolenoid = new Solenoid(3);
+	//ShooterSpeed = 1.0;
+	//isPressedShooterSpeed = false;
+	//bridgeDown = false;
+
 
 	//kinect = new KinectFHS(drivetrain);
         driverStation = DriverStation.getInstance();
-        //enhancedIO = new EnhancedIOFHS(driverStation);
+		enhancedIO = new EnhancedIOFHS(driverStation);
 
 		//robotDrive = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
     drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
-    tower = new Tower(8,7,6,5,joystickAux);
+    tower = new Tower(driverStation,8,7,6,5,3,enhancedIO);
 
 	//sensors = new Sensors();
 
@@ -86,7 +83,7 @@ public class RobotTemplate extends IterativeRobot
 	camera = new CameraFHS(drivetrain, imageAnalysis);
 
         watchdog = Watchdog.getInstance();
-		System.out.println("Through robotinit");
+
     }
 
     public void autonomousPeriodic()
@@ -121,9 +118,11 @@ public class RobotTemplate extends IterativeRobot
 
     public void teleopPeriodic()
     {
-
 		drivetrain.drive();
 		tower.run();
+		dashboardHigh.updateDashboardHigh(drivetrain, 0, sensors.getUltrasonicLeft().getRangeInches(), sensors.getUltrasonicRight().getRangeInches(), 0, luminosityMin, 0, joystick);
+		//dashboardHigh.updateDashboardHigh(drivetrain,0.0,0.0,0.0,0.0, luminosityMin, 0,joystick);
+
 		//robotDrive.mecanumDrive_Polar(joystick.getMagnitude(), joystick.getDirectionDegrees(), joystick.getTwist());
 		/*
 		double numRec;

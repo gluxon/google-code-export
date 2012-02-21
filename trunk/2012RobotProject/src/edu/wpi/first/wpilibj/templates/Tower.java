@@ -4,38 +4,69 @@ import edu.wpi.first.wpilibj.*;
 
 public class Tower
 {
+	private boolean control;
+
     private Victor bottomShooterMotor, topShooterMotor, ballElevatorMotor, ballIntakeMotor;
 	private Joystick joystickAux;
     private Compressor compressor;
 	private Solenoid bridgeSolenoid;
 	private Solenoid intakeSolenoid;
+	private Relay cameraLights;
+	private EnhancedIOFHS enhancedIO;
 
-	private double ShooterSpeed;
+	private double shooterSpeed;
 	private boolean isPressedShooterSpeed;
 	private boolean bridgeDown;
 	private boolean isShooting;
 	private boolean compressorToggle;
 	private boolean isPressedCompressorToggle;
+	private boolean cameraLightState;
+	DriverStation driverStation;
 
-    public Tower(int bottomShooterMotorN, int topShooterMotorN, int ballElevatorMotorN, int ballIntakeMotorN, Joystick joystickA)
+    public Tower(DriverStation ds, int bottomShooterMotorN, int topShooterMotorN, int ballElevatorMotorN, int ballIntakeMotorN, int cameraLightN, EnhancedIOFHS IO)
     {
+
+		joystickAux = new Joystick(2);
+		driverStation = ds;
         bottomShooterMotor = new Victor(bottomShooterMotorN);
         topShooterMotor = new Victor(topShooterMotorN);
         ballElevatorMotor = new Victor(ballElevatorMotorN);
         ballIntakeMotor = new Victor(ballIntakeMotorN);
 		compressor = new Compressor(6,2);
 		compressor.start();
-		joystickAux = joystickA;
+		enhancedIO = IO;
+		cameraLights = new Relay(cameraLightN,Relay.Direction.kForward);
 
 		bridgeSolenoid = new Solenoid(2);
 		intakeSolenoid = new Solenoid(3);
-		ShooterSpeed = 1.0;
+		shooterSpeed = 1.0;
 		isPressedShooterSpeed = false;
 		bridgeDown = false;
 		isShooting = false;
-		compressorToggle = false;
-		isPressedCompressorToggle = false;
+		//compressorToggle = false;
+		//isPressedCompressorToggle = false;
+		cameraLightState = false;
+
+		control = true; // true = driver station, false = aux controller
+
+		compressor.start();
     }
+
+	public boolean toggleCameraLight()
+	{
+		if(cameraLightState)
+		{
+			cameraLights.set(Relay.Value.kOff);
+			cameraLightState = false;
+			return cameraLightState;
+		}
+		else
+		{
+			cameraLights.set(Relay.Value.kOn);
+			cameraLightState = true;
+			return cameraLightState;
+		}
+	}
 
     public Victor getBottomShooterMotor()
     {
@@ -80,25 +111,95 @@ public class Tower
     public void setShooterMotors(double input)
     {
         setBottomShooterMotor(input);
-        setTopShooterMotor(-input);
+        setTopShooterMotor(-input*0.95);
     }
+
+	public void setShooterSpeed(double input)
+	{
+		shooterSpeed = input;
+	}
+
 	public void shoot()
 	{
 		isShooting = true;
-		setShooterMotors(1.0);
-		Timer.delay(3);
+		setShooterSpeed(enhancedIO.getSlider());
+		setShooterMotors(shooterSpeed);
+		for(int i = 0; i < 12; i++)
+		{
+			setShooterSpeed(enhancedIO.getSlider());
+			setShooterMotors(shooterSpeed);
+			if(enhancedIO.getFireButton())
+				Timer.delay(.25);
+			else
+			{
+				isShooting = false;
+				return;
+			}
+		}
 		setBallElevator(1.0);
-		Timer.delay(3);
+		while(enhancedIO.getFireButton())
+		{
+			Timer.delay(.25);
+			setShooterSpeed(enhancedIO.getSlider());
+			setShooterMotors(shooterSpeed);
+			System.out.println(shooterSpeed);
+		}
 		isShooting = false;
-
 	}
+
 	public void run()
 	{
-		if(joystickAux.getRawButton(11) && ShooterSpeed > 0 && isPressedShooterSpeed == false) {
-			ShooterSpeed -= 0.05;
+
+		System.out.println(shooterSpeed);
+
+			if(isShooting == false)
+			{
+				if(enhancedIO.getFireButton())
+					shoot();
+				else
+				{
+					setShooterMotors(0.0);
+					if(enhancedIO.getBallElevatorSwitch()[0])
+					setBallElevator(1.0);
+					else if(enhancedIO.getBallElevatorSwitch()[1])
+					setBallElevator(-1.0);
+					else
+					setBallElevator(0.0);
+				}
+			}
+
+			if(enhancedIO.getBallIntakeSwitch()[0]) {
+				System.out.println("BallIntakeIn");
+				setBallIntakeMotor(.5);
+			}
+			else if(enhancedIO.getBallIntakeSwitch()[1]) {
+				System.out.println("BallIntakeOut");
+				setBallIntakeMotor(-.5);
+			}
+			else
+				setBallIntakeMotor(0.0);
+
+			if(!bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[1])
+			{
+				bridgeSolenoid.set(true);
+				bridgeDown = true;
+			}
+
+			if(bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[0])
+			{
+				bridgeSolenoid.set(false);
+				bridgeDown = false;
+			}
+
+	}
+
+	public void runAux()
+	{
+		if(joystickAux.getRawButton(11) && shooterSpeed > 0.05 && isPressedShooterSpeed == false) {
+			shooterSpeed -= 0.05;
 		}
-		if (joystickAux.getRawButton(12) && ShooterSpeed < 1 && isPressedShooterSpeed == false) {
-			ShooterSpeed += 0.05;
+		if (joystickAux.getRawButton(12) && shooterSpeed < 1 && isPressedShooterSpeed == false) {
+			shooterSpeed += 0.05;
 		}
 
 		if(joystickAux.getRawButton(11) || joystickAux.getRawButton(12))
@@ -106,7 +207,7 @@ public class Tower
 		else
 			isPressedShooterSpeed = false;
 
-		//System.out.println(ShooterSpeed);
+		System.out.println(shooterSpeed);
 
 		boolean fire = joystickAux.getRawButton(1);
 		boolean shootingMotor = joystickAux.getRawButton(2);
@@ -115,45 +216,43 @@ public class Tower
 		boolean elevatorUp = joystickAux.getRawButton(6);
         boolean elevatorDown = joystickAux.getRawButton(4);
 
-		if(joystickAux.getRawButton(7) && isPressedCompressorToggle == false)
-		  {
-			compressorToggle = !compressorToggle;
-	        if(compressorToggle)
-            compressor.start();
+
+			if(isShooting == false)
+			{
+				if(fire)
+					shoot();
+				else
+				{
+					setShooterMotors(0.0);
+					if(elevatorUp)
+					setBallElevator(1.0);
+					else if(elevatorDown)
+					setBallElevator(-1.0);
+					else
+					setBallElevator(0.0);
+				}
+			}
+
+			if(ballIntakeIn)
+				setBallIntakeMotor(1.0);
+			else if(ballIntakeOut)
+				setBallIntakeMotor(-1.0);
 			else
-            compressor.stop();
-		  }
+				setBallIntakeMotor(0.0);
 
-		if(joystickAux.getRawButton(7))
-			isPressedCompressorToggle = true;
-		else
-			isPressedCompressorToggle = false;
+			if(!bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[1])
+			{
+				bridgeSolenoid.set(true);
+				bridgeDown = true;
+			}
 
-
-		if(shootingMotor)
-			setShooterMotors(1.0);
-		else
-			setShooterMotors(0.0);
-
-        if(fire && isShooting == false)
-            shoot();
-
-        if(elevatorUp)
-            setBallElevator(1.0);
-        else if(elevatorDown)
-            setBallElevator(-1.0);
-        else
-            setBallElevator(0.0);
-
-        if(ballIntakeIn)
-            setBallIntakeMotor(1.0);
-        else if(ballIntakeOut)
-            setBallIntakeMotor(-1.0);
-        else
-            setBallIntakeMotor(0.0);
+			if(bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[0])
+			{
+				bridgeSolenoid.set(false);
+				bridgeDown = false;
+			}
 
 		bridgeSolenoid.set(joystickAux.getRawButton(10));
 		intakeSolenoid.set(joystickAux.getRawButton(9));
-		System.out.println(compressor.enabled());
 	}
 }
