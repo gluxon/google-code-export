@@ -63,47 +63,42 @@ public class Drivetrain
         robotY = -joystick.getY();
 		robotZ = -joystick.getTwist();
 
-		System.out.println("Button 7:" + joystick.getRawButton(7));
-        speed = 1.0;
 
 		//Go slower
 		if(joystick.getRawButton(2))
-        {
             speed = 0.3;
-        }
-		else {
+		else
 			speed = 1.0;
+
+		if(joystick.getRawButton(7)) { //forward at 0.2 speed, does not work
+			frontRight.set(-0.2);
+			frontLeft.set(0.2);
+			rearRight.set(-0.2);
+			rearLeft.set(0.2);
 		}
 
-		if(joystick.getRawButton(7)==true) { //forward at 0.2 speed, does not work
-			frontRight.set(-1);
-			frontLeft.set(1);
-			rearRight.set(-1);
-			rearLeft.set(1);
-		}
-
-		if(joystick.getRawButton(8)==true) { //forward at 0.4 speed
+		else if(joystick.getRawButton(8)) { //forward at 0.4 speed
 			frontRight.set(-0.4);
 			frontLeft.set(0.4);
 			rearRight.set(-0.4);
 			rearLeft.set(0.4);
 		}
 
-		if(joystick.getRawButton(9)==true) { //back at 0.4 speed
+		else if(joystick.getRawButton(9)) { //back at 0.4 speed
 			frontRight.set(0.4);
 			frontLeft.set(-0.4);
 			rearRight.set(0.4);
 			rearLeft.set(-0.4);
 		}
 
-		if(joystick.getRawButton(11)==true) {//strafe left at 0.2, might be wrong
+		else if(joystick.getRawButton(11)) {//strafe left at 0.2, might be wrong
 			frontRight.set(0.2);
 			frontLeft.set(-0.2);
 			rearRight.set(-0.2);
 			rearLeft.set(0.2);
 		}
 
-		if(joystick.getRawButton(12)==true) {//strafe right at 0.2 speed, might be wrong
+		else if(joystick.getRawButton(12)) {//strafe right at 0.2 speed, might be wrong
 			frontRight.set(-0.2);
 			frontLeft.set(0.2);
 			rearRight.set(0.2);
