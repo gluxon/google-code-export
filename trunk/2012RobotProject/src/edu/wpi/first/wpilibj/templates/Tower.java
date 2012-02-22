@@ -128,8 +128,9 @@ public class Tower
 		{
 			setShooterSpeed(enhancedIO.getSlider());
 			setShooterMotors(shooterSpeed);
-			if(enhancedIO.getFireButton())
-				Timer.delay(.25);
+			if(enhancedIO.getFireButton()) {
+				//Timer.delay(.25); THIS IS DANGEROUS!
+			}
 			else
 			{
 				isShooting = false;
