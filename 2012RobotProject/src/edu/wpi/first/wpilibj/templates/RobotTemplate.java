@@ -134,96 +134,6 @@ if(imageAnalysis.getRectangles() == null)
 
 		*/
 
-		//To change shooter speed
-	/*	if(joystickAux.getRawButton(11) && ShooterSpeed > 0 && isPressedShooterSpeed == false) {
-			ShooterSpeed -= 0.05;
-		}
-		if (joystickAux.getRawButton(12) && ShooterSpeed < 1 && isPressedShooterSpeed == false) {
-			ShooterSpeed += 0.05;
-		}
-
-		if(joystick.getRawButton(11) || joystick.getRawButton(12))
-			isPressedShooterSpeed = true;
-		else
-			isPressedShooterSpeed = false;
-
-		System.out.println(ShooterSpeed);
-
-		boolean fire = joystickAux.getRawButton(7);
-        boolean elevatorUp = joystickAux.getRawButton(1);
-        boolean elevatorDown = joystickAux.getRawButton(2);
-        boolean ballIntakeIn = joystickAux.getRawButton(3);
-        boolean ballIntakeOut = joystickAux.getRawButton(4);
-        compressorToggle = joystickAux.getRawButton(5);
-
-		/*if(joystickAux.getRawButton(5) && isPressedCompressorToggle == false)
-		  {
-			compressorToggle = !compressorToggle;
-	        if(compressorToggle)
-            compressor.start();
-			else
-            compressor.stop();
-			}/*
-
-
-		if(joystickAux.getRawButton(5))
-			isPressedCompressorToggle = true;
-		else
-			isPressedCompressorToggle = false;
-
-        if(fire)
-            tower.setShooterMotors(ShooterSpeed);
-        else
-            tower.setShooterMotors(0.0);
-
-        if(elevatorUp)
-            tower.setBallElevator(1.0);
-        else if(elevatorDown)
-            tower.setBallElevator(-1.0);
-        else
-            tower.setBallElevator(0.0);
-
-        if(ballIntakeIn)
-            tower.setBallIntakeMotor(1.0);
-        else if(ballIntakeOut)
-            tower.setBallIntakeMotor(-1.0);
-        else
-            tower.setBallIntakeMotor(0.0);
-
-
-
-		bridgeSolenoid.set(joystickAux.getRawButton(10));
-		intakeSolenoid.set(joystickAux.getRawButton(9));
-		*/
-
-       /* if(enhancedIO.getFireButton())
-        {
-            tower.setShooterMotors(enhancedIO.getSlider());
-        }
-        else
-        {
-            tower.setShooterMotors(0.0);
-        }
-
-        if(enhancedIO.getBallElevatorSwitch()[0])
-            tower.setBallElevator(1.0);
-        else if(enhancedIO.getBallElevatorSwitch()[1])
-            tower.setBallElevator(-1.0);
-        else
-            tower.setBallElevator(0.0);
-
-        if(enhancedIO.getBallIntakeSwitch()[0])
-            tower.setBallIntakeMotor(1.0);
-        else if(enhancedIO.getBallIntakeSwitch()[1])
-            tower.setBallIntakeMotor(-1.0);
-        else
-            tower.setBallIntakeMotor(0.0);
-
-        if(enhancedIO.getCompressorSwitch())
-            compressor.start();
-        else
-            compressor.stop();
-
         /*****Debug*****/
 /*
 		if (joystick.getRawButton(9) && isPressedLastLuminosityMin == false) {
@@ -322,6 +232,8 @@ if(imageAnalysis.getRectangles() == null)
 
 	*/
 
+	System.out.println("Left: " + sensors.getUltrasonicLeft().getValue());
+	System.out.println("Right: " + sensors.getUltrasonicRight().getValue());
 	watchdog.feed();
     }
 }
