@@ -10,7 +10,7 @@ public class Tower
 	private Joystick joystickAux;
     private Compressor compressor;
 	private Solenoid bridgeSolenoid;
-	private Solenoid intakeSolenoid;
+	//private Solenoid intakeSolenoid;
 	private Relay cameraLights;
 	private EnhancedIOFHS enhancedIO;
 
@@ -37,8 +37,8 @@ public class Tower
 		enhancedIO = IO;
 		cameraLights = new Relay(cameraLightN,Relay.Direction.kForward);
 
-		bridgeSolenoid = new Solenoid(2);
-		intakeSolenoid = new Solenoid(3);
+		//bridgeSolenoid = new Solenoid(2);
+		//intakeSolenoid = new Solenoid(3);
 		shooterSpeed = 1.0;
 		isPressedShooterSpeed = false;
 		bridgeDown = false;
@@ -121,31 +121,8 @@ public class Tower
 
 	public void shoot()
 	{
-		isShooting = true;
 		setShooterSpeed(enhancedIO.getSlider());
 		setShooterMotors(shooterSpeed);
-		for(int i = 0; i < 12; i++)
-		{
-			setShooterSpeed(enhancedIO.getSlider());
-			setShooterMotors(shooterSpeed);
-			if(enhancedIO.getFireButton()) {
-				//Timer.delay(.25); THIS IS DANGEROUS!
-			}
-			else
-			{
-				isShooting = false;
-				return;
-			}
-		}
-		setBallElevator(1.0);
-		while(enhancedIO.getFireButton())
-		{
-			Timer.delay(.25);
-			setShooterSpeed(enhancedIO.getSlider());
-			setShooterMotors(shooterSpeed);
-			System.out.println(shooterSpeed);
-		}
-		isShooting = false;
 	}
 
 	public void run()
@@ -170,11 +147,9 @@ public class Tower
 			}
 
 			if(enhancedIO.getBallIntakeSwitch()[0]) {
-				System.out.println("BallIntakeIn");
 				setBallIntakeMotor(.5);
 			}
 			else if(enhancedIO.getBallIntakeSwitch()[1]) {
-				System.out.println("BallIntakeOut");
 				setBallIntakeMotor(-.5);
 			}
 			else
@@ -191,6 +166,9 @@ public class Tower
 				bridgeSolenoid.set(false);
 				bridgeDown = false;
 			}
+
+			//bridgeSolenoid.set(joystickAux.getRawButton(7));
+			//intakeSolenoid.set(joystickAux.getRawButton(8));
 
 	}
 
@@ -253,7 +231,5 @@ public class Tower
 				bridgeDown = false;
 			}
 
-		bridgeSolenoid.set(joystickAux.getRawButton(10));
-		intakeSolenoid.set(joystickAux.getRawButton(9));
 	}
 }
