@@ -8,9 +8,13 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 public class RobotTemplate extends IterativeRobot
 {
     private Joystick joystick;//, joystickAux;
+	private Joystick joystickAux;
     //private KinectFHS kinect;
     private EnhancedIOFHS enhancedIO;
     private DriverStation driverStation;
+
+	//private Solenoid bridgeSolenoid;
+	private Solenoid intakeSolenoid;
 
     private Drivetrain drivetrain;
     private Tower tower;
@@ -49,6 +53,7 @@ public class RobotTemplate extends IterativeRobot
 		System.out.println("In robotInit");
 
 		joystick = new Joystick(1);
+		joystickAux = new Joystick(2);
 		//joystickAux  = new Joystick(2);
 	//luminosityMin = 130;
 	//isPressedLast = false;
@@ -63,7 +68,7 @@ public class RobotTemplate extends IterativeRobot
 	//compressor = new Compressor(5,1);
 	//compressor.start();
 	//bridgeSolenoid = new Solenoid(2); //slot 3, channel 2
-	//intakeSolenoid = new Solenoid(3);
+	intakeSolenoid = new Solenoid(3);
 	//ShooterSpeed = 1.0;
 	//isPressedShooterSpeed = false;
 	//bridgeDown = false;
@@ -232,8 +237,10 @@ if(imageAnalysis.getRectangles() == null)
 
 	*/
 
-	System.out.println("Left: " + sensors.getUltrasonicLeft().getValue());
-	System.out.println("Right: " + sensors.getUltrasonicRight().getValue());
+	//bridgeSolenoid.set(joystickAux.getRawButton(7));
+	intakeSolenoid.set(true);
+	//System.out.println("Left: " + sensors.getUltrasonicLeft().getValue());
+	//System.out.println("Right: " + sensors.getUltrasonicRight().getValue());
 	watchdog.feed();
     }
 }
