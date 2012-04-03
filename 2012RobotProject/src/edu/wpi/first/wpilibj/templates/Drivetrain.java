@@ -8,163 +8,103 @@ public class Drivetrain
 
     private Joystick joystick;
 
-	double robotX, robotY, robotZ, speed;
+    double robotX, robotY, robotZ, speed;
 
-    public Drivetrain(int frontLeftN, int frontRightN, int rearLeftN, int rearRightN, Joystick joystick, final double speed) {
-
-		frontLeft = new Victor(frontLeftN) {
-			public void set(double d) {
-				super.set(d * speed);
+    public Drivetrain(int frontLeftN, int frontRightN, int rearLeftN, int rearRightN, Joystick joystick, final double speed)
+    {
+        frontLeft = new Victor(frontLeftN)
+        {
+            public void set(double d)
+            {
+                super.set(d * speed);
             }
         };
-		frontRight = new Victor(frontRightN) {
-			public void set(double d) {
-				super.set(d * speed);
+		frontRight = new Victor(frontRightN)
+        {
+            public void set(double d)
+            {
+                super.set(d * speed);
             }
         };
-		rearLeft = new Victor(rearLeftN) {
-			public void set(double d) {
-				super.set(d * speed);
+		rearLeft = new Victor(rearLeftN)
+        {
+            public void set(double d)
+            {
+                super.set(d * speed);
             }
         };
-		rearRight = new Victor(rearRightN) {
-			public void set(double d) {
-				super.set(d * speed);
+        rearRight = new Victor(rearRightN)
+        {
+            public void set(double d)
+            {
+                super.set(d * speed);
             }
         };
 
-		this.joystick = joystick;
-
+        this.joystick = joystick;
     }
 
-    public double getFrontLeft()
+    public double getFrontLeft() //Gets the front left motor speed
     {
         return this.frontLeft.get();
     }
 
-    public double getFrontRight()
+    public double getFrontRight() //Gets the front right motor speed
     {
         return this.frontRight.get();
     }
 
-    public double getRearLeft()
+    public double getRearLeft() //Gets the rear left motor speed
     {
         return this.rearLeft.get();
     }
 
-    public double getRearRight()
+    public double getRearRight() //Gets the rear right motor speed
     {
         return this.rearRight.get();
     }
 
-    public void drive()
+    public void drive() //Drives the robot
     {
-		robotX = -joystick.getX();
+        robotX = -joystick.getX();
         robotY = -joystick.getY();
 		robotZ = -joystick.getTwist();
 
-
-		//Go slower
-		if(joystick.getRawButton(2))
-            speed = 0.3;
-		else
-			speed = 1.0;
-
-		if(joystick.getRawButton(7)) { //forward at 0.2 speed, does not work
-			frontRight.set(-0.2);
-			frontLeft.set(0.2);
-			rearRight.set(-0.2);
-			rearLeft.set(0.2);
+        speed = 1.0;
+		if (joystick.getRawButton(2)) {
+			speed = 0.5;
 		}
-
-		else if(joystick.getRawButton(8)) { //forward at 0.4 speed
-			frontRight.set(-0.4);
-			frontLeft.set(0.4);
-			rearRight.set(-0.4);
-			rearLeft.set(0.4);
-		}
-
-		else if(joystick.getRawButton(9)) { //back at 0.4 speed
-			frontRight.set(0.4);
-			frontLeft.set(-0.4);
-			rearRight.set(0.4);
-			rearLeft.set(-0.4);
-		}
-
-		else if(joystick.getRawButton(11)) {//strafe left at 0.2, might be wrong
-			frontRight.set(0.2);
-			frontLeft.set(-0.2);
-			rearRight.set(-0.2);
-			rearLeft.set(0.2);
-		}
-
-		else if(joystick.getRawButton(12)) {//strafe right at 0.2 speed, might be wrong
-			frontRight.set(-0.2);
-			frontLeft.set(0.2);
-			rearRight.set(0.2);
-			rearLeft.set(-0.2);
-		}
-		else {
-			frontLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
-			rearLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
-			frontRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
-			rearRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
-        }
-		/*if(joystick.getRawButton(3))
-			rearLeft.set(.2);
-		else
-			rearLeft.set(0);
-		if(joystick.getRawButton(5))
-			frontLeft.set(.2);
-		else
-			frontLeft.set(0);
-		if(joystick.getRawButton(4))
-			rearRight.set(.2);
-		else
-			rearRight.set(0);
-		if(joystick.getRawButton(6))
-			frontRight.set(.2);
-		else
-			frontRight.set(0);
-
-        if(joystick.getRawButton(4))
-        {
-            frontLeft.set(-speed);
-            rearLeft.set(speed);
-            frontRight.set(-speed);
-            rearRight.set(speed);
-        }
-        else if(joystick.getRawButton(3))
-        {
-            frontLeft.set(speed);
-            rearLeft.set(-speed);
-            frontRight.set(speed);
-            rearRight.set(-speed);
-        }*/
-
-	}
-    public void frontLeftSet(double value) {
-		frontLeft.set(value);
+        frontLeft.set(-(robotZ * speed) + (robotY * speed) - (robotX * speed));
+        rearLeft.set(-(robotZ * speed) + (robotY * speed) + (robotX * speed));
+        frontRight.set(-(robotZ * speed) - (robotY * speed) - (robotX * speed));
+        rearRight.set(-(robotZ * speed) - (robotY * speed) + (robotX * speed));
     }
 
-    public void rearLeftSet(double value) {
-		rearLeft.set(value);
+    public void frontLeftSet(double value) //Sets the front left Victor
+    {
+        frontLeft.set(value);
     }
 
-    public void frontRightSet(double value) {
-		frontRight.set(value);
+    public void rearLeftSet(double value) //Sets the rear left Victor
+    {
+    	rearLeft.set(value);
     }
 
-    public void rearRightSet(double value) {
-		rearRight.set(value);
+    public void frontRightSet(double value) //Sets the front right Victor
+    {
+	frontRight.set(value);
     }
 
-	public void setDiminishedSpeed(double fraction)
-	{
-		frontLeft.set(getFrontLeft() * fraction);
+    public void rearRightSet(double value) //Sets the rear right Victor
+    {
+	rearRight.set(value);
+    }
+
+    public void setDiminishedSpeed(double fraction) //Sets the robot speed
+    {
+    	frontLeft.set(getFrontLeft() * fraction);
         rearLeft.set(getRearLeft() * fraction);
         frontRight.set(getFrontRight() * fraction);
         rearRight.set(getRearRight() * fraction);
-	}
-
+    }
 }

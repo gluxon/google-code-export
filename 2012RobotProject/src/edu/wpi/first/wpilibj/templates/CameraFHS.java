@@ -46,7 +46,40 @@ public class CameraFHS
 		}
 
     }
-		public void centerOnTarget(int target,int lum) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
+    public void centerBottomTarget() throws AxisCameraException, NIVisionException
+    {
+        analysis.updateImage(0);
+        ParticleAnalysisReport[] reports = analysis.getRectangle();
+		System.out.println("numtarg: "+reports.length);
+        //if(reports.length > 3)
+        //{
+            for(int i = 0; i < reports.length; i++)
+            {
+                System.out.println(" "+i+": "+reports[i].center_mass_x_normalized+"||"+(-reports[i].center_mass_y_normalized));
+            }
+            //System.out.println(" ");
+            double xNormal = reports[0].center_mass_x_normalized;
+
+            //drivetrain.frontLeftSet(xNormal);
+            //drivetrain.frontRightSet(xNormal);
+            //drivetrain.rearLeftSet(xNormal);
+            //drivetrain.rearRightSet(xNormal);
+        if(true){}
+        else
+        {
+            System.out.println("No Targets!");
+          //  drivetrain.frontLeftSet(0.0);
+         //   drivetrain.frontRightSet(0.0);
+        //    drivetrain.rearLeftSet(0.0);
+       //     drivetrain.rearRightSet(0.0);
+        }
+
+
+
+
+    }
+
+	public void centerOnTarget(int target,int lum) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
     {
 		analysis.updateImage(lum);
 
@@ -57,13 +90,12 @@ public class CameraFHS
 		if(report != null)
 		{
 			xNormal = report.center_mass_x_normalized;
+            System.out.println(report.center_mass_x_normalized + "_:_" + report.center_mass_y_normalized);
 
-			System.out.println(xNormal);
-
-			drivetrain.frontLeftSet(xNormal*0.3);
-			drivetrain.frontRightSet(xNormal*0.3);
-			drivetrain.rearLeftSet(xNormal*0.3);
-			drivetrain.rearRightSet(xNormal*0.3);
+			//drivetrain.frontLeftSet(xNormal*0.3);
+			//drivetrain.frontRightSet(xNormal*0.3);
+			//drivetrain.rearLeftSet(xNormal*0.3);
+			//drivetrain.rearRightSet(xNormal*0.3);
 		}
 		else
 		{
