@@ -16,7 +16,7 @@ public class Sensors
     {
 	//gyro = new Gyro(1, 2);
 	ultrasonicLeft = new UltrasonicFHS(3);
-    ultrasonicRight = new UltrasonicFHS(4);
+        ultrasonicRight = new UltrasonicFHS(4);
 	//encoderBottom = new Encoder(1, 2);
         //encoderBottom.start();
        // encoderBottom.setDistancePerPulse(DISTANCE_PER_PULSE);

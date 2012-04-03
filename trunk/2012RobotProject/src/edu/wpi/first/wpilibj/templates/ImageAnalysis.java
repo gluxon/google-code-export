@@ -46,7 +46,7 @@ public class ImageAnalysis {
 				//timer.start();
                 ColorImage image = axis.getImage();
 				//System.out.println("1:" + timer.get());
-                BinaryImage image2 = image.thresholdHSL(0,255,0,37,luminosityMin,255);
+                BinaryImage image2 = image.thresholdHSL(0,20,240,255,14,104);
 				image.free();
 				BinaryImage image3 = image2.removeSmallObjects(true, 1);
 				image2.free();
@@ -64,7 +64,7 @@ public class ImageAnalysis {
 				//System.out.println("6:" + timer.get());
 				//timer.stop();
 				//timer.reset();
-				//System.out.println("number:" + numParticles);
+				System.out.println("number:" + numParticles);
 				for(int i = 0; i < rectangle.length; i++)
 				{
 					System.out.println("x: " + rectangle[i].center_mass_x + "y: " + rectangle[i].center_mass_y);
@@ -113,6 +113,11 @@ public class ImageAnalysis {
         }
 
     }
+        
+        public ParticleAnalysisReport[] getRectangle()
+        {
+            return rectangle;
+        }
 	public void updateImageAuto(Drivetrain drive) throws AxisCameraException, NIVisionException
     {
 
@@ -252,6 +257,7 @@ public double getNumParticles()
 		{
 			return null;
 		}
+                System.out.println(rectangle.length);
 		for(int i = 0; i < rectangle.length; i++)
 		{
 			if(Math.abs(getHeight(i) - height) < 1)

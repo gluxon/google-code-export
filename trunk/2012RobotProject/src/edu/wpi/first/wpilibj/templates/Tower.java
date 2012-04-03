@@ -1,235 +1,196 @@
 package edu.wpi.first.wpilibj.templates;
-
+//Imports
 import edu.wpi.first.wpilibj.*;
 
 public class Tower
 {
-	private boolean control;
-
+    //DriverStation
+    DriverStation driverStation;
+    //Drive Motors
     private Victor bottomShooterMotor, topShooterMotor, ballElevatorMotor, ballIntakeMotor;
-	private Joystick joystickAux;
+    //Solenoids
+    private Solenoid bridgeSolenoid;
+    //private Solenoid intakeSolenoid;
     private Compressor compressor;
-	private Solenoid bridgeSolenoid;
-	//private Solenoid intakeSolenoid;
-	private Relay cameraLights;
-	private EnhancedIOFHS enhancedIO;
-
-	private double shooterSpeed;
-	private boolean isPressedShooterSpeed;
-	private boolean bridgeDown;
-	private boolean isShooting;
-	private boolean compressorToggle;
-	private boolean isPressedCompressorToggle;
-	private boolean cameraLightState;
-	DriverStation driverStation;
+    //Relay
+    private Relay cameraLights;
+    //Controls
+    private EnhancedIOFHS enhancedIO;
+    //Misc. Variables
+    private double shooterSpeed;
+    private boolean isPressedShooterSpeed;
+    private boolean bridgeDown = false;
+    private boolean isShooting;
+    private boolean compressorToggle;
+    private boolean isPressedCompressorToggle;
+    private boolean cameraLightState;
 
     public Tower(DriverStation ds, int bottomShooterMotorN, int topShooterMotorN, int ballElevatorMotorN, int ballIntakeMotorN, int cameraLightN, EnhancedIOFHS IO)
     {
-
-		joystickAux = new Joystick(2);
-		driverStation = ds;
+        //DriverStation
+        driverStation = ds;
+        //Drive Motors
         bottomShooterMotor = new Victor(bottomShooterMotorN);
         topShooterMotor = new Victor(topShooterMotorN);
         ballElevatorMotor = new Victor(ballElevatorMotorN);
-        ballIntakeMotor = new Victor(ballIntakeMotorN);
-		compressor = new Compressor(6,2);
-		compressor.start();
-		enhancedIO = IO;
-		cameraLights = new Relay(cameraLightN,Relay.Direction.kForward);
-
-		//bridgeSolenoid = new Solenoid(2);
-		//intakeSolenoid = new Solenoid(3);
-		shooterSpeed = 1.0;
-		isPressedShooterSpeed = false;
-		bridgeDown = false;
-		isShooting = false;
-		//compressorToggle = false;
-		//isPressedCompressorToggle = false;
-		cameraLightState = false;
-
-		control = true; // true = driver station, false = aux controller
-
-		compressor.start();
+        ballIntakeMotor = new Victor(ballIntakeMotorN)
+		{
+            public void set(double d)
+            {
+                super.set(d * 0.50);
+            }
+        };
+	//Compressor
+        compressor = new Compressor(6,2);
+	compressor.start();
+	//Controls
+        enhancedIO = IO;
+	//Relay
+        cameraLights = new Relay(cameraLightN,Relay.Direction.kForward);
+        //Solenoid
+	bridgeSolenoid = new Solenoid(2);
+	//intakeSolenoid = new Solenoid(3);
+	//Misc. Variables
+        shooterSpeed = 1.0;
+	isPressedShooterSpeed = false;
+	bridgeDown = false;
+	isShooting = false;
+	//compressorToggle = false;
+	//isPressedCompressorToggle = false;
+	cameraLightState = false;
     }
 
-	public boolean toggleCameraLight()
+    public void cameraLightOn() //Turns the camera light on
+    {
+        cameraLights.set(Relay.Value.kOn);
+        cameraLightState = true;
+    }
+    public void cameraLightOff() //Turns the camera light off
+    {
+        cameraLights.set(Relay.Value.kOff);
+        cameraLightState = false;
+    }
+
+	public void startCompressor()
 	{
-		if(cameraLightState)
-		{
-			cameraLights.set(Relay.Value.kOff);
-			cameraLightState = false;
-			return cameraLightState;
-		}
-		else
-		{
-			cameraLights.set(Relay.Value.kOn);
-			cameraLightState = true;
-			return cameraLightState;
-		}
+		compressor.start();
 	}
 
-    public Victor getBottomShooterMotor()
+	public void stopCompressor()
+	{
+		compressor.stop();
+	}
+
+    public boolean toggleCameraLight() //Toggles the camera light
+    {
+        if(cameraLightState)
+	{
+            cameraLights.set(Relay.Value.kOff);
+            cameraLightState = false;
+            return cameraLightState;
+	}
+	else
+	{
+            cameraLights.set(Relay.Value.kOn);
+            cameraLightState = true;
+            return cameraLightState;
+        }
+    }
+
+    public Victor getBottomShooterMotor() //Gets the bottom shooter Victor
     {
         return bottomShooterMotor;
     }
 
-    public Victor getTopShooterMotor()
+    public Victor getTopShooterMotor() //Gets the top shooter Victor
     {
         return topShooterMotor;
     }
 
-    public Victor getBallElevatorMotor()
+    public Victor getBallElevatorMotor() //Gets the ball elevator Victor
     {
         return ballElevatorMotor;
     }
 
-    public Victor getBallIntakeMotor()
+    public Victor getBallIntakeMotor() //Gets the ball intake Victor
     {
         return ballIntakeMotor;
     }
 
-    public void setBottomShooterMotor(double input)
+    public void setBottomShooterMotor(double input) //Sets the bottom shooter Victor
     {
         bottomShooterMotor.set(input);
     }
 
-    public void setTopShooterMotor(double input)
+    public void setTopShooterMotor(double input) //Sets the top shooter Victor
     {
         topShooterMotor.set(input);
     }
 
-    public void setBallElevator(double input)
+    public void setBallElevator(double input) //Sets the ball elevator Victor
     {
         ballElevatorMotor.set(input);
     }
 
-    public void setBallIntakeMotor(double input)
+    public void setBallIntakeMotor(double input) //Sets the ball intake Victor
     {
         ballIntakeMotor.set(input);
     }
 
-    public void setShooterMotors(double input)
+    public void setShooterMotors(double input) //Sets the shooter motors Victors
     {
         setBottomShooterMotor(input);
-        setTopShooterMotor(-input*0.95);
+        setTopShooterMotor(-input*0.5);
     }
 
-	public void setShooterSpeed(double input)
-	{
-		shooterSpeed = input;
-	}
+    public void setShooterSpeed(double input) //Sets the shooter speed
+    {
+        shooterSpeed = input;
+    }
 
-	public void shoot()
-	{
-		setShooterSpeed(enhancedIO.getSlider());
-		setShooterMotors(shooterSpeed);
-	}
+    public void shoot() //Shoots the ball
+    {
+        setShooterSpeed(enhancedIO.getSlider());
+	setShooterMotors(shooterSpeed);
+    }
 
-	public void run()
-	{
+    public void run() //Runs the tower
+    {
+        if(enhancedIO.getFireButton())
+            shoot();
+        else
+            setShooterMotors(0.0);
 
-		System.out.println(shooterSpeed);
+        ////////
 
-			if(isShooting == false)
-			{
-				if(enhancedIO.getFireButton())
-					shoot();
-				else
-				{
-					setShooterMotors(0.0);
-					if(enhancedIO.getBallElevatorSwitch()[0])
-					setBallElevator(1.0);
-					else if(enhancedIO.getBallElevatorSwitch()[1])
-					setBallElevator(-1.0);
-					else
-					setBallElevator(0.0);
-				}
-			}
+        if(enhancedIO.getBallElevatorSwitch()[0])
+            setBallElevator(1.0);
+        else if(enhancedIO.getBallElevatorSwitch()[1])
+            setBallElevator(-1.0);
+        else
+            setBallElevator(0.0);
 
-			if(enhancedIO.getBallIntakeSwitch()[0]) {
-				setBallIntakeMotor(.5);
-			}
-			else if(enhancedIO.getBallIntakeSwitch()[1]) {
-				setBallIntakeMotor(-.5);
-			}
-			else
-				setBallIntakeMotor(0.0);
+        ////////
 
-			if(!bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[1])
-			{
-				bridgeSolenoid.set(true);
-				bridgeDown = true;
-			}
+        if(enhancedIO.getBallIntakeSwitch()[0])
+            setBallIntakeMotor(.5);
+        else if(enhancedIO.getBallIntakeSwitch()[1])
+            setBallIntakeMotor(-.5);
+        else
+            setBallIntakeMotor(0.0);
 
-			if(bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[0])
-			{
-				bridgeSolenoid.set(false);
-				bridgeDown = false;
-			}
+        ////////
 
-			//bridgeSolenoid.set(joystickAux.getRawButton(7));
-			//intakeSolenoid.set(joystickAux.getRawButton(8));
+        if(!bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[1])
+        {
+            bridgeSolenoid.set(true);
+            bridgeDown = true;
+        }
 
-	}
-
-	public void runAux()
-	{
-		if(joystickAux.getRawButton(11) && shooterSpeed > 0.05 && isPressedShooterSpeed == false) {
-			shooterSpeed -= 0.05;
-		}
-		if (joystickAux.getRawButton(12) && shooterSpeed < 1 && isPressedShooterSpeed == false) {
-			shooterSpeed += 0.05;
-		}
-
-		if(joystickAux.getRawButton(11) || joystickAux.getRawButton(12))
-			isPressedShooterSpeed = true;
-		else
-			isPressedShooterSpeed = false;
-
-		System.out.println(shooterSpeed);
-
-		boolean fire = joystickAux.getRawButton(1);
-		boolean shootingMotor = joystickAux.getRawButton(2);
-        boolean ballIntakeIn = joystickAux.getRawButton(3);
-        boolean ballIntakeOut = joystickAux.getRawButton(5);
-		boolean elevatorUp = joystickAux.getRawButton(6);
-        boolean elevatorDown = joystickAux.getRawButton(4);
-
-
-			if(isShooting == false)
-			{
-				if(fire)
-					shoot();
-				else
-				{
-					setShooterMotors(0.0);
-					if(elevatorUp)
-					setBallElevator(1.0);
-					else if(elevatorDown)
-					setBallElevator(-1.0);
-					else
-					setBallElevator(0.0);
-				}
-			}
-
-			if(ballIntakeIn)
-				setBallIntakeMotor(1.0);
-			else if(ballIntakeOut)
-				setBallIntakeMotor(-1.0);
-			else
-				setBallIntakeMotor(0.0);
-
-			if(!bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[1])
-			{
-				bridgeSolenoid.set(true);
-				bridgeDown = true;
-			}
-
-			if(bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[0])
-			{
-				bridgeSolenoid.set(false);
-				bridgeDown = false;
-			}
-
-	}
+        if(bridgeDown && enhancedIO.getBridgeManipulatorSwitch()[0])
+        {
+            bridgeSolenoid.set(false);
+            bridgeDown = false;
+        }
+    }
 }

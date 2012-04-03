@@ -1,5 +1,5 @@
 package edu.wpi.first.wpilibj.templates;
-
+//Imports
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.camera.AxisCameraException;
@@ -7,240 +7,197 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 
 public class RobotTemplate extends IterativeRobot
 {
-    private Joystick joystick;//, joystickAux;
-	private Joystick joystickAux;
-    //private KinectFHS kinect;
+    //Controls
+    private Joystick joystick;
     private EnhancedIOFHS enhancedIO;
+    //Driverstation
     private DriverStation driverStation;
-
-	//private Solenoid bridgeSolenoid;
-	private Solenoid intakeSolenoid;
-
+    private DashboardHigh dashboardHigh;
+    //Movement
     private Drivetrain drivetrain;
     private Tower tower;
-
-	private Sensors sensors;
-	//private double ShooterSpeed;
-	//private boolean isPressedShooterSpeed;
-	//private boolean bridgeDown;
-
-	//private RobotDrive robotDrive;
-	//private Victor frontLeft, rearLeft, frontRight, rearRight;
-
-	//private RobotDrive robotDrive;
-
-    //private Sensors sensors;
+    //Sensors
+    private Sensors sensors;
+    //Image
     private CameraFHS camera;
-
-    private Watchdog watchdog;
-
     private ImageAnalysis imageAnalysis;
-	private DashboardHigh dashboardHigh;
-
-    //double gyroLast;
-    //double gyroOffset;
-
-	//boolean hasAnalyzed;
-	//boolean isPressedLast;
-
-	int luminosityMin;
-	//boolean isPressedLastLuminosityMin;
-
-	double numParticles;
+    //Watchdog
+    private Watchdog watchdog;
+    //Solenoid
+    private Solenoid intakeSolenoid;
+    //Misc. Variables
+    Timer timer, timer2;
+    double rangeLast = 0;
+    boolean first = true;
+    boolean stopped = false;
+    double rangeBeforeStop = 0;
+    int luminosityMin;
+    double numParticles;
+	DriverStationLCD dsout;
+	boolean autoFist = true;
 
     public void robotInit()
     {
-		System.out.println("In robotInit");
-
-		joystick = new Joystick(1);
-		joystickAux = new Joystick(2);
-		//joystickAux  = new Joystick(2);
-	//luminosityMin = 130;
-	//isPressedLast = false;
-	//isPressedLastLuminosityMin = false;
-	dashboardHigh = new DashboardHigh();
-	sensors = new Sensors();
-    //gyroLast = 0.0;
-	//gyroOffset = 0.0;
-
-	//compressorToggle = true;
-	//isPressedCompressorToggle = false;
-	//compressor = new Compressor(5,1);
-	//compressor.start();
-	//bridgeSolenoid = new Solenoid(2); //slot 3, channel 2
-	intakeSolenoid = new Solenoid(3);
-	//ShooterSpeed = 1.0;
-	//isPressedShooterSpeed = false;
-	//bridgeDown = false;
-
-
-	//kinect = new KinectFHS(drivetrain);
+		timer2 = new Timer();
+        //DriverStation
         driverStation = DriverStation.getInstance();
-		enhancedIO = new EnhancedIOFHS(driverStation);
-
-		//robotDrive = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
-    drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
-    tower = new Tower(driverStation,8,7,6,5,3,enhancedIO);
-
-	//sensors = new Sensors();
-
-    imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
-	camera = new CameraFHS(drivetrain, imageAnalysis);
-
+        dashboardHigh = new DashboardHigh();
+        //Controls
+		joystick = new Joystick(1);
+        enhancedIO = new EnhancedIOFHS(driverStation);
+        //Movement
+        drivetrain = new Drivetrain(1,2,3,4,joystick,1.0);
+		tower = new Tower(driverStation,8,7,6,5,3,enhancedIO);
+        //Sensors
+        sensors = new Sensors();
+        //Solenoid
+		intakeSolenoid = new Solenoid(3);
+        //Image
+        imageAnalysis = new ImageAnalysis(AxisCamera.getInstance());
+		camera = new CameraFHS(drivetrain, imageAnalysis);
+        //Watchdog
         watchdog = Watchdog.getInstance();
-
+		dsout = DriverStationLCD.getInstance();
+		dsout.updateLCD();
     }
 
     public void autonomousPeriodic()
     {
-	//kinect.autonomousKinect();
-
         /*
-        double gyroAngle = sensors.getGyro().getAngle()/180;
-        drivetrain.frontLeftSet(gyroAngle);
-        drivetrain.frontRightSet(gyroAngle);
-        drivetrain.rearLeftSet(gyroAngle);
-        drivetrain.rearRightSet(gyroAngle);
-        */
+        double range = sensors.getUltrasonicRight().getRangeInches();
+		System.out.println(range);
+		double robo_speed_far = 0.3;
+		double robo_speed_close = 0.10;
 
 
-
-	/*try
+	if((first || (Math.abs(range-rangeLast) < 20)) && !stopped)
 	{
-	    camera.centerOnFirstTarget();
-	}
-	catch (AxisCameraException ex)
-	{
-	    ex.printStackTrace();
-	}
-	catch (NIVisionException ex)
-	{
-	    ex.printStackTrace();
-	}
+                rangeBeforeStop = range;
+		if(first)
+		{
+                    first = false;
+		}
 
+		if(range < 150)
+		{
+                    drivetrain.frontLeftSet(-robo_speed_far);
+                    drivetrain.frontRightSet(robo_speed_far);
+                    drivetrain.rearLeftSet(-robo_speed_far);
+                    drivetrain.rearRightSet(robo_speed_far);
+		}
+		else if(range >= 150 && range < 180)
+		{
+                    drivetrain.frontLeftSet(-robo_speed_close);
+                    drivetrain.frontRightSet(robo_speed_close);
+                    drivetrain.rearLeftSet(-robo_speed_close);
+                    drivetrain.rearRightSet(robo_speed_close);
+		}
+		else
+		{
+                    System.out.println("STOP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    drivetrain.frontLeftSet(0.0);
+                    drivetrain.frontRightSet(0.0);
+                    drivetrain.rearLeftSet(0.0);
+                    drivetrain.rearRightSet(0.0);
+		}
+		rangeLast = range;
+	}
+	else if(stopped)
+	{
+            timer.start();
+            System.out.println(timer.get());
+            drivetrain.frontLeftSet(0.0);
+            drivetrain.frontRightSet(0.0);
+            drivetrain.rearLeftSet(0.0);
+            drivetrain.rearRightSet(0.0);
+
+            if((Math.abs(range-rangeBeforeStop) < 5) && timer.get() < 5)
+            {
+                timer.stop();
+                timer.reset();
+            stopped = false;
+            rangeLast = range;
+            }
+	}
+	else
+	{
+            drivetrain.frontLeftSet(0.0);
+            drivetrain.frontRightSet(0.0);
+            drivetrain.rearLeftSet(0.0);
+            drivetrain.rearRightSet(0.0);
+	}
 */
+		if(autoFist)
+		{
+			autoFist = false;
+			timer2.start();
+		}
+
+		double time = timer2.get();
+
+		// Wait 6 seconds for shooting motors to power up (more dense ball first
+		if(time <= 6)
+		{
+			tower.setShooterMotors(0.43);
+		}
+		// Start Elevator for 1 second
+		else if(time > 6 && time <= 7)
+		{
+			tower.setBallElevator(1.0);
+		}
+		// Stop Elevator for 12 seconds
+		else if(time > 7 && time <= 12)
+		{
+			tower.setBallElevator(0.0);
+		}
+		// Start Elevator for 2 seconds
+		else if(time > 12 && time <= 14)
+		{
+			tower.setBallElevator(1.0);
+		}
+		// Stop after 14 seconds from start
+		else if(time > 14)
+		{
+			timer2.stop();
+			tower.setBallElevator(0.0);
+			tower.setShooterMotors(0.0);
+		}
+
+		// Update values on Dashboard
+		dashboardHigh.updateDashboardHigh(drivetrain, 0, sensors.getUltrasonicLeft().getRangeInches(), sensors.getUltrasonicRight().getRangeInches(), 0, luminosityMin, 0, joystick);
+		
+		tower.startCompressor();
     }
 
     public void teleopPeriodic()
     {
-		drivetrain.drive();
-		tower.run();
-		dashboardHigh.updateDashboardHigh(drivetrain, 0, sensors.getUltrasonicLeft().getRangeInches(), sensors.getUltrasonicRight().getRangeInches(), 0, luminosityMin, 0, joystick);
-		//dashboardHigh.updateDashboardHigh(drivetrain,0.0,0.0,0.0,0.0, luminosityMin, 0,joystick);
-
-		//robotDrive.mecanumDrive_Polar(joystick.getMagnitude(), joystick.getDirectionDegrees(), joystick.getTwist());
-		/*
-		double numRec;
-if(imageAnalysis.getRectangles() == null)
-	numRec = -1;
-			else
-	numRec = imageAnalyisif s.getRectangles().length;
-		dashboardHigh.updateDashboardHigh(drivetrain,sensors.getGyro().getAngle(),sensors.getUltrasonicLeft().getRangeInches(),sensors.getUltrasonicRight().getRangeInches(),numRec, luminosityMin, compState,joystick);
-
-		*/
-
-        /*****Debug*****/
-/*
-		if (joystick.getRawButton(9) && isPressedLastLuminosityMin == false) {
-			if (luminosityMin > 0)
-				luminosityMin -= 5;
+        //Movement
+        /*if(joystick.getRawButton(11))
+		{
+            try
+            {
+				System.out.println("a");
+                camera.centerBottomTarget();
+            }
+            catch (AxisCameraException ex){}
+            catch (NIVisionException ex){}
 		}
-
-		if (joystick.getRawButton(10) && isPressedLastLuminosityMin == false) {
-			if (luminosityMin < 255)
-				luminosityMin += 5;
-		}
-
-		if(joystick.getRawButton(9) || joystick.getRawButton(10))
-			isPressedLastLuminosityMin = true;
 		else
-			isPressedLastLuminosityMin = false;
+		{*/
 
+		//}
 
-        if (joystick.getRawButton(7))
-        {
-            double gyroAngle = sensors.getGyro().getAngle();
-            // Change speed based on Angle
-            double speed = Math.abs(gyroAngle / 7);
-            System.out.println("Motor Speed: " + speed);
+		drivetrain.drive();
+        dsout.println(DriverStationLCD.Line.kUser4, 2, "Slider: "+(int)(enhancedIO.getSlider()*100)+"%        ");
 
-            double deadZone = 1;
+		//tower.cameraLightOn();
+        tower.run();
 
-            if (gyroAngle < deadZone && gyroAngle > -deadZone)
-            {
-                System.out.println("Straight: " + gyroAngle);
-            }
-            else if (gyroAngle > deadZone)
-            {
-                System.out.println("DOWN: " + gyroAngle);
-		drivetrain.frontLeftSet(speed);
-		drivetrain.rearLeftSet(speed);
-		drivetrain.frontRightSet(-speed);
-		drivetrain.rearRightSet(-speed);
-            }
-            else if (gyroAngle < -deadZone)
-            {
-                System.out.println("UP: " + gyroAngle);
-		drivetrain.frontLeftSet(-speed);
-		drivetrain.rearLeftSet(-speed);
-		drivetrain.frontRightSet(speed);
-                drivetrain.rearRightSet(speed);
-            }
-        }
+		//Dashboard
+		dashboardHigh.updateDashboardHigh(drivetrain, 0, sensors.getUltrasonicLeft().getRangeInches(), sensors.getUltrasonicRight().getRangeInches(), 0, luminosityMin, 0, joystick);
 
-        if (joystick.getRawButton(8))
-        {
-            sensors.getGyro().reset();
-        }
-
-	if(joystick.getRawButton(11) && isPressedLast == false)
-	{
-            try
-            {
-                camera.centerOnTarget(0,luminosityMin);
-            }
-            catch (AxisCameraException ex)
-            {
-            }
-            catch (NIVisionException ex)
-            {
-            }
-	}
-
-	if(joystick.getRawButton(11))
-		isPressedLast = true;
-	else
-		isPressedLast = false;
-
-        if(joystick.getRawButton(12))
-        {
-            try
-            {
-                imageAnalysis.updateImageTeleop(drivetrain);
-                if(imageAnalysis.getRectangles().length > 1)
-                {
-                    System.out.println("Height:" + imageAnalysis.getHeight(0) + " Distance:" + imageAnalysis.getDistance(0));
-                }
-            }
-            catch (AxisCameraException ex)
-            {
-            }
-            catch (NIVisionException ex)
-            {
-            }
-        }
-
-	if (joystick.getRawButton(12))
-        {
-            System.out.println(sensors.getUltrasonicLeft().getRangeInches() + " : " + sensors.getUltrasonicRight().getRangeInches());
-        }
-
-	*/
-
-	//bridgeSolenoid.set(joystickAux.getRawButton(7));
-	intakeSolenoid.set(true);
-	//System.out.println("Left: " + sensors.getUltrasonicLeft().getValue());
-	//System.out.println("Right: " + sensors.getUltrasonicRight().getValue());
-	watchdog.feed();
+		//Watchdog
+		watchdog.feed();
+		dsout.updateLCD();
     }
 }
