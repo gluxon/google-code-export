@@ -1,4 +1,3 @@
-
 package edu.wpi.first.wpilibj.templates;
 
 import com.sun.squawk.util.MathUtils;
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Vector;
-
 
 public class ImageAnalysis {
 
@@ -46,7 +44,7 @@ public class ImageAnalysis {
 				//timer.start();
                 ColorImage image = axis.getImage();
 				//System.out.println("1:" + timer.get());
-                BinaryImage image2 = image.thresholdHSL(0,20,240,255,14,104);
+                BinaryImage image2 = image.thresholdHSL(60,255,220,255,140,180);//green light
 				image.free();
 				BinaryImage image3 = image2.removeSmallObjects(true, 1);
 				image2.free();
@@ -113,7 +111,7 @@ public class ImageAnalysis {
         }
 
     }
-        
+
         public ParticleAnalysisReport[] getRectangle()
         {
             return rectangle;
@@ -195,13 +193,20 @@ public class ImageAnalysis {
     {
         return rectangle;
     }
-public double getNumParticles()
+	public double getNumParticles()
     {
         return numParticles;
     }
     public double getDistance(int particle) {
         //in feet
         //double thisvalue = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].boundingRectWidth;
+
+		/*
+		 * During testing
+		 *  - find ratio of distance to size
+		 */
+
+		double particleSize = rectangle[particle].particleArea;
 
 		double FieldOfVision = HEIGHT / rectangle[particle].boundingRectHeight * rectangle[particle].imageWidth;
 		double distance = FieldOfVision / Math.tan(ANGLE);

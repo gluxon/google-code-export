@@ -6,24 +6,23 @@ public class Tower
 {
     //DriverStation
     DriverStation driverStation;
-    //Drive Motors
+
+	//Drive Motors
     private Victor bottomShooterMotor, topShooterMotor, ballElevatorMotor, ballIntakeMotor;
-    //Solenoids
-    private Solenoid bridgeSolenoid;
-    //private Solenoid intakeSolenoid;
+
+	//Solenoids
+    public Solenoid bridgeSolenoid;
     private Compressor compressor;
-    //Relay
-    private Relay cameraLights;
-    //Controls
-    private EnhancedIOFHS enhancedIO;
-    //Misc. Variables
+
+	private Relay cameraLights; //Relay
+    private EnhancedIOFHS enhancedIO; //Controls
+
+	//Misc. Variables
     private double shooterSpeed;
-    private boolean isPressedShooterSpeed;
     private boolean bridgeDown = false;
-    private boolean isShooting;
-    private boolean compressorToggle;
-    private boolean isPressedCompressorToggle;
     private boolean cameraLightState;
+
+	private boolean firstShooterPress;
 
     public Tower(DriverStation ds, int bottomShooterMotorN, int topShooterMotorN, int ballElevatorMotorN, int ballIntakeMotorN, int cameraLightN, EnhancedIOFHS IO)
     {
@@ -40,24 +39,19 @@ public class Tower
                 super.set(d * 0.50);
             }
         };
-	//Compressor
+
+		//Compressor
         compressor = new Compressor(6,2);
-	compressor.start();
-	//Controls
-        enhancedIO = IO;
-	//Relay
-        cameraLights = new Relay(cameraLightN,Relay.Direction.kForward);
-        //Solenoid
-	bridgeSolenoid = new Solenoid(2);
-	//intakeSolenoid = new Solenoid(3);
-	//Misc. Variables
+		compressor.start();
+
+        enhancedIO = IO; //Controls
+        cameraLights = new Relay(cameraLightN,Relay.Direction.kForward); //Relay
+		bridgeSolenoid = new Solenoid(2); //Solenoid
         shooterSpeed = 1.0;
-	isPressedShooterSpeed = false;
-	bridgeDown = false;
-	isShooting = false;
-	//compressorToggle = false;
-	//isPressedCompressorToggle = false;
-	cameraLightState = false;
+		bridgeDown = false;
+		cameraLightState = false;
+
+		firstShooterPress = false;
     }
 
     public void cameraLightOn() //Turns the camera light on
@@ -83,14 +77,12 @@ public class Tower
 
     public boolean toggleCameraLight() //Toggles the camera light
     {
-        if(cameraLightState)
-	{
+        if(cameraLightState) {
             cameraLights.set(Relay.Value.kOff);
             cameraLightState = false;
             return cameraLightState;
-	}
-	else
-	{
+		}
+		else {
             cameraLights.set(Relay.Value.kOn);
             cameraLightState = true;
             return cameraLightState;
@@ -150,17 +142,34 @@ public class Tower
 
     public void shoot() //Shoots the ball
     {
-        setShooterSpeed(enhancedIO.getSlider());
-	setShooterMotors(shooterSpeed);
+
+		/*setShooterSpeed(enhancedIO.getSlider());
+
+		if (firstShooterPress) {
+			setShooterMotors(shooterSpeed * 2);
+			firstShooterPress = false;
+			System.out.println("Shooter First Press.");
+		}
+		if (!firstShooterPress) {
+			setShooterMotors(shooterSpeed);
+		}*/
+
+		setShooterSpeed(enhancedIO.getSlider());
+		setShooterMotors(shooterSpeed);
     }
 
     public void run() //Runs the tower
     {
-        if(enhancedIO.getFireButton())
+        if(enhancedIO.getFireButton()) {
+			firstShooterPress = true;
             shoot();
-        else
-            setShooterMotors(0.0);
+		}
+		else {
+			setShooterSpeed(0.0);
+			setShooterMotors(shooterSpeed);
+		}
 
+		firstShooterPress = false;
         ////////
 
         if(enhancedIO.getBallElevatorSwitch()[0])

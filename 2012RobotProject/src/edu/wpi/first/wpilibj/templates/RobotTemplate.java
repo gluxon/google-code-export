@@ -63,6 +63,7 @@ public class RobotTemplate extends IterativeRobot
 
     public void autonomousPeriodic()
     {
+
         /*
         double range = sensors.getUltrasonicRight().getRangeInches();
 		System.out.println(range);
@@ -135,62 +136,72 @@ public class RobotTemplate extends IterativeRobot
 
 		double time = timer2.get();
 
-		// Wait 6 seconds for shooting motors to power up (more dense ball first
-		if(time <= 6)
+		// Wait 4 seconds for shooting motors to power up (more dense ball first)
+		if(time <= 4)
 		{
 			tower.setShooterMotors(0.43);
 		}
-		// Start Elevator for 1 second
+		// Start Elevator for 2 seconds (first + second ball)
+		else if(time > 4 && time <= 5)
+		{
+			tower.setBallElevator(1.0);
+		}
+		// Stop Elevator for a second
+		else if(time > 5 && time <= 6)
+		{
+			tower.setBallElevator(0.0);
+		}//.35 for 3
 		else if(time > 6 && time <= 7)
 		{
 			tower.setBallElevator(1.0);
 		}
-		// Stop Elevator for 12 seconds
-		else if(time > 7 && time <= 12)
-		{
-			tower.setBallElevator(0.0);
-		}
 		// Start Elevator for 2 seconds
-		else if(time > 12 && time <= 14)
+		else if(time > 7 && time <= 10)
 		{
-			tower.setBallElevator(1.0);
-		}
-		// Stop after 14 seconds from start
-		else if(time > 14)
-		{
-			timer2.stop();
-			tower.setBallElevator(0.0);
 			tower.setShooterMotors(0.0);
+			tower.setBallElevator(0.0);
+			/*drivetrain.rearLeftSet(-0.35);
+			drivetrain.rearRightSet(0.42);
+			drivetrain.frontLeftSet(-0.35);
+			drivetrain.frontRightSet(0.42);
+			tower.bridgeSolenoid.set(true);*/
+		}
+		else if(time > 10)
+		{
+			/*drivetrain.rearLeftSet(0.0);
+			drivetrain.rearRightSet(0.0);
+			drivetrain.frontLeftSet(0.0);
+			drivetrain.frontRightSet(0.0);*/
+			timer2.stop();
 		}
 
 		// Update values on Dashboard
 		dashboardHigh.updateDashboardHigh(drivetrain, 0, sensors.getUltrasonicLeft().getRangeInches(), sensors.getUltrasonicRight().getRangeInches(), 0, luminosityMin, 0, joystick);
-		
+
 		tower.startCompressor();
     }
 
     public void teleopPeriodic()
     {
         //Movement
-        /*if(joystick.getRawButton(11))
+        if(joystick.getRawButton(11))
 		{
             try
             {
-				System.out.println("a");
-                camera.centerBottomTarget();
+				imageAnalysis.updateImage(0);
+				camera.centerOnTarget(0, 0);
             }
             catch (AxisCameraException ex){}
             catch (NIVisionException ex){}
 		}
 		else
-		{*/
-
-		//}
-
+		{
 		drivetrain.drive();
-        dsout.println(DriverStationLCD.Line.kUser4, 2, "Slider: "+(int)(enhancedIO.getSlider()*100)+"%        ");
+		}
 
-		//tower.cameraLightOn();
+		dsout.println(DriverStationLCD.Line.kUser4, 2, "Slider: "+(int)(enhancedIO.getSlider()*100)+"%        ");
+
+		tower.cameraLightOn();
         tower.run();
 
 		//Dashboard

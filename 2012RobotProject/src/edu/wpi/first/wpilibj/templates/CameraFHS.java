@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
+// Where are the particle filters?
+
 public class CameraFHS
 {
     private ImageAnalysis analysis;
@@ -31,18 +33,18 @@ public class CameraFHS
 
 			System.out.println(xNormal);
 
-			drivetrain.frontLeftSet(xNormal*0.3);
-			drivetrain.frontRightSet(xNormal*0.3);
-			drivetrain.rearLeftSet(xNormal*0.3);
-			drivetrain.rearRightSet(xNormal*0.3);
+			//drivetrain.frontLeftSet(xNormal*0.3);
+			//drivetrain.frontRightSet(xNormal*0.3);
+			//drivetrain.rearLeftSet(xNormal*0.3);
+			//drivetrain.rearRightSet(xNormal*0.3);
 		}
 		else
 		{
 			System.out.println("No Valid Targets Found!");
-			drivetrain.frontLeftSet(0.0);
-			drivetrain.frontRightSet(0.0);
-			drivetrain.rearLeftSet(0.0);
-			drivetrain.rearRightSet(0.0);
+			//drivetrain.frontLeftSet(0.0);
+			//drivetrain.frontRightSet(0.0);
+			//drivetrain.rearLeftSet(0.0);
+			//drivetrain.rearRightSet(0.0);
 		}
 
     }
@@ -74,9 +76,6 @@ public class CameraFHS
        //     drivetrain.rearRightSet(0.0);
         }
 
-
-
-
     }
 
 	public void centerOnTarget(int target,int lum) throws AxisCameraException, NIVisionException//0:bottom 1:middle(either) 2:top
@@ -92,10 +91,10 @@ public class CameraFHS
 			xNormal = report.center_mass_x_normalized;
             System.out.println(report.center_mass_x_normalized + "_:_" + report.center_mass_y_normalized);
 
-			//drivetrain.frontLeftSet(xNormal*0.3);
-			//drivetrain.frontRightSet(xNormal*0.3);
-			//drivetrain.rearLeftSet(xNormal*0.3);
-			//drivetrain.rearRightSet(xNormal*0.3);
+			drivetrain.frontLeftSet(xNormal*0.4);
+			drivetrain.frontRightSet(xNormal*0.4);
+			drivetrain.rearLeftSet(xNormal*0.4);
+			drivetrain.rearRightSet(xNormal*0.4);
 		}
 		else
 		{
